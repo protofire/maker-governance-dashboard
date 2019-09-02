@@ -1,0 +1,23 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "prettier"
+  ],
+  "plugins": ["react", "import", "prettier"],
+  "parser": "babel-eslint",
+  "rules": {
+    "array-callback-return": 2,
+    "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
+    "no-console": 1,
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "no-undef": 2
+  }
+}

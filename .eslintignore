@@ -1,0 +1,10 @@
+!.eslintrc.js
+build
+config
+coverage
+node_modules
+public
+src/assets
+src/Tests
+src/global.js
+src/serviceWorker.js
