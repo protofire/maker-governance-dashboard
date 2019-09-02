@@ -1,14 +1,17 @@
 import React from 'react'
+import { Switch, Route } from 'react-router-dom'
 
-import ExampleMakerDaoCpdEngine from '../ExampleMakerDaoCpdEngine'
+import Home from '../Home'
 
 import './index.css'
 
 function App() {
   return (
     <div className="App">
-      <p>React Subgraph - starter kit</p>
-      <ExampleMakerDaoCpdEngine />
+      <p>Maker Governance Dashboard</p>
+      <Switch>
+        <Route exact path="/" component={Home} />
+      </Switch>
     </div>
   )
 }
