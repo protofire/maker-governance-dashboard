@@ -1,10 +1,8 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/e3010012-c6e9-486d-802e-cc5b6adef7a1/deploy-status)](https://app.netlify.com/sites/mkr-gov/deploys)
 
-# React Subgraph starter kit
+# Maker governance dashboard
 
-The intention of this project is to provide an easy and faster way to consume data from a [subgraph](https://thegraph.com/) and display them in a react application.
-
-This starter kit was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and is configured with:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and is configured with:
 
 - [Typescript](https://www.typescriptlang.org/)
 - [Apollo-client](https://www.apollographql.com/docs/react/)
@@ -16,9 +14,6 @@ This starter kit was bootstrapped with [Create React App](https://github.com/fac
 ## How to use it
 
 First you have to fork this repository. Then you need to create an **.env.local** with the same content as **.env.example**.
-
-That configuration provides information that will be used by `ExampleMakerDaoCpdEngine` component to communicate with the [MakerDao](https://thegraph.com/explorer/subgraph/protofire/makerdao) subgraph deployed in theGraph.
-_(This configuration should be overwritten with the subgraph you want to communicate with)._
 
 You can generate the types for the GQL Queries and Subscriptions by running `npm generateGQLTypes`, this command will search the schema exposed by graphql (it's defined in .env.local in key **REACT_APP_GRAPH_HTTP**) and then will generate a file in `/src/types/generatedGQL.ts` with the types needed for your queries. Note that this command should be executed each time the schema changes.
 

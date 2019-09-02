@@ -3,23 +3,19 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetCdpEngine
+// GraphQL query operation: GetGovernanceInfo
 // ====================================================
 
-export interface GetCdpEngine_cdpEngine {
-  __typename: 'CdpEngine'
+export interface GetGovernanceInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
   id: string
-  cdpCount: number
-  openCdpCount: number
-  totalCollateral: any
-  totalDebt: any
+  countVoters: any
+  locked: any
   lastBlock: any
-  lastModifiedDate: any
-  cdpOwners: any[]
 }
 
-export interface GetCdpEngine {
-  cdpEngine: GetCdpEngine_cdpEngine | null
+export interface GetGovernanceInfo {
+  governanceInfo: GetGovernanceInfo_governanceInfo | null
 }
 
 /* tslint:disable */
@@ -27,23 +23,19 @@ export interface GetCdpEngine {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL subscription operation: CdpEngine
+// GraphQL subscription operation: GovernanceInfo
 // ====================================================
 
-export interface CdpEngine_cdpEngine {
-  __typename: 'CdpEngine'
+export interface GovernanceInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
   id: string
-  cdpCount: number
-  openCdpCount: number
-  totalCollateral: any
-  totalDebt: any
+  countVoters: any
+  locked: any
   lastBlock: any
-  lastModifiedDate: any
-  cdpOwners: any[]
 }
 
-export interface CdpEngine {
-  cdpEngine: CdpEngine_cdpEngine | null
+export interface GovernanceInfo {
+  governanceInfo: GovernanceInfo_governanceInfo | null
 }
 
 /* tslint:disable */
@@ -51,19 +43,15 @@ export interface CdpEngine {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: CdpEngineDetail
+// GraphQL fragment: MakerGovernanceDetail
 // ====================================================
 
-export interface CdpEngineDetail {
-  __typename: 'CdpEngine'
+export interface MakerGovernanceDetail {
+  __typename: 'GovernanceInfo'
   id: string
-  cdpCount: number
-  openCdpCount: number
-  totalCollateral: any
-  totalDebt: any
+  countVoters: any
+  locked: any
   lastBlock: any
-  lastModifiedDate: any
-  cdpOwners: any[]
 }
 
 /* tslint:disable */
