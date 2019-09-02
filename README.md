@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e3010012-c6e9-486d-802e-cc5b6adef7a1/deploy-status)](https://app.netlify.com/sites/mkr-gov/deploys)
+
 # React Subgraph starter kit
 
 The intention of this project is to provide an easy and faster way to consume data from a [subgraph](https://thegraph.com/) and display them in a react application.
