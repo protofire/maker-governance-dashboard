@@ -11,17 +11,18 @@ import Header from '../../components/Header'
 const items = [{ to: '/', label: 'Dashboard' }]
 
 const AppWrapper = styled.div`
-  background-color: #fafafa;
+  min-height: 400px;
+  padding: 0px 16px;
 `
 
 function App() {
   return (
     <Fragment>
       <GlobalStyle />
+      <Breadcrumb>
+        <Header items={items} />
+      </Breadcrumb>
       <AppWrapper>
-        <Breadcrumb>
-          <Header items={items} />
-        </Breadcrumb>
         <Switch>
           <Route exact path="/" component={Home} />
         </Switch>

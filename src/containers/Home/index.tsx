@@ -1,8 +1,17 @@
 import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import styled from 'styled-components'
+
 import gql from 'graphql-tag'
 
 import HomeDetail from '../../components/Home/HomeDetail'
+
+//Common components
+import { Spinner, SpinnerContainer } from '../../components/common/Spinner'
+
+const HomeContainer = styled.div`
+  margin: 20px;
+`
 
 const makerGovernanceDetailFragment = gql`
   fragment MakerGovernanceDetail on GovernanceInfo {
@@ -34,23 +43,30 @@ function MakerGovernanceInfo() {
   const { subscribeToMore, ...result } = useQuery(GOVERNANCE_INFO_QUERY)
 
   if (result.loading) {
-    return <div>loading...</div>
+    return (
+      <SpinnerContainer>
+        <Spinner />
+      </SpinnerContainer>
+    )
   }
 
   if (result.error) {
-    return <div>ERROR: There was an error trying to fetch data!</div>
+    return <div>ERROR: There was an error trying to fetch the data. </div>
   }
 
   return (
-    <HomeDetail
-      data={result.data.governanceInfo}
-      subscribeToChanges={() =>
-        subscribeToMore({
-          document: GOVERNANCE_INFO_SUBSCRIPTION,
-          updateQuery: (prev, { subscriptionData }) => (subscriptionData.data ? subscriptionData.data : prev),
-        })
-      }
-    />
+    <HomeContainer>
+      <h2>Dashboard</h2>
+      <HomeDetail
+        data={result.data.governanceInfo}
+        subscribeToChanges={() =>
+          subscribeToMore({
+            document: GOVERNANCE_INFO_SUBSCRIPTION,
+            updateQuery: (prev, { subscriptionData }) => (subscriptionData.data ? subscriptionData.data : prev),
+          })
+        }
+      />
+    </HomeContainer>
   )
 }
 

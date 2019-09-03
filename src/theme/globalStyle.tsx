@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
             sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-        background:#fafafa;
+        background-color: rgb(246, 248, 249);
     }
     code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
