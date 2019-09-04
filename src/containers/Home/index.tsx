@@ -8,10 +8,9 @@ import HomeDetail from '../../components/Home/HomeDetail'
 
 //Common components
 import { Spinner, SpinnerContainer } from '../../components/common/Spinner'
+import { PageTitle } from '../../components/common/styled'
 
-const HomeContainer = styled.div`
-  margin: 20px;
-`
+const HomeContainer = styled.div``
 
 const makerGovernanceDetailFragment = gql`
   fragment MakerGovernanceDetail on GovernanceInfo {
@@ -56,7 +55,7 @@ function MakerGovernanceInfo() {
 
   return (
     <HomeContainer>
-      <h2>Dashboard</h2>
+      <PageTitle>Dashboard</PageTitle>
       <HomeDetail
         data={result.data.governanceInfo}
         subscribeToChanges={() =>

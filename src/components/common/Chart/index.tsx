@@ -1,14 +1,15 @@
 import React from 'react'
-import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 type Props = {
   data: Array<any>
+  children: React.ReactNode
   width: Number
   height: Number
 }
 
 function Chart(props: Props) {
-  const { data, width, height } = props //500 400
+  const { data, width, height, children } = props //500 400
 
   return (
     <>
@@ -19,8 +20,7 @@ function Chart(props: Props) {
           <YAxis />
           <Tooltip />
           <Legend verticalAlign="bottom" />
-          <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-          <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
+          {children}
         </ComposedChart>
       </ResponsiveContainer>
     </>

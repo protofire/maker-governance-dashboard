@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Nav = styled.div`
-  background-color: rgb(14, 16, 41);
-  color: #fff;
+  border: solid 1px #d9d9d9;
+  background-color: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.0975);
+  height: 60px;
+  display: flex;
 `
 const NavHeader = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
 `
 const NavLeft = styled.div`
   max-width: 1140px;
@@ -18,18 +21,16 @@ const NavLeft = styled.div`
   margin: 0 auto;
   display: flex;
   flex: 1;
-  justify-content: space-between;
+  align-items: center;
   a {
-    font-size: 18px;
-    font-weigth: 500;
+    font-weight: 500;
+    margin-rigth: 2rem;
+    margin-left: 2rem;
   }
 `
 
 const Breadcrumb = styled.div`
   display: flex;
-  position: relative;
-  top: 3px;
-  margin-left: 3rem;
 `
 
 const StyledLink = styled(Link)`
