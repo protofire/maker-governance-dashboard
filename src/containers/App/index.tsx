@@ -51,7 +51,7 @@ function App() {
       </AppWrapper>
       <Footer>
         <span>
-          Built by <img src="./protofire.png" />
+          Built by <img alt="protofire" src="./protofire.png" />
         </span>
       </Footer>
     </Fragment>

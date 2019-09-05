@@ -28,3 +28,23 @@ export const ChartTitle = styled.p`
   font-size: 14px;
   color: #444444;
 `
+export const TableContainer = styled.div`
+  table {
+    border-collapse: separate;
+    border-spacing: 10px 5px;
+    th {
+      font-size: 12px;
+      color: #999999;
+    }
+    tbody {
+      font-size: 13px;
+      color: #000000;
+      tr {
+        &:nth-child(odd) {
+          background-color: #fafafa;
+        }
+        height: 36px;
+      }
+    }
+  }
+`

@@ -1,3 +1,37 @@
+import moment from 'moment'
+
+export const Pollcolumns = () => [
+  {
+    Header: 'Poll creator',
+    accessor: row => shortenAccount(row.creator),
+  },
+  {
+    Header: 'Time Left',
+    accessor: row => timeLeft(row.endDate),
+  },
+]
+
+const shortenAccount = (account: string): string => account.slice(0, 6) + '...' + account.slice(account.length - 4)
+
+const timeLeft = (end): string => {
+  const today = moment()
+  const end_date = moment.unix(end)
+
+  if (end_date.diff(today) <= 0) return 'Ended'
+
+  const minsDiff = end_date.diff(today, 'minutes')
+  const hoursDiff = end_date.diff(today, 'hours')
+  const daysDiff = end_date.diff(today, 'days')
+  const weeksDiff = end_date.diff(today, 'weeks')
+  const monthsDiff = end_date.diff(today, 'months')
+
+  if (monthsDiff > 0) return `${monthsDiff} months`
+  if (weeksDiff > 0) return `${weeksDiff} weeks`
+  if (daysDiff > 0) return `${daysDiff} days`
+  if (hoursDiff > 0) return `${hoursDiff} hours`
+  return `${minsDiff} minutes`
+}
+
 export const mockedData: Array<any> = [
   {
     name: 'Page A',

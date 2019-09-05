@@ -2,44 +2,18 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
-import gql from 'graphql-tag'
-
 import HomeDetail from '../../components/Home/HomeDetail'
 
 //Common components
-import { Spinner, SpinnerContainer } from '../../components/common/Spinner'
-import { PageTitle } from '../../components/common/styled'
+import { Spinner, SpinnerContainer, PageTitle } from '../../components/common'
+
+//Queries
+import { POLL_VOTES_FIRST_QUERY } from './queries'
 
 const HomeContainer = styled.div``
 
-const makerGovernanceDetailFragment = gql`
-  fragment MakerGovernanceDetail on GovernanceInfo {
-    id
-    countVoters
-    locked
-    lastBlock
-  }
-`
-
-const GOVERNANCE_INFO_QUERY = gql`
-  query GetGovernanceInfo {
-    governanceInfo(id: "0x0") {
-      ...MakerGovernanceDetail
-    }
-  }
-  ${makerGovernanceDetailFragment}
-`
-
-const GOVERNANCE_INFO_SUBSCRIPTION = gql`
-  subscription GovernanceInfo {
-    governanceInfo(id: "0x0") {
-      ...MakerGovernanceDetail
-    }
-  }
-  ${makerGovernanceDetailFragment}
-`
 function MakerGovernanceInfo() {
-  const { subscribeToMore, ...result } = useQuery(GOVERNANCE_INFO_QUERY)
+  const { data, ...result } = useQuery(POLL_VOTES_FIRST_QUERY)
 
   if (result.loading) {
     return (
@@ -56,15 +30,7 @@ function MakerGovernanceInfo() {
   return (
     <HomeContainer>
       <PageTitle>Dashboard</PageTitle>
-      <HomeDetail
-        data={result.data.governanceInfo}
-        subscribeToChanges={() =>
-          subscribeToMore({
-            document: GOVERNANCE_INFO_SUBSCRIPTION,
-            updateQuery: (prev, { subscriptionData }) => (subscriptionData.data ? subscriptionData.data : prev),
-          })
-        }
-      />
+      <HomeDetail subscribeToChanges={() => console.log} pollVotes={data.pollVotes} />
     </HomeContainer>
   )
 }
