@@ -6,14 +6,15 @@ type Props = {
   children: React.ReactNode
   width: Number
   height: Number
+  modalStyles?: Object
 }
 
 function Chart(props: Props) {
-  const { data, width, height, children } = props //500 400
+  const { data, width, height, children, modalStyles } = props
 
   return (
     <>
-      <ResponsiveContainer>
+      <ResponsiveContainer {...modalStyles}>
         <ComposedChart width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis />

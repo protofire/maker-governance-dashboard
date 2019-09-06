@@ -1,16 +1,19 @@
 import moment from 'moment'
+import React from 'react'
+import { Link } from '../components/common'
 
 export const Pollcolumns = () => [
   {
     Header: 'Poll creator',
-    accessor: row => shortenAccount(row.creator),
+    accessor: 'creator',
+    Cell: cellInfo =>
+      cellInfo && <Link href={cellInfo.row.original.url}> {shortenAccount(cellInfo.row.original.creator)} </Link>,
   },
   {
     Header: 'Time Left',
     accessor: row => timeLeft(row.endDate),
   },
 ]
-
 const shortenAccount = (account: string): string => account.slice(0, 6) + '...' + account.slice(account.length - 4)
 
 const timeLeft = (end): string => {

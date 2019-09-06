@@ -17,8 +17,13 @@ const TableSection = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: 1rem;
-  &:nth-child(odd) {
-    background-color: #fafafa;
+`
+
+const RowsSection = styled.div`
+  ${TableSection} {
+    &:nth-child(odd) {
+      background-color: #fafafa;
+    }
   }
 `
 const HeaderRow = styled.span`
@@ -50,7 +55,7 @@ function Table({ columns, data }: TableProps) {
           </TableSection>
         ))}
       </div>
-      <div>
+      <RowsSection>
         {rows.map(
           row =>
             prepareRow(row) || (
@@ -61,7 +66,7 @@ function Table({ columns, data }: TableProps) {
               </TableSection>
             ),
         )}
-      </div>
+      </RowsSection>
     </TableWrapper>
   )
 }

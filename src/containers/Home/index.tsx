@@ -8,12 +8,12 @@ import HomeDetail from '../../components/Home/HomeDetail'
 import { Spinner, SpinnerContainer, PageTitle } from '../../components/common'
 
 //Queries
-import { POLL_VOTES_FIRST_QUERY } from './queries'
+import { POLLS_FIRST_QUERY } from './queries'
 
 const HomeContainer = styled.div``
 
 function MakerGovernanceInfo() {
-  const { data, ...result } = useQuery(POLL_VOTES_FIRST_QUERY)
+  const { data, ...result } = useQuery(POLLS_FIRST_QUERY)
 
   if (result.loading) {
     return (
@@ -30,7 +30,7 @@ function MakerGovernanceInfo() {
   return (
     <HomeContainer>
       <PageTitle>Dashboard</PageTitle>
-      <HomeDetail subscribeToChanges={() => console.log} pollVotes={data.pollVotes} />
+      <HomeDetail subscribeToChanges={() => console.log} polls={data.polls} />
     </HomeContainer>
   )
 }

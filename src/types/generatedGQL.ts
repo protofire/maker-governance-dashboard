@@ -23,20 +23,21 @@ export interface GetGovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetPollVotes
+// GraphQL query operation: GetPolls
 // ====================================================
 
-export interface GetPollVotes_pollVotes {
-  __typename: 'PollVote'
+export interface GetPolls_polls {
+  __typename: 'Poll'
   id: string
   creator: any | null
+  url: string | null
   pollId: any
   startDate: any
   endDate: any
 }
 
-export interface GetPollVotes {
-  pollVotes: GetPollVotes_pollVotes[]
+export interface GetPolls {
+  polls: GetPolls_polls[]
 }
 
 /* tslint:disable */
@@ -80,13 +81,14 @@ export interface MakerGovernanceDetail {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: pollVoteDetail
+// GraphQL fragment: pollsDetail
 // ====================================================
 
-export interface pollVoteDetail {
-  __typename: 'PollVote'
+export interface pollsDetail {
+  __typename: 'Poll'
   id: string
   creator: any | null
+  url: string | null
   pollId: any
   startDate: any
   endDate: any

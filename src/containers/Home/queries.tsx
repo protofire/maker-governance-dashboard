@@ -9,10 +9,11 @@ const makerGovernanceDetailFragment = gql`
   }
 `
 
-const pollVoteDetailFragment = gql`
-  fragment pollVoteDetail on PollVote {
+const pollsDetailFragment = gql`
+  fragment pollsDetail on Poll {
     id
     creator
+    url
     pollId
     startDate
     endDate
@@ -27,13 +28,13 @@ export const GOVERNANCE_INFO_QUERY = gql`
   ${makerGovernanceDetailFragment}
 `
 
-export const POLL_VOTES_FIRST_QUERY = gql`
-  query GetPollVotes {
-    pollVotes(first: 5) {
-      ...pollVoteDetail
+export const POLLS_FIRST_QUERY = gql`
+  query GetPolls {
+    polls(first: 5) {
+      ...pollsDetail
     }
   }
-  ${pollVoteDetailFragment}
+  ${pollsDetailFragment}
 `
 
 export const GOVERNANCE_INFO_SUBSCRIPTION = gql`

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Nav = styled.div`
@@ -14,6 +14,8 @@ const NavHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: row;
+  flex: 1;
 `
 const NavLeft = styled.div`
   max-width: 1140px;
@@ -24,19 +26,31 @@ const NavLeft = styled.div`
   align-items: center;
   a {
     font-weight: 500;
-    margin-rigth: 2rem;
+    margin-right: 2rem;
     margin-left: 2rem;
   }
+`
+
+const NavRight = styled.div`
+  max-width: 1140px;
+  padding: 2rem 2.5rem;
+  margin: 0 auto;
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
 `
 
 const Breadcrumb = styled.div`
   display: flex;
 `
 
-const StyledLink = styled(Link)`
+const StyledLink = styled(NavLink)`
   text-decoration: none;
+  color: #666666;
+  &:hover {
+    color: #000000;
+  }
   &:visited,
-  &:hover,
   &:active {
     color: inherit;
   }
@@ -60,12 +74,15 @@ function Header(props: Props) {
           <img alt="logo" src="./maker.png" />
           <Breadcrumb>
             {items.map(({ to, label }) => (
-              <StyledLink key={to} to={to}>
+              <StyledLink activeStyle={{ color: '#000000' }} key={to} to={to}>
                 {label}
               </StyledLink>
             ))}
           </Breadcrumb>
         </NavLeft>
+        <NavRight>
+          <span>Mainnet</span>
+        </NavRight>
       </NavHeader>
     </Nav>
   )
