@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Expand" width="12" height="12" viewBox="0 0 12 12">
+    <defs>
+        <style>
+            .cls-1{fill:#bbb}
+        </style>
+    </defs>
+    <path id="Path_16" d="M4.915 186.634l-3.893 3.893v-2.14H0v3.886h3.886v-1.023h-2.14l3.893-3.893z" class="cls-1" data-name="Path 16" transform="translate(0 -180.272)"/>
+    <path id="Path_17" d="M188.386 0v1.023h2.14l-3.893 3.893.723.723 3.893-3.893v2.14h1.023V0z" class="cls-1" data-name="Path 17" transform="translate(-180.271)"/>
+</svg>

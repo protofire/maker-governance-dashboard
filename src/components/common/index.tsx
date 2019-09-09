@@ -2,8 +2,8 @@ import Chart from './Chart'
 import { Spinner, SpinnerContainer } from './Spinner'
 import Table from './Table'
 import Modal from './Modal'
-import CloseIcon from './CloseIcon'
-import { TableContainer, Card, PageTitle, ChartTitle, TableTitle, TitleContainer, Link } from './styled'
+import { CloseIcon, ExpandIcon } from './Icon'
+import { TableContainer, Card, PageTitle, ChartTitle, TableTitle, TitleContainer, Link, IconContainer } from './styled'
 
 export {
   Chart,
@@ -19,4 +19,6 @@ export {
   Link,
   Modal,
   CloseIcon,
+  ExpandIcon,
+  IconContainer,
 }

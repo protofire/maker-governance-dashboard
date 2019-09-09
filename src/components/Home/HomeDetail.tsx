@@ -3,7 +3,19 @@ import styled from 'styled-components'
 
 import { mockedData } from '../../utils' //This is only for testing
 import { GetPolls_polls } from '../../types/generatedGQL'
-import { Card, ChartTitle, TableContainer, Table, TableTitle, TitleContainer, Chart, Modal, CloseIcon } from '../common'
+import {
+  Card,
+  ChartTitle,
+  TableContainer,
+  Table,
+  TableTitle,
+  TitleContainer,
+  Chart,
+  Modal,
+  CloseIcon,
+  ExpandIcon,
+  IconContainer,
+} from '../common'
 import { Pollcolumns } from '../../utils'
 import { Line } from 'recharts'
 
@@ -43,11 +55,15 @@ function HomeDetail(props: Props) {
     <>
       <TitleContainer>
         <ChartTitle>This is the chart title</ChartTitle>
-        {!inModal && <span onClick={() => setModal(getGraph1)}>EXPAND IT</span>}
+        {!inModal && (
+          <IconContainer onClick={() => setModal(getGraph1)}>
+            <ExpandIcon />
+          </IconContainer>
+        )}
         {inModal && (
-          <span onClick={() => setModalOpen(false)}>
+          <IconContainer onClick={() => setModalOpen(false)}>
             <CloseIcon />
-          </span>
+          </IconContainer>
         )}
       </TitleContainer>
       <Chart modalStyles={inModal ? { width: '99%', aspect: 3 } : undefined} width={100} height={400} data={mockedData}>

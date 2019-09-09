@@ -58,6 +58,11 @@ export const TitleContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
 `
+export const IconContainer = styled.div`
+  display: flex;
+  cursor: pointer;
+`
+
 export const TableContainer = styled.div`
   table {
     border-collapse: separate;
