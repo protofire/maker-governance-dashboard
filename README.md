@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e3010012-c6e9-486d-802e-cc5b6adef7a1/deploy-status)](https://app.netlify.com/sites/mkr-gov/deploys)
+
 # Maker governance dashboard
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and is configured with:
