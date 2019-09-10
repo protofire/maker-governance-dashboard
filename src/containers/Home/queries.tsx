@@ -30,7 +30,7 @@ export const GOVERNANCE_INFO_QUERY = gql`
 
 export const POLLS_FIRST_QUERY = gql`
   query GetPolls {
-    polls(id: "0x0") {
+    polls {
       ...pollsDetail
     }
   }
