@@ -61,10 +61,6 @@ export const TitleContainer = styled.div`
 export const IconContainer = styled.div`
   display: flex;
   cursor: pointer;
-  span {
-    font-size: 12px;
-    color: #00ba9c;
-  }
 `
 
 export const TableContainer = styled.div`

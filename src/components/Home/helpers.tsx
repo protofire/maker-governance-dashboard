@@ -25,6 +25,11 @@ export const getModalContainer = (type, Content, title, props, closeCallback) =>
   )
 }
 
+export const ViewAll = styled.span`
+  font-size: 12px;
+  color: #00ba9c;
+`
+
 export const WrappedContainer = styled.div`
   display: flex;
   flex-direction: row;

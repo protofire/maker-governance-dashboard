@@ -1,11 +1,15 @@
 import React from 'react'
-import { useTable } from 'react-table'
+import { useTable, useTableState, usePagination } from 'react-table'
 import styled, { css } from 'styled-components'
+import { NextIcon, PreviousIcon } from '../../common'
+import { IconContainer } from '../styled'
 
 type TableProps = {
   columns: Array<any>
   data: Array<any>
   expanded?: boolean
+  limitPerPage?: number
+  scrollable?: boolean
 }
 
 const TableRow = styled.span`
@@ -45,6 +49,12 @@ const TableWrapper = styled.div`
       }
     }
   }
+  ${props =>
+    props.scrollable &&
+    css`
+      max-height: 400px;
+      overflow: hidden;
+    `}
 `
 
 const RowsSection = styled.div`
@@ -55,44 +65,121 @@ const RowsSection = styled.div`
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
   }
+  overflow-y:${props => (props.scrollable ? 'scroll' : 'hidden')}
 `
 const HeaderRow = styled.span`
   font-size: 12px;
   color: #999999;
 `
 
-function Table({ columns, data, expanded }: TableProps) {
+const Pagination = styled.div`
+  * {
+    font-size: 12px;
+    color: #666666;
+  }
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: flex-end;
+`
+const PageIconContainer = styled(IconContainer)`
+  margin-left: 1rem;
+`
+const PageSelect = styled.select`
+  background: transparent;
+  border: none;
+  margin-right: 1rem;
+  &:focus {
+    outline: 0;
+  }
+`
+
+const Pager = styled.span`
+  margin-right: 1rem;
+`
+
+function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps) {
+  const pageData = limitPerPage ? { pageSize: limitPerPage } : {}
+  const tableState = useTableState(pageData)
+
   // Use the state and functions returned from useTable to build your UI
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data,
-  })
+  const {
+    getTableProps,
+    headerGroups,
+    prepareRow,
+    page, // Instead of using 'rows', we'll use page,
+    // which has only the rows for the active page
+    // The rest of these things are super handy, too ;)
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: [{ pageIndex, pageSize }],
+  } = useTable(
+    {
+      columns,
+      data,
+      state: tableState,
+    },
+    usePagination,
+  )
 
   // Render the UI for your table
   return (
-    <TableWrapper expanded={expanded} {...getTableProps()}>
-      <div>
-        {headerGroups.map(headerGroup => (
-          <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <HeaderRow {...column.getHeaderProps()}>{column.render('Header')}</HeaderRow>
+    <>
+      <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
+        <div>
+          {headerGroups.map(headerGroup => (
+            <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <HeaderRow {...column.getHeaderProps()}>{column.render('Header')}</HeaderRow>
+              ))}
+            </TableSection>
+          ))}
+        </div>
+        <RowsSection scrollable={scrollable} expanded={expanded}>
+          {page.map(
+            row =>
+              prepareRow(row) || (
+                <TableSection {...row.getRowProps()}>
+                  {row.cells.map(cell => {
+                    return <TableRow {...cell.getCellProps()}>{cell.render('Cell')}</TableRow>
+                  })}
+                </TableSection>
+              ),
+          )}
+        </RowsSection>
+      </TableWrapper>
+      {expanded && (
+        <Pagination>
+          <PageSelect
+            value={pageSize}
+            onChange={e => {
+              setPageSize(Number(e.target.value))
+            }}
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Rows per page: {pageSize}
+              </option>
             ))}
-          </TableSection>
-        ))}
-      </div>
-      <RowsSection expanded={expanded}>
-        {rows.map(
-          row =>
-            prepareRow(row) || (
-              <TableSection {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <TableRow {...cell.getCellProps()}>{cell.render('Cell')}</TableRow>
-                })}
-              </TableSection>
-            ),
-        )}
-      </RowsSection>
-    </TableWrapper>
+          </PageSelect>
+          <Pager>
+            {pageIndex + 1}-{pageSize} of {pageOptions.length}
+          </Pager>
+          <PageIconContainer onClick={() => previousPage()} disabled={!canPreviousPage}>
+            <PreviousIcon />
+          </PageIconContainer>
+          <PageIconContainer onClick={() => nextPage()} disabled={!canNextPage}>
+            <NextIcon />
+          </PageIconContainer>
+        </Pagination>
+      )}
+    </>
   )
 }
 

@@ -12,9 +12,11 @@ import {
   Modal,
   ExpandIcon,
 } from '../common'
-import { getIconContainer, getModalContainer, WrappedContainer } from './helpers'
+import { getIconContainer, getModalContainer, WrappedContainer, ViewAll } from './helpers'
 import { Pollcolumns } from '../../utils'
 import { Line } from 'recharts'
+
+const TABLE_PREVIEW = 5
 
 type Props = {
   polls: Array<GetPolls_polls>
@@ -23,7 +25,6 @@ type Props = {
 
 function HomeDetail(props: Props) {
   const { polls } = props
-
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [modalData, setModalData] = useState({ type: '', title: '', component: '' })
@@ -53,6 +54,7 @@ function HomeDetail(props: Props) {
       return {
         ...obj,
         expanded: isModalOpen,
+        scrollable: true,
         data: homeMap[type][component].data,
         columns: homeMap[type][component].columns,
       }
@@ -94,7 +96,6 @@ function HomeDetail(props: Props) {
   }
 
   // Polls Table Data
-  const PollTable = props => <Table {...props} />
   const getPollsTable = () => {
     const data = {
       title: 'Top polls',
@@ -107,13 +108,13 @@ function HomeDetail(props: Props) {
           <TableTitle>{data.title}</TableTitle>
           {getIconContainer(
             () => (
-              <span>View All</span>
+              <ViewAll>View All</ViewAll>
             ),
             data,
             setModal,
           )}
         </TitleContainer>
-        <PollTable expanded={isModalOpen} columns={pollcolumns} data={polls} />
+        <Table expanded={isModalOpen} columns={pollcolumns} data={polls.slice(0, TABLE_PREVIEW)} />
       </TableContainer>
     )
   }
