@@ -1,17 +1,18 @@
 import React from 'react'
 import { useTable } from 'react-table'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 type TableProps = {
   columns: Array<any>
   data: Array<any>
+  expanded?: boolean
 }
 
-const TableWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+const TableRow = styled.span`
+  font-size: 13px;
+  color: #000000;
 `
+
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
@@ -19,10 +20,39 @@ const TableSection = styled.div`
   padding: 1rem;
 `
 
+const TableWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
+  margin-top: ${props => (props.expanded ? '1rem' : '0')};
+  ${TableSection} {
+    ${TableRow}:first-child {
+      ${props =>
+        !props.expanded &&
+        css`
+          display: flex;
+          width: 120px;
+        `}
+      a {
+        ${props =>
+          !props.expanded &&
+          css`
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          `}
+      }
+    }
+  }
+`
+
 const RowsSection = styled.div`
   ${TableSection} {
+    border-top:  ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')}
+    border-bottom:  ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')}
     &:nth-child(odd) {
-      background-color: #fafafa;
+      background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
   }
 `
@@ -31,12 +61,7 @@ const HeaderRow = styled.span`
   color: #999999;
 `
 
-const TableRow = styled.span`
-  font-size: 13px;
-  color: #000000;
-`
-
-function Table({ columns, data }: TableProps) {
+function Table({ columns, data, expanded }: TableProps) {
   // Use the state and functions returned from useTable to build your UI
   const { getTableProps, headerGroups, rows, prepareRow } = useTable({
     columns,
@@ -45,17 +70,17 @@ function Table({ columns, data }: TableProps) {
 
   // Render the UI for your table
   return (
-    <TableWrapper {...getTableProps()}>
+    <TableWrapper expanded={expanded} {...getTableProps()}>
       <div>
         {headerGroups.map(headerGroup => (
-          <TableSection {...headerGroup.getHeaderGroupProps()}>
+          <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
               <HeaderRow {...column.getHeaderProps()}>{column.render('Header')}</HeaderRow>
             ))}
           </TableSection>
         ))}
       </div>
-      <RowsSection>
+      <RowsSection expanded={expanded}>
         {rows.map(
           row =>
             prepareRow(row) || (

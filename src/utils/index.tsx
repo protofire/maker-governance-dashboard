@@ -2,18 +2,22 @@ import moment from 'moment'
 import React from 'react'
 import { Link } from '../components/common'
 
-export const Pollcolumns = () => [
-  {
-    Header: 'Poll creator',
-    accessor: 'creator',
-    Cell: cellInfo =>
-      cellInfo && <Link href={cellInfo.row.original.url}> {shortenAccount(cellInfo.row.original.creator)} </Link>,
-  },
-  {
-    Header: 'Time Left',
-    accessor: row => timeLeft(row.endDate),
-  },
-]
+export const Pollcolumns = (isModalOpen: boolean) => {
+  const getValue = value => {
+    return isModalOpen ? value : shortenAccount(value)
+  }
+  return [
+    {
+      Header: 'Poll creator',
+      accessor: 'creator',
+      Cell: ({ row }) => <Link href={row.original.url}>{getValue(row.original.creator)}</Link>,
+    },
+    {
+      Header: 'Time Left',
+      accessor: row => timeLeft(row.endDate),
+    },
+  ]
+}
 const shortenAccount = (account: string): string => account.slice(0, 6) + '...' + account.slice(account.length - 4)
 
 const timeLeft = (end): string => {

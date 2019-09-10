@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-
+import React, { useState } from 'react'
 import { mockedData } from '../../utils' //This is only for testing
 import { GetPolls_polls } from '../../types/generatedGQL'
 import {
@@ -12,32 +10,11 @@ import {
   TitleContainer,
   Chart,
   Modal,
-  CloseIcon,
   ExpandIcon,
-  IconContainer,
 } from '../common'
+import { getIconContainer, getModalContainer, WrappedContainer } from './helpers'
 import { Pollcolumns } from '../../utils'
 import { Line } from 'recharts'
-
-const WrappedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ${Card} {
-    width: 25%;
-  }
-  @media (max-width: 768px) {
-    ${Card} {
-      width: 40%;
-    }
-  }
-  @media (max-width: 580px) {
-    ${Card} {
-      width: 100% !important;
-    }
-  }
-`
 
 type Props = {
   polls: Array<GetPolls_polls>
@@ -45,42 +22,107 @@ type Props = {
 }
 
 function HomeDetail(props: Props) {
-  const { polls, subscribeToChanges } = props
-  const pollcolumns = React.useMemo(Pollcolumns, [])
+  const { polls } = props
 
   const [isModalOpen, setModalOpen] = useState(false)
-  const [modalData, setModalData] = useState(null)
+  const [isModalChart, setModalChart] = useState(false)
+  const [modalData, setModalData] = useState({ type: '', title: '', component: '' })
 
-  const getGraph1 = (inModal = false) => (
-    <>
-      <TitleContainer>
-        <ChartTitle>This is the chart title</ChartTitle>
-        {!inModal && (
-          <IconContainer onClick={() => setModal(getGraph1)}>
-            <ExpandIcon />
-          </IconContainer>
-        )}
-        {inModal && (
-          <IconContainer onClick={() => setModalOpen(false)}>
-            <CloseIcon />
-          </IconContainer>
-        )}
-      </TitleContainer>
-      <Chart modalStyles={inModal ? { width: '99%', aspect: 3 } : undefined} width={100} height={400} data={mockedData}>
-        <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-        <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-      </Chart>
-    </>
-  )
+  const pollcolumns = React.useMemo(() => Pollcolumns(isModalOpen), [isModalOpen])
 
-  const setModal = (cb: Function): void => {
-    setModalOpen(true)
-    setModalData(cb(true))
+  // Data map for building this page
+  const homeMap = {
+    table: {
+      polls: {
+        data: polls,
+        columns: pollcolumns,
+        component: props => <Table {...props} />,
+      },
+    },
+    chart: {
+      chart1: {
+        data: mockedData,
+        component: props => <Graph1 {...props} />,
+      },
+    },
   }
 
-  useEffect(() => {
-    subscribeToChanges()
-  })
+  const getModalProps = (type, component) => {
+    const obj = {}
+    if (type === 'table')
+      return {
+        ...obj,
+        expanded: isModalOpen,
+        data: homeMap[type][component].data,
+        columns: homeMap[type][component].columns,
+      }
+    return {
+      modalStyles: isModalOpen ? { width: '99%', aspect: 3 } : undefined,
+      width: 100,
+      height: 400,
+      data: homeMap[type][component].data,
+    }
+  }
+
+  // Graph1 graph data
+  const Graph1 = props => (
+    <Chart {...props}>
+      <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
+      <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
+    </Chart>
+  )
+  const getGraph1 = () => {
+    const data = {
+      title: 'This is the chart title',
+      type: 'chart',
+      component: 'chart1',
+    }
+    return (
+      <>
+        <TitleContainer>
+          <ChartTitle>{data.title}</ChartTitle>
+          {getIconContainer(ExpandIcon, data, setModal, true)}
+        </TitleContainer>
+        <Graph1
+          modalStyles={isModalOpen ? { width: '99%', aspect: 3 } : undefined}
+          width={100}
+          height={400}
+          data={mockedData}
+        />
+      </>
+    )
+  }
+
+  // Polls Table Data
+  const PollTable = props => <Table {...props} />
+  const getPollsTable = () => {
+    const data = {
+      title: 'Top polls',
+      type: 'table',
+      component: 'polls',
+    }
+    return (
+      <TableContainer>
+        <TitleContainer>
+          <TableTitle>{data.title}</TableTitle>
+          {getIconContainer(
+            () => (
+              <span>View All</span>
+            ),
+            data,
+            setModal,
+          )}
+        </TitleContainer>
+        <PollTable expanded={isModalOpen} columns={pollcolumns} data={polls} />
+      </TableContainer>
+    )
+  }
+
+  const setModal = (data: any, isChart: boolean = false): void => {
+    setModalOpen(true)
+    setModalChart(isChart)
+    setModalData(data)
+  }
 
   return (
     <>
@@ -94,12 +136,7 @@ function HomeDetail(props: Props) {
           </Chart>
         </Card>
         <Card type="table" style={{ height: 340, padding: 0 }}>
-          <TableContainer>
-            <TitleContainer>
-              <TableTitle>Top polls</TableTitle>
-            </TitleContainer>
-            <Table columns={pollcolumns} data={polls} />
-          </TableContainer>
+          {getPollsTable()}
         </Card>
         <Card style={{ height: 300 }}>
           <ChartTitle>This is the chart title</ChartTitle>
@@ -130,9 +167,17 @@ function HomeDetail(props: Props) {
           </Chart>
         </Card>
       </WrappedContainer>
-      <Modal isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
-        {modalData}
-      </Modal>
+      {isModalOpen && (
+        <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
+          {getModalContainer(
+            modalData.type,
+            homeMap.table[modalData.component].component,
+            modalData.title,
+            getModalProps(modalData.type, modalData.component),
+            setModalOpen,
+          )}
+        </Modal>
+      )}
     </>
   )
 }

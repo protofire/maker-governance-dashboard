@@ -15,16 +15,22 @@ ReactModal.setAppElement('#root')
 
 type Props = {
   isOpen: Boolean
+  isChart?: Boolean
   closeModal: Function
   children: React.ReactNode
 }
 
 function Modal(props: Props) {
-  const { isOpen, closeModal, children } = props
+  const { isOpen, closeModal, children, isChart } = props
 
   return (
     <>
-      <ReactModal style={customStyles} shouldCloseOnOverlayClick={false} isOpen={isOpen} onRequestClose={closeModal}>
+      <ReactModal
+        style={isChart ? customStyles : { content: { bottom: 'none' } }}
+        shouldCloseOnOverlayClick={false}
+        isOpen={isOpen}
+        onRequestClose={closeModal}
+      >
         {children}
       </ReactModal>
     </>
