@@ -29,6 +29,17 @@ export const Card = styled.div`
   }
 `
 
+export const Select = styled.select`
+  background: transparent;
+  border: none;
+  margin-right: 1rem;
+  &:focus {
+    outline: 0;
+  }
+`
+export const ChartSelect = styled(Select)`
+  color: #00ba9c;
+`
 export const PageTitle = styled.p`
   font-size: 20px;
   color: #444444;
@@ -39,7 +50,7 @@ export const Link = styled.a`
   color: #000000;
 `
 
-export const ChartTitle = styled.p`
+const ChartTitle = styled.p`
   margin-top: 0;
   font-size: 14px;
   color: #444444;
@@ -52,7 +63,7 @@ export const TitleContainer = styled.div`
   display: flex;
   flex: 1;
   padding: 16px;
-  padding-bottom: 5px;
+  align-items: center;
   display: flex;
   flex: 1;
   flex-direction: row;

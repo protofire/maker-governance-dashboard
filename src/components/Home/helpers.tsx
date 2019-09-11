@@ -2,6 +2,23 @@ import React from 'react'
 import styled from 'styled-components'
 import { IconContainer, TitleContainer, CloseIcon, TableTitle, ChartTitle, Card } from '../common'
 
+import { getLastYear, getLastWeek, getLastMonth, getLastDay } from '../../utils'
+import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../../constants'
+
+const periodsMap = {
+  [LAST_YEAR]: getLastYear,
+  [LAST_MONTH]: getLastMonth,
+  [LAST_WEEK]: getLastWeek,
+  [LAST_DAY]: getLastDay,
+}
+
+export const filters = [
+  { label: 'Last year', value: LAST_YEAR },
+  { label: 'Last month', value: LAST_MONTH },
+  { label: 'Last week', value: LAST_WEEK },
+  { label: 'Last day', value: LAST_DAY },
+]
+
 export const getIconContainer = (Component, data, cb, isChart = false) => {
   return (
     <IconContainer onClick={() => cb(data, isChart)}>
@@ -23,6 +40,23 @@ export const getModalContainer = (type, Content, title, props, closeCallback) =>
       <Content {...props} />
     </>
   )
+}
+
+export const getGraphData1 = (data: Array<any>, time: string): Array<any> => {
+  const periods = periodsMap[time]
+  return periods().map(el => {
+    return {
+      ...el,
+      count: data.filter(d => {
+        return d.timestamp >= el.from && d.timestamp <= el.to
+      }).length,
+      mkr: 0,
+    }
+  })
+}
+
+export const defaultFilters = {
+  chart1: LAST_YEAR,
 }
 
 export const ViewAll = styled.span`

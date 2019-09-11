@@ -14,6 +14,7 @@
     "apollo-link-error": "^1.1.11",
     "apollo-link-http": "^1.5.15",
     "apollo-link-ws": "^1.0.18",
+    "date-fns": "^2.1.0",
     "dotenv-flow": "^3.1.0",
     "graphql": "^14.5.4",
     "graphql-tag": "^2.10.1",

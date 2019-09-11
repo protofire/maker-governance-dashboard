@@ -2,7 +2,7 @@ import React from 'react'
 import { useTable, useTableState, usePagination } from 'react-table'
 import styled, { css } from 'styled-components'
 import { NextIcon, PreviousIcon } from '../../common'
-import { IconContainer } from '../styled'
+import { IconContainer, Select } from '../styled'
 
 type TableProps = {
   columns: Array<any>
@@ -87,14 +87,8 @@ const Pagination = styled.div`
 const PageIconContainer = styled(IconContainer)`
   margin-left: 1rem;
 `
-const PageSelect = styled.select`
-  background: transparent;
-  border: none;
-  margin-right: 1rem;
-  &:focus {
-    outline: 0;
-  }
-`
+
+const PageSelect = styled(Select)``
 
 const Pager = styled.span`
   margin-right: 1rem;

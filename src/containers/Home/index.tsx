@@ -8,14 +8,14 @@ import HomeDetail from '../../components/Home/HomeDetail'
 import { Spinner, SpinnerContainer, PageTitle } from '../../components/common'
 
 //Queries
-import { POLLS_FIRST_QUERY } from './queries'
+import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 
 const HomeContainer = styled.div``
 
 function MakerGovernanceInfo() {
-  const { data, ...result } = useQuery(POLLS_FIRST_QUERY)
-
-  if (result.loading) {
+  const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
+  const { data, ...result } = useQuery(ACTIONS_QUERY, { variables: { voters: 304 } })
+  if (result.loading || gResult.loading) {
     return (
       <SpinnerContainer>
         <Spinner />
@@ -23,14 +23,13 @@ function MakerGovernanceInfo() {
     )
   }
 
-  if (result.error) {
+  if (result.error || gResult.error) {
     return <div>ERROR: There was an error trying to fetch the data. </div>
   }
-
   return (
     <HomeContainer>
       <PageTitle>Dashboard</PageTitle>
-      <HomeDetail subscribeToChanges={() => console.log} polls={data.polls} />
+      <HomeDetail data={data} />
     </HomeContainer>
   )
 }

@@ -33,11 +33,13 @@ const NavLeft = styled.div`
 
 const NavRight = styled.div`
   max-width: 1140px;
-  padding: 2rem 2.5rem;
   margin: 0 auto;
   display: flex;
   flex: 1;
   flex-direction: row-reverse;
+  span {
+    margin-right: 1rem;
+  }
 `
 
 const Breadcrumb = styled.div`
