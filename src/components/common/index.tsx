@@ -5,7 +5,23 @@ import Table from './Table'
 import Modal from './Modal'
 import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon } from './Icon'
 import { ChartSelect } from './Chart'
-import { TableContainer, Card, PageTitle, TableTitle, TitleContainer, Link, IconContainer, Select } from './styled'
+import ChartWrapper from './ChartWrapper'
+import TableWrapper from './TableWrapper'
+
+import {
+  TableContainer,
+  Card,
+  PageTitle,
+  TableTitle,
+  TitleContainer,
+  ChartTitleContainer,
+  Link,
+  IconContainer,
+  Select,
+  ViewAll,
+  Separator,
+  Versus,
+} from './styled'
 
 export {
   Chart,
@@ -15,6 +31,7 @@ export {
   TableTitle,
   TitleContainer,
   TableContainer,
+  ChartTitleContainer,
   Card,
   PageTitle,
   ChartTitle,
@@ -27,4 +44,9 @@ export {
   IconContainer,
   Select,
   ChartSelect,
+  ChartWrapper,
+  ViewAll,
+  TableWrapper,
+  Separator,
+  Versus,
 }

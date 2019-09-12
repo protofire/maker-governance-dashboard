@@ -5,8 +5,8 @@ import { NextIcon, PreviousIcon } from '../../common'
 import { IconContainer, Select } from '../styled'
 
 type TableProps = {
-  columns: Array<any>
-  data: Array<any>
+  columns?: Array<any>
+  data?: Array<any>
   expanded?: boolean
   limitPerPage?: number
   scrollable?: boolean

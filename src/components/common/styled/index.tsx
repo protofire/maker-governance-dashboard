@@ -18,15 +18,22 @@ export const Card = styled.div`
   ${props =>
     props.type &&
     css`
-      width: 29.5% !important;
+      width: 32.5% !important;
+      flex: unset !important;
     `}
   @media (max-width: 768px) {
     ${props =>
       props.type &&
       css`
-        width: 47% !important;
+        width: 46.5% !important;
       `}
   }
+`
+export const Versus = styled.span`
+  color: #bbbbbb;
+`
+export const Separator = styled(Versus)`
+  margin-right: 0;
 `
 
 export const Select = styled.select`
@@ -59,6 +66,16 @@ export const TableTitle = styled(ChartTitle)`
   font-size: 13px;
   margin-bottom: 0;
 `
+export const ChartTitleContainer = styled.div`
+  display: flex;
+  font-size: 14px;
+  flex-direction: row;
+  flex: 1;
+  span {
+    margin-right: 5px;
+  }
+`
+
 export const TitleContainer = styled.div`
   display: flex;
   flex: 1;
@@ -68,13 +85,37 @@ export const TitleContainer = styled.div`
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
+  @media (max-width: 768px) {
+    ${props =>
+      props.type &&
+      css`
+        padding-right: 0;
+        padding-left: 0;
+      `}
+
+    ${Separator} {
+      display: none;
+    }
+    ${ChartTitleContainer} {
+      flex-direction: column;
+    }
+    select {
+      width: 80px;
+      position: relative;
+      right: 4px;
+    }
+  }
 `
+
 export const IconContainer = styled.div`
   display: flex;
   cursor: pointer;
 `
 
 export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   table {
     border-collapse: separate;
     border-spacing: 10px 5px;
@@ -93,4 +134,9 @@ export const TableContainer = styled.div`
       }
     }
   }
+`
+
+export const ViewAll = styled.span`
+  font-size: 12px;
+  color: #00ba9c;
 `

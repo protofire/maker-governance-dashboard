@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { ComposedChart, XAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Select } from '../styled'
+import { Select, Separator, Versus, ChartTitleContainer } from '../styled'
 
 type Props = {
   data: Array<any>
@@ -11,23 +11,6 @@ type Props = {
   modalStyles?: Object
   xLabel?: string
 }
-
-const ChartTitleContainer = styled.div`
-  display: flex;
-  font-size: 14px;
-  flex-direction: row;
-  flex: 1;
-  span {
-    margin-right: 5px;
-  }
-`
-const Versus = styled.span`
-  color: #bbbbbb;
-`
-
-const Separator = styled(Versus)`
-  margin-right: 0;
-`
 
 const SelectContainer = styled(Select)`
   color: #00ba9c;
@@ -50,10 +33,12 @@ export const ChartTitle = props => {
   const { content, versus, children } = props
   return (
     <ChartTitleContainer>
-      <span>{content}</span>
-      {versus && <Versus>vs</Versus>}
-      {versus && <span>{versus}</span>}
-      <Separator>&middot;</Separator>
+      <div>
+        <span>{content}</span>
+        {versus && <Versus>vs</Versus>}
+        {versus && <span>{versus}</span>}
+        <Separator>&middot;</Separator>
+      </div>
       {children}
     </ChartTitleContainer>
   )
@@ -69,7 +54,7 @@ const ChartContainer = styled(ResponsiveContainer)`
     }
   }
 `
-function Chart(props: Props) {
+function Chart(props) {
   const { data, width, height, children, modalStyles, xLabel } = props
 
   return (
