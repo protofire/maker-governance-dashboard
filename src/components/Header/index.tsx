@@ -1,26 +1,56 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Nav = styled.div`
-  background-color: #fff;
+  border: solid 1px #d9d9d9;
+  background-color: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.0975);
+  height: 60px;
+  display: flex;
 `
 const NavHeader = styled.div`
-  padding: 26px 20px;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  margin: 0 auto;
+  justify-content: center;
+  flex-direction: row;
+  flex: 1;
 `
 const NavLeft = styled.div`
-  width: 33.333%;
-  text-align: left;
+  max-width: 1140px;
+  padding: 2rem 2.5rem;
+  margin: 0 auto;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  a {
+    font-weight: 500;
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
 `
 
-const StyledLink = styled(Link)`
+const NavRight = styled.div`
+  max-width: 1140px;
+  padding: 2rem 2.5rem;
+  margin: 0 auto;
+  display: flex;
+  flex: 1;
+  flex-direction: row-reverse;
+`
+
+const Breadcrumb = styled.div`
+  display: flex;
+`
+
+const StyledLink = styled(NavLink)`
   text-decoration: none;
+  color: #666666;
+  &:hover {
+    color: #000000;
+  }
   &:visited,
-  &:hover,
   &:active {
     color: inherit;
   }
@@ -41,12 +71,18 @@ function Header(props: Props) {
     <Nav>
       <NavHeader>
         <NavLeft>
-          {items.map(({ to, label }) => (
-            <StyledLink key={to} to={to}>
-              {label}
-            </StyledLink>
-          ))}
+          <img alt="logo" src="./maker.png" />
+          <Breadcrumb>
+            {items.map(({ to, label }) => (
+              <StyledLink activeStyle={{ color: '#000000' }} key={to} to={to}>
+                {label}
+              </StyledLink>
+            ))}
+          </Breadcrumb>
         </NavLeft>
+        <NavRight>
+          <span>Mainnet</span>
+        </NavRight>
       </NavHeader>
     </Nav>
   )
