@@ -6,3 +6,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[context.deploy-preview.environment]
+  REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
+  REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
