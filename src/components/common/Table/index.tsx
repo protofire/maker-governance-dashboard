@@ -16,6 +16,10 @@ const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
 `
+const HeaderRow = styled.span`
+  font-size: 12px;
+  color: #999999;
+`
 
 const TableSection = styled.div`
   display: flex;
@@ -48,6 +52,22 @@ const TableWrapper = styled.div`
           `}
       }
     }
+    ${TableRow} {
+      ${props =>
+        props.expanded &&
+        css`
+          width: 100px;
+          text-align: center;
+        `}
+    }
+    ${HeaderRow} {
+      ${props =>
+        props.expanded &&
+        css`
+          width: 100px;
+          text-align: left;
+        `}
+    }
   }
   ${props =>
     props.scrollable &&
@@ -66,10 +86,6 @@ const RowsSection = styled.div`
     }
   }
   overflow-y:${props => (props.scrollable ? 'scroll' : 'hidden')}
-`
-const HeaderRow = styled.span`
-  font-size: 12px;
-  color: #999999;
 `
 
 const Pagination = styled.div`

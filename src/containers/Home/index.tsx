@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
@@ -12,24 +12,43 @@ import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 
 const HomeContainer = styled.div``
 
-function MakerGovernanceInfo() {
-  const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
-  const { data, ...result } = useQuery(ACTIONS_QUERY, { variables: { voters: 304 } })
-  if (result.loading || gResult.loading) {
-    return (
-      <SpinnerContainer>
-        <Spinner />
-      </SpinnerContainer>
-    )
+const getHomeVariables = data => {
+  const governance = data.governanceInfo
+  return {
+    voters: Number(governance.countProxies) + Number(governance.countAddresses) || 309,
+    polls: Number(governance.countPolls) || 32,
+    executives: Number(governance.countSpells) || 30,
+    lock: Number(governance.countLock) || 100,
+    free: Number(governance.countFree) || 100,
   }
+}
 
-  if (result.error || gResult.error) {
-    return <div>ERROR: There was an error trying to fetch the data. </div>
-  }
+const Loading = () => (
+  <SpinnerContainer>
+    <Spinner />
+  </SpinnerContainer>
+)
+
+const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
+
+function MakerGovernanceInfo() {
+  const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
+
+  const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
+
+  useEffect(() => {
+    if (gData) setResultVariables(getHomeVariables(gData))
+  }, [gData])
+
+  const homeData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+
+  if (homeData.loading || gResult.loading) return <Loading />
+  if (homeData.error || gResult.error) return <Error />
+
   return (
     <HomeContainer>
       <PageTitle>Dashboard</PageTitle>
-      <HomeDetail data={data} />
+      <HomeDetail gData={gData} data={homeData.data} />
     </HomeContainer>
   )
 }

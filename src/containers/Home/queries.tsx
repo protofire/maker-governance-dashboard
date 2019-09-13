@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 const makerGovernanceDetailFragment = gql`
-  fragment MakerGovernanceDetail on GovernanceInfo {
+  fragment makerGovernanceDetail on GovernanceInfo {
     id
     countProxies
     countAddresses
@@ -21,6 +21,19 @@ const actionsDetailFragment = gql`
   fragment actionsDetail on Action {
     id
     timestamp
+    wad
+    type
+  }
+`
+
+const executivesDetailFragment = gql`
+  fragment executivesDetail on Spell {
+    id
+    timestamp
+    casted
+    castedWith
+    lifted
+    liftedWith
   }
 `
 
@@ -37,7 +50,7 @@ const pollsDetailFragment = gql`
 export const GOVERNANCE_INFO_QUERY = gql`
   query GetGovernanceInfo {
     governanceInfo(id: "0x0") {
-      ...MakerGovernanceDetail
+      ...makerGovernanceDetail
     }
   }
   ${makerGovernanceDetailFragment}
@@ -52,22 +65,32 @@ export const POLLS_FIRST_QUERY = gql`
   ${pollsDetailFragment}
 `
 export const ACTIONS_QUERY = gql`
-  query getHomeData($voters: Int!) {
-    polls {
+  query getHomeData($voters: Int!, $executives: Int!, $polls: Int!, $lock: Int!, $free: Int!) {
+    polls(first: $polls) {
       ...pollsDetail
+    }
+    executives: spells(first: $executives) {
+      ...executivesDetail
     }
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }
+    lock: actions(where: { type: LOCK }, first: $lock) {
+      ...actionsDetail
+    }
+    free: actions(where: { type: FREE }, first: $free) {
+      ...actionsDetail
+    }
   }
   ${pollsDetailFragment}
+  ${executivesDetailFragment}
   ${actionsDetailFragment}
 `
 
 export const GOVERNANCE_INFO_SUBSCRIPTION = gql`
   subscription GovernanceInfo {
     governanceInfo(id: "0x0") {
-      ...MakerGovernanceDetail
+      ...makerGovernanceDetail
     }
   }
   ${makerGovernanceDetailFragment}

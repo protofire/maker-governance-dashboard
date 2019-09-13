@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, IconContainer, CloseIcon } from '../components/common'
+import { IconContainer, CloseIcon } from '../components/common'
 
 import {
   startOfMonth,
@@ -24,25 +24,10 @@ import {
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
 
-export const Pollcolumns = (isModalOpen: boolean) => {
-  const getValue = value => {
-    return isModalOpen ? value : shortenAccount(value)
-  }
-  return [
-    {
-      Header: 'Poll creator',
-      accessor: 'creator',
-      Cell: ({ row }) => <Link href={row.original.url}>{getValue(row.original.creator)}</Link>,
-    },
-    {
-      Header: 'Time Left',
-      accessor: row => timeLeft(row.endDate),
-    },
-  ]
-}
-const shortenAccount = (account: string): string => account.slice(0, 6) + '...' + account.slice(account.length - 4)
+export const shortenAccount = (account: string): string =>
+  account.slice(0, 6) + '...' + account.slice(account.length - 4)
 
-const timeLeft = (end): string => {
+export const timeLeft = (end): string => {
   const today = new Date()
   const end_date = fromUnixTime(end)
   if (differenceInSeconds(end_date, today) <= 0) return 'Ended'

@@ -66,6 +66,34 @@ export interface getHomeData_polls {
   endDate: any
 }
 
+export interface getHomeData_executives {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+}
+
 export interface getHomeData_voters {
   __typename: 'Action'
   id: string
@@ -73,15 +101,64 @@ export interface getHomeData_voters {
    *  Action timestamp as seconds (time)
    */
   timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
+}
+
+export interface getHomeData_lock {
+  __typename: 'Action'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
+}
+
+export interface getHomeData_free {
+  __typename: 'Action'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
 }
 
 export interface getHomeData {
   polls: getHomeData_polls[]
+  executives: getHomeData_executives[]
   voters: getHomeData_voters[]
+  lock: getHomeData_lock[]
+  free: getHomeData_free[]
 }
 
 export interface getHomeDataVariables {
   voters: number
+  executives: number
+  polls: number
+  lock: number
+  free: number
 }
 
 /* tslint:disable */
@@ -117,10 +194,10 @@ export interface GovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: MakerGovernanceDetail
+// GraphQL fragment: makerGovernanceDetail
 // ====================================================
 
-export interface MakerGovernanceDetail {
+export interface makerGovernanceDetail {
   __typename: 'GovernanceInfo'
   id: string
   countProxies: any
@@ -151,6 +228,50 @@ export interface actionsDetail {
    *  Action timestamp as seconds (time)
    */
   timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: executivesDetail
+// ====================================================
+
+export interface executivesDetail {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
 }
 
 /* tslint:disable */
@@ -178,6 +299,16 @@ export interface pollsDetail {
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export enum ActionType {
+  CRETATE_EXECUTIVE_VOTE = 'CRETATE_EXECUTIVE_VOTE',
+  CRETATE_POLL_VOTE = 'CRETATE_POLL_VOTE',
+  FREE = 'FREE',
+  LIFT = 'LIFT',
+  LOCK = 'LOCK',
+  VOTE = 'VOTE',
+  VOTER = 'VOTER',
+}
 
 //==============================================================
 // END Enums and Input Objects
