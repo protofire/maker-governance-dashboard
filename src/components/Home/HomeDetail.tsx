@@ -175,18 +175,10 @@ function HomeDetail(props: Props) {
         <Card type="table" style={{ padding: 0 }}>
           <HomeTable content="Top polls" component="polls" />
         </Card>
-        <Card style={{ height: 340 }}>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-        </Card>
-        <Card style={{ height: 340 }}>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-        </Card>
-        <Card style={{ height: 340 }}>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-        </Card>
-        <Card style={{ height: 340 }}>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-        </Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
       </WrappedContainer>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
