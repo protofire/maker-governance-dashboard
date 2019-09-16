@@ -27,6 +27,10 @@ import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
 export const shortenAccount = (account: string): string =>
   account.slice(0, 6) + '...' + account.slice(account.length - 4)
 
+export const toNiceDate = timestamp => {
+  return format(fromUnixTime(timestamp), 'PP')
+}
+
 export const timeLeft = (end): string => {
   const today = new Date()
   const end_date = fromUnixTime(end)

@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react'
+import React from 'react'
+import { useQuery } from '@apollo/react-hooks'
 import { Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -11,6 +12,9 @@ import Executive from '../Executive'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Header from '../../components/Header'
+
+//Queries
+import { GOVERNANCE_INFO_QUERY } from './queries'
 
 const items = [
   { to: '/', label: 'DASHBOARD' },
@@ -46,11 +50,14 @@ const Footer = styled.div`
 `
 
 function App() {
+  const { data, ...result } = useQuery(GOVERNANCE_INFO_QUERY)
+
   return (
-    <Fragment>
+    <>
       <GlobalStyle />
       <Breadcrumb>
-        <Header items={items} />
+        {console.log(data)}
+        <Header lastSynced={result.loading || !data ? undefined : data.governanceInfo.lastSynced} items={items} />
       </Breadcrumb>
       <AppWrapper>
         <Switch>
@@ -64,7 +71,7 @@ function App() {
           Built by <img alt="protofire" src="./protofire.png" />
         </span>
       </Footer>
-    </Fragment>
+    </>
   )
 }
 

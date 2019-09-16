@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { toNiceDate } from '../../utils'
 import styled, { css } from 'styled-components'
 import HamburgerMenu from 'react-hamburger-menu'
 
@@ -41,7 +42,6 @@ const NavLeft = styled.div`
   padding: 2rem 2.5rem;
   margin: 0 auto;
   display: flex;
-  flex: 1;
   align-items: center;
   a {
     font-weight: 500;
@@ -63,8 +63,8 @@ const NavRight = styled.div`
   flex-direction: row-reverse;
   @media (max-width: 480px) {
     flex-direction: row;
+    font-size: 12px;
     justify-content: center;
-    flex: 1;
   }
   span {
     margin-right: 1rem;
@@ -90,7 +90,6 @@ const Breadcrumb = styled.div`
 const HamburgerContainer = styled.div`
   width: 100%;
   display: flex;
-  flex: 1;
   flex-direction: column;
   position: absolute;
   top: 62px;
@@ -141,6 +140,7 @@ interface Item {
 
 type Props = {
   items: Item[]
+  lastSynced?: string
 }
 
 const HamburgerContent = props => {
@@ -161,7 +161,7 @@ const HamburgerContent = props => {
 }
 
 function Header(props: Props) {
-  const { items } = props
+  const { items, lastSynced } = props
   const [isOpenMenu, setOpenMenu] = useState(false)
   return (
     <>
@@ -179,7 +179,9 @@ function Header(props: Props) {
             </Breadcrumb>
           </NavLeft>
           <NavRight>
-            <span>Mainnet</span>
+            <span>
+              Mainnet | Last synced: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
+            </span>
           </NavRight>
           <RightMenu>
             <HamburgerMenu
