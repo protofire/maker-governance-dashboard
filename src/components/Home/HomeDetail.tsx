@@ -5,7 +5,7 @@ import { Card, Table, Chart, Modal, TableWrapper } from '../common'
 import {
   getModalContainer,
   WrappedContainer,
-  getGraphData1,
+  getVotersVsMkrData,
   defaultFilters,
   Pollcolumns,
   Executivecolumns,
@@ -27,27 +27,34 @@ function HomeDetail(props: Props) {
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const pollcolumns = React.useMemo(() => Pollcolumns(isModalOpen), [isModalOpen])
-  const executiveColumns = React.useMemo(() => Executivecolumns(isModalOpen), [isModalOpen])
+  const pollcolumns = expanded => Pollcolumns(expanded)
+  const executiveColumns = expanded => Executivecolumns(expanded)
+
   // Data map for building this page
   const homeMap = {
     table: {
       polls: {
         data: data.polls,
-        columns: pollcolumns,
-        component: props => <HomeTable content="Top polls" component="polls" {...props} />,
+        columns: expanded => pollcolumns(expanded),
+        component: props => <HomeTable expanded content="Top polls" component="polls" {...props} />,
       },
       executives: {
         data: data.executives,
-        columns: executiveColumns,
-        component: props => <HomeTable content="Top executives" component="executives" {...props} />,
+        columns: expanded => executiveColumns(expanded),
+        component: props => <HomeTable expanded content="Top executives" component="executives" {...props} />,
       },
     },
     chart: {
-      chart1: {
-        data: getGraphData1(data.voters, [...data.free, ...data.lock], chartFilters.chart1),
+      votersVsMkr: {
+        data: getVotersVsMkrData(data.voters, [...data.free, ...data.lock], chartFilters.votersVsMkr),
         component: props => (
-          <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" {...props} />
+          <VotersVsMkr
+            expanded
+            content="Number of voters"
+            versus="Total MKR staked"
+            component="votersVsMkr"
+            {...props}
+          />
         ),
       },
     },
@@ -62,43 +69,44 @@ function HomeDetail(props: Props) {
   }
 
   const getWrapperProps = data => {
-    const { content, versus = null, component } = data
+    const { content, versus = null, component, expanded } = data
     const isChart = data.type === 'table' ? false : true
-    const handleModal = !isModalOpen ? () => setModal(data, isChart) : () => setModalOpen(false)
+    const handleModal = !expanded ? () => setModal(data, isChart) : () => setModalOpen(false)
     return {
       content,
       versus,
       value: chartFilters[data.component],
       handleModal,
       onChange: e => setFilter(e, component),
-      isModalOpen,
+      isModalOpen: expanded,
     }
   }
 
-  const getModalProps = (type, component) => {
+  const getModalProps = (type, component, expanded = false) => {
     const data = homeMap[type][component].data
     if (type === 'table')
       return {
-        expanded: isModalOpen,
-        scrollable: isModalOpen,
-        data: isModalOpen ? data : data.slice(0, TABLE_PREVIEW),
-        columns: homeMap[type][component].columns,
+        expanded,
+        scrollable: expanded,
+        data: expanded ? data : data.slice(0, TABLE_PREVIEW),
+        columns: homeMap[type][component].columns(expanded),
       }
     return {
-      modalStyles: isModalOpen ? { width: '99%', aspect: 3 } : undefined,
+      modalStyles: expanded ? { width: '99%', aspect: 3 } : undefined,
       width: 100,
       height: 400,
       data,
     }
   }
 
-  // Graph1 graph data
-  const Graph1 = props => {
+  // VotersVsMkr graph data
+  const VotersVsMkr = props => {
     const data = {
       type: 'chart',
       component: props.component,
       content: props.content,
       versus: props.versus,
+      expanded: props.expanded,
     }
 
     const currentVoter = governanceInfo
@@ -107,7 +115,7 @@ function HomeDetail(props: Props) {
     const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
     return (
       <ChartWrapper {...getWrapperProps(data)}>
-        <Chart {...getModalProps(data.type, data.component)}>
+        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
           <YAxis yAxisId="0" datakey="count" />
           <YAxis yAxisId="1" datakey="mkr" orientation="right" />
 
@@ -140,10 +148,11 @@ function HomeDetail(props: Props) {
       content: props.content,
       type: 'table',
       component: props.component,
+      expanded: props.expanded,
     }
     return (
       <TableWrapper {...getWrapperProps(data)}>
-        <Table {...getModalProps(data.type, data.component)} />
+        <Table {...getModalProps(data.type, data.component, data.expanded)} />
       </TableWrapper>
     )
   }
@@ -157,7 +166,7 @@ function HomeDetail(props: Props) {
   return (
     <>
       <Card style={{ height: 340 }}>
-        <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" />
+        <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
       </Card>
       <WrappedContainer>
         <Card type="table" style={{ padding: 0 }}>
@@ -167,16 +176,16 @@ function HomeDetail(props: Props) {
           <HomeTable content="Top polls" component="polls" />
         </Card>
         <Card style={{ height: 340 }}>
-          <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" />
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
         <Card style={{ height: 340 }}>
-          <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" />
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
         <Card style={{ height: 340 }}>
-          <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" />
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
         <Card style={{ height: 340 }}>
-          <Graph1 content="Number of voters" versus="Total MKR staked" component="chart1" />
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
       </WrappedContainer>
       {isModalOpen && (

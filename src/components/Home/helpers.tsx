@@ -21,11 +21,12 @@ const formatMkrData = (el, data, prev) => {
     .reduce((acum, value) => (value.type === ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)), prev)
 }
 
-export const getGraphData1 = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
-  const periods = periodsMap[time]
-  let count = 0
-  let mkr = 0
-  return periods().map(el => {
+export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
+  const periods = periodsMap[time]()
+
+  let count = data.filter(el => el.timestamp < periods[0].from).length
+  let mkr = initializeMkr(periods[0].from, mkrLockFree, 0)
+  return periods.map(el => {
     mkr = formatMkrData(el, mkrLockFree, mkr)
     count += data.filter(d => {
       return d.timestamp >= el.from && d.timestamp <= el.to
@@ -38,8 +39,13 @@ export const getGraphData1 = (data: Array<any>, mkrLockFree: Array<any>, time: s
   })
 }
 
+const initializeMkr = (el, data, prev) => {
+  return data
+    .filter(d => d.timestamp < el)
+    .reduce((acum, value) => (value.type === ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)), prev)
+}
 export const defaultFilters = {
-  chart1: LAST_YEAR,
+  votersVsMkr: LAST_YEAR,
 }
 
 export const WrappedContainer = styled.div`

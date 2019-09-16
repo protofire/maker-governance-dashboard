@@ -5,3 +5,5 @@ export const LAST_DAY = 'last_day'
 
 export const ACTION_FREE = 'FREE'
 export const ACTION_LOCK = 'LOCK'
+
+export const DEFAULT_FETCH_ROWS = 300

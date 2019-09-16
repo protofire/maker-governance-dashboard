@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
+import { DEFAULT_FETCH_ROWS } from '../../constants'
 
 import HomeDetail from '../../components/Home/HomeDetail'
 
@@ -15,11 +16,11 @@ const HomeContainer = styled.div``
 const getHomeVariables = data => {
   const governance = data.governanceInfo
   return {
-    voters: Number(governance.countProxies) + Number(governance.countAddresses) || 309,
-    polls: Number(governance.countPolls) || 32,
-    executives: Number(governance.countSpells) || 30,
-    lock: Number(governance.countLock) || 100,
-    free: Number(governance.countFree) || 100,
+    voters: Number(governance.countProxies) + Number(governance.countAddresses) || DEFAULT_FETCH_ROWS,
+    polls: Number(governance.countPolls) || DEFAULT_FETCH_ROWS,
+    executives: Number(governance.countSpells) || DEFAULT_FETCH_ROWS,
+    lock: Number(governance.countLock) || DEFAULT_FETCH_ROWS,
+    free: Number(governance.countFree) || DEFAULT_FETCH_ROWS,
   }
 }
 
