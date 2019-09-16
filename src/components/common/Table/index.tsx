@@ -1,7 +1,7 @@
 import React from 'react'
-import { useTable, useTableState, usePagination } from 'react-table'
+import { useTable, useTableState, usePagination, useSortBy } from 'react-table'
 import styled, { css } from 'styled-components'
-import { NextIcon, PreviousIcon } from '../../common'
+import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
 type TableProps = {
@@ -86,6 +86,13 @@ const RowsSection = styled.div`
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
 `
 
+const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
+  position: relative;
+  left: 5px;
+  top: 2px;
+  transform: ${props => (props.up ? 'rotate(180deg)' : 'rotate(0deg)')};
+`
+
 const Pagination = styled.div`
   * {
     font-size: 12px;
@@ -133,6 +140,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps
       data,
       state: tableState,
     },
+    useSortBy,
     usePagination,
   )
 
@@ -144,7 +152,12 @@ function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps
           {headerGroups.map(headerGroup => (
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <HeaderRow {...column.getHeaderProps()}>{column.render('Header')}</HeaderRow>
+                <HeaderRow {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render('Header')}
+                  <span>
+                    {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
+                  </span>
+                </HeaderRow>
               ))}
             </TableSection>
           ))}

@@ -3,7 +3,7 @@ import { Spinner, SpinnerContainer } from './Spinner'
 import { ChartTitle } from './Chart'
 import Table from './Table'
 import Modal from './Modal'
-import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon } from './Icon'
+import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
 import { ChartSelect } from './Chart'
 import ChartWrapper from './ChartWrapper'
 import TableWrapper from './TableWrapper'
@@ -41,6 +41,7 @@ export {
   ExpandIcon,
   NextIcon,
   PreviousIcon,
+  ArrowIcon,
   IconContainer,
   Select,
   ChartSelect,
