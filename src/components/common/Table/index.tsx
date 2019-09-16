@@ -24,7 +24,6 @@ const HeaderRow = styled.span`
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   padding: 1rem;
 `
 
@@ -35,6 +34,21 @@ const TableWrapper = styled.div`
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
   ${TableSection} {
+    ${props => {
+      if (!props.expanded) {
+        return css`
+          justify-content: space-between;
+        `
+      } else {
+        return css`
+          ${TableRow}, ${HeaderRow} {
+            flex: 1;
+            text-align: left;
+          }
+        `
+      }
+    }}
+
     ${TableRow}:first-child {
       ${props =>
         !props.expanded &&
@@ -52,22 +66,6 @@ const TableWrapper = styled.div`
           `}
       }
     }
-    ${TableRow} {
-      ${props =>
-        props.expanded &&
-        css`
-          width: 100px;
-          text-align: center;
-        `}
-    }
-    ${HeaderRow} {
-      ${props =>
-        props.expanded &&
-        css`
-          width: 100px;
-          text-align: left;
-        `}
-    }
   }
   ${props =>
     props.scrollable &&
@@ -79,13 +77,13 @@ const TableWrapper = styled.div`
 
 const RowsSection = styled.div`
   ${TableSection} {
-    border-top:  ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')}
-    border-bottom:  ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')}
+    border-top: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
+    border-bottom: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
     &:nth-child(odd) {
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
   }
-  overflow-y:${props => (props.scrollable ? 'scroll' : 'hidden')}
+  overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
 `
 
 const Pagination = styled.div`
