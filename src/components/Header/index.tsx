@@ -50,6 +50,8 @@ const NavLeft = styled.div`
   }
   @media (max-width: 480px) {
     padding-right: 0;
+    padding-left: 0;
+    margin-left: 10px;
   }
 `
 
@@ -59,6 +61,10 @@ const NavRight = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row-reverse;
+  @media (max-width: 480px) {
+    flex-direction: row;
+    justify-content: center;
+  }
   span {
     margin-right: 1rem;
   }
@@ -68,6 +74,9 @@ const RightMenu = styled(NavRight)`
   margin-right: 10px;
   @media (min-width: 480px) {
     display: none;
+  }
+  @media (max-width: 480px) {
+    justify-content: flex-end;
   }
 `
 
