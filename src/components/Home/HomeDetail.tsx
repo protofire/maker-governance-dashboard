@@ -1,138 +1,190 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-
-import { mockedData } from '../../utils' //This is only for testing
-import { GetPolls_polls } from '../../types/generatedGQL'
+import React, { useState } from 'react'
+import { ChartWrapper } from '../../components/common'
+import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
+import { Card, Table, Chart, Modal, TableWrapper } from '../common'
 import {
-  Card,
-  ChartTitle,
-  TableContainer,
-  Table,
-  TableTitle,
-  TitleContainer,
-  Chart,
-  Modal,
-  CloseIcon,
-  ExpandIcon,
-  IconContainer,
-} from '../common'
-import { Pollcolumns } from '../../utils'
-import { Line } from 'recharts'
+  getModalContainer,
+  WrappedContainer,
+  getVotersVsMkrData,
+  defaultFilters,
+  Pollcolumns,
+  Executivecolumns,
+} from './helpers'
+import { Line, YAxis } from 'recharts'
 
-const WrappedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ${Card} {
-    width: 25%;
-  }
-  @media (max-width: 768px) {
-    ${Card} {
-      width: 40%;
-    }
-  }
-  @media (max-width: 580px) {
-    ${Card} {
-      width: 100% !important;
-    }
-  }
-`
+const TABLE_PREVIEW = 5
 
 type Props = {
-  polls: Array<GetPolls_polls>
-  subscribeToChanges: () => void
+  data: getHomeData
+  gData: GetGovernanceInfo
+  subscribeToChanges?: () => void
 }
 
 function HomeDetail(props: Props) {
-  const { polls, subscribeToChanges } = props
-  const pollcolumns = React.useMemo(Pollcolumns, [])
-
+  const { data, gData } = props
+  const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
-  const [modalData, setModalData] = useState(null)
+  const [isModalChart, setModalChart] = useState(false)
+  const [chartFilters, setChartFilters] = useState(defaultFilters)
+  const [modalData, setModalData] = useState({ type: '', component: '' })
+  const pollcolumns = expanded => Pollcolumns(expanded)
+  const executiveColumns = expanded => Executivecolumns(expanded)
 
-  const getGraph1 = (inModal = false) => (
-    <>
-      <TitleContainer>
-        <ChartTitle>This is the chart title</ChartTitle>
-        {!inModal && (
-          <IconContainer onClick={() => setModal(getGraph1)}>
-            <ExpandIcon />
-          </IconContainer>
-        )}
-        {inModal && (
-          <IconContainer onClick={() => setModalOpen(false)}>
-            <CloseIcon />
-          </IconContainer>
-        )}
-      </TitleContainer>
-      <Chart modalStyles={inModal ? { width: '99%', aspect: 3 } : undefined} width={100} height={400} data={mockedData}>
-        <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-        <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-      </Chart>
-    </>
-  )
-
-  const setModal = (cb: Function): void => {
-    setModalOpen(true)
-    setModalData(cb(true))
+  // Data map for building this page
+  const homeMap = {
+    table: {
+      polls: {
+        data: data.polls,
+        columns: expanded => pollcolumns(expanded),
+        component: props => <HomeTable expanded content="Top polls" component="polls" {...props} />,
+      },
+      executives: {
+        data: data.executives,
+        columns: expanded => executiveColumns(expanded),
+        component: props => <HomeTable expanded content="Top executives" component="executives" {...props} />,
+      },
+    },
+    chart: {
+      votersVsMkr: {
+        data: getVotersVsMkrData(data.voters, [...data.free, ...data.lock], chartFilters.votersVsMkr),
+        component: props => (
+          <VotersVsMkr
+            expanded
+            content="Number of voters"
+            versus="Total MKR staked"
+            component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+    },
   }
 
-  useEffect(() => {
-    subscribeToChanges()
-  })
+  const setFilter = (e, component) => {
+    const obj = {
+      ...chartFilters,
+      [component]: e.target.value,
+    }
+    setChartFilters(obj)
+  }
+
+  const getWrapperProps = data => {
+    const { content, versus = null, component, expanded } = data
+    const isChart = data.type === 'table' ? false : true
+    const handleModal = !expanded ? () => setModal(data, isChart) : () => setModalOpen(false)
+    return {
+      content,
+      versus,
+      value: chartFilters[data.component],
+      handleModal,
+      onChange: e => setFilter(e, component),
+      isModalOpen: expanded,
+    }
+  }
+
+  const getModalProps = (type, component, expanded = false) => {
+    const data = homeMap[type][component].data
+    if (type === 'table')
+      return {
+        expanded,
+        scrollable: expanded,
+        data: expanded ? data : data.slice(0, TABLE_PREVIEW),
+        columns: homeMap[type][component].columns(expanded),
+      }
+    return {
+      modalStyles: expanded ? { width: '99%', aspect: 3 } : undefined,
+      width: 100,
+      height: 400,
+      data,
+    }
+  }
+
+  // VotersVsMkr graph data
+  const VotersVsMkr = props => {
+    const data = {
+      type: 'chart',
+      component: props.component,
+      content: props.content,
+      versus: props.versus,
+      expanded: props.expanded,
+    }
+
+    const currentVoter = governanceInfo
+      ? Number(governanceInfo.countProxies) + Number(governanceInfo.countAddresses)
+      : '-'
+    const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
+    return (
+      <ChartWrapper {...getWrapperProps(data)}>
+        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
+          <YAxis yAxisId="0" datakey="count" />
+          <YAxis yAxisId="1" datakey="mkr" orientation="right" />
+
+          <Line
+            dot={false}
+            name={`Number of voters - Current ${currentVoter}`}
+            stroke="#2730a0"
+            strokeWidth={2}
+            type="monotone"
+            dataKey="count"
+            yAxisId="0"
+          />
+          <Line
+            dot={false}
+            name={`Total MKR stacked - Current ${currentMkr}`}
+            stroke="#27a02c"
+            strokeWidth={2}
+            type="monotone"
+            dataKey="mkr"
+            yAxisId="1"
+          />
+        </Chart>
+      </ChartWrapper>
+    )
+  }
+
+  //Table Data
+  const HomeTable = props => {
+    const data = {
+      content: props.content,
+      type: 'table',
+      component: props.component,
+      expanded: props.expanded,
+    }
+    return (
+      <TableWrapper {...getWrapperProps(data)}>
+        <Table {...getModalProps(data.type, data.component, data.expanded)} />
+      </TableWrapper>
+    )
+  }
+
+  const setModal = (data: any, isChart: boolean = false): void => {
+    setModalOpen(true)
+    setModalChart(isChart)
+    setModalData(data)
+  }
 
   return (
     <>
-      <Card style={{ height: 300 }}>{getGraph1()}</Card>
+      <Card style={{ height: 340 }}>
+        <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
+      </Card>
       <WrappedContainer>
-        <Card style={{ height: 300 }}>
-          <ChartTitle>This is the chart title</ChartTitle>
-          <Chart width={100} height={400} data={mockedData}>
-            <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-            <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-          </Chart>
+        <Card type="table" style={{ padding: 0 }}>
+          <HomeTable content="Executive votes" component="executives" />
         </Card>
-        <Card type="table" style={{ height: 340, padding: 0 }}>
-          <TableContainer>
-            <TitleContainer>
-              <TableTitle>Top polls</TableTitle>
-            </TitleContainer>
-            <Table columns={pollcolumns} data={polls} />
-          </TableContainer>
+        <Card type="table" style={{ padding: 0 }}>
+          <HomeTable content="Top polls" component="polls" />
         </Card>
-        <Card style={{ height: 300 }}>
-          <ChartTitle>This is the chart title</ChartTitle>
-          <Chart width={100} height={400} data={mockedData}>
-            <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-            <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-          </Chart>
-        </Card>
-        <Card style={{ height: 300 }}>
-          <ChartTitle>This is the chart title</ChartTitle>
-          <Chart width={100} height={400} data={mockedData}>
-            <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-            <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-          </Chart>
-        </Card>
-        <Card style={{ height: 300 }}>
-          <ChartTitle>This is the chart title</ChartTitle>
-          <Chart width={100} height={400} data={mockedData}>
-            <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-            <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-          </Chart>
-        </Card>
-        <Card style={{ height: 300 }}>
-          <ChartTitle>This is the chart title</ChartTitle>
-          <Chart width={100} height={400} data={mockedData}>
-            <Line name="Number of voters - Current 1000" stroke="red" strokeWidth={2} type="monotone" dataKey="pv" />
-            <Line name="Total MKR stacked - Current 2000" stroke="blue" strokeWidth={2} type="monotone" dataKey="uv" />
-          </Chart>
-        </Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
       </WrappedContainer>
-      <Modal isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
-        {modalData}
-      </Modal>
+      {isModalOpen && (
+        <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
+          {getModalContainer(homeMap[modalData.type][modalData.component].component)}
+        </Modal>
+      )}
     </>
   )
 }
