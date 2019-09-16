@@ -4,11 +4,19 @@ import styled from 'styled-components'
 
 import GlobalStyle from '../../theme/globalStyle'
 
+// Pages
 import Home from '../Home'
+import Polls from '../Polls'
+import Executive from '../Executive'
+
 import Breadcrumb from '../../components/Breadcrumb'
 import Header from '../../components/Header'
 
-const items = [{ to: '/', label: 'DASHBOARD' }]
+const items = [
+  { to: '/', label: 'DASHBOARD' },
+  { to: '/executive', label: 'EXECUTIVE VOTES' },
+  { to: '/polling', label: 'POLLING' },
+]
 
 const AppWrapper = styled.div`
   min-height: 400px;
@@ -47,6 +55,8 @@ function App() {
       <AppWrapper>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/executive" component={Executive} />
+          <Route exact path="/polling" component={Polls} />
         </Switch>
       </AppWrapper>
       <Footer>

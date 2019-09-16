@@ -45,8 +45,9 @@ const NavLeft = styled.div`
   align-items: center;
   a {
     font-weight: 500;
-    margin-right: 2rem;
     margin-left: 2rem;
+    display:flex
+    align-items:center
   }
   @media (max-width: 480px) {
     padding-right: 0;
@@ -59,11 +60,11 @@ const NavRight = styled.div`
   max-width: 1140px;
   margin: 0 auto;
   display: flex;
-  flex: 1;
   flex-direction: row-reverse;
   @media (max-width: 480px) {
     flex-direction: row;
     justify-content: center;
+    flex: 1;
   }
   span {
     margin-right: 1rem;
@@ -125,11 +126,11 @@ const StyledLink = styled(NavLink)`
   text-decoration: none;
   color: #666666;
   &:hover {
-    color: #000000;
+    color: #000000 !important;
   }
   &:visited,
   &:active {
-    color: inherit;
+    color: #666666;
   }
 `
 
@@ -171,7 +172,7 @@ function Header(props: Props) {
             <img alt="logo" src="./maker.png" />
             <Breadcrumb>
               {items.map(({ to, label }) => (
-                <StyledLink activeStyle={{ color: '#000000' }} key={to} to={to}>
+                <StyledLink exact activeStyle={{ color: '#000000' }} key={to} to={to}>
                   {label}
                 </StyledLink>
               ))}
