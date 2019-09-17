@@ -84,6 +84,17 @@ const RowsSection = styled.div`
     }
   }
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
+  ${TableRow} {
+    ${props =>
+      props.expanded &&
+      css`
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 20px;
+      `}
+  }
 `
 
 const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`

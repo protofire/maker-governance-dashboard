@@ -1,20 +1,27 @@
+import React from 'react'
+import { format, fromUnixTime } from 'date-fns'
+import { Link } from '../common/styled'
+
 export const Pollcolumns = () => {
   return [
     {
       Header: 'Name',
-      accessor: 'name',
+      accessor: 'title',
+      Cell: ({ row }) => <Link href={row.original.url}>{row.original.title}</Link>,
     },
     {
       Header: 'Overview',
-      accessor: 'overview',
+      accessor: 'summary',
     },
     {
       Header: 'Started',
       accessor: 'startDate',
+      Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
     },
     {
       Header: 'Ended',
       accessor: 'endDate',
+      Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
     },
   ]
 }

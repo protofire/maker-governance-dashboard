@@ -194,6 +194,49 @@ export interface GovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetPollsInfo
+// ====================================================
+
+export interface GetPollsInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
+  countPolls: any
+}
+
+export interface GetPollsInfo {
+  governanceInfo: GetPollsInfo_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPollsData
+// ====================================================
+
+export interface GetPollsData_polls {
+  __typename: 'Poll'
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  startDate: any
+  endDate: any
+}
+
+export interface GetPollsData {
+  polls: GetPollsData_polls[]
+}
+
+export interface GetPollsDataVariables {
+  polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: makerGovernanceDetail
 // ====================================================
 
@@ -301,12 +344,11 @@ export interface pollsDetail {
 //==============================================================
 
 export enum ActionType {
-  CAST = 'CAST',
-  ETCH = 'ETCH',
+  CRETATE_EXECUTIVE_VOTE = 'CRETATE_EXECUTIVE_VOTE',
+  CRETATE_POLL_VOTE = 'CRETATE_POLL_VOTE',
   FREE = 'FREE',
   LIFT = 'LIFT',
   LOCK = 'LOCK',
-  POLL_CREATED = 'POLL_CREATED',
   VOTE = 'VOTE',
   VOTER = 'VOTER',
 }

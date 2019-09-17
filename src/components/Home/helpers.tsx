@@ -79,9 +79,9 @@ export const WrappedContainer = styled.div`
 export const Pollcolumns = (isModalOpen: boolean) => {
   return [
     {
-      Header: 'Poll creator',
-      accessor: 'creator',
-      Cell: ({ row }) => <Link href={row.original.url}>{shortenAccount(row.original.creator)}</Link>,
+      Header: 'Name',
+      accessor: 'title',
+      Cell: ({ row }) => <Link href={row.original.url}>{row.original.title}</Link>,
     },
     {
       Header: 'Start date',

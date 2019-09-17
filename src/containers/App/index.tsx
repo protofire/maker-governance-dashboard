@@ -56,7 +56,6 @@ function App() {
     <>
       <GlobalStyle />
       <Breadcrumb>
-        {console.log(data)}
         <Header lastSynced={result.loading || !data ? undefined : data.governanceInfo.lastSynced} items={items} />
       </Breadcrumb>
       <AppWrapper>

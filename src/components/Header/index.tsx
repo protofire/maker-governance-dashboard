@@ -180,7 +180,7 @@ function Header(props: Props) {
           </NavLeft>
           <NavRight>
             <span>
-              Mainnet | Last synced: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
+              Mainnet | Last sync: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
             </span>
           </NavRight>
           <RightMenu>

@@ -29,6 +29,7 @@ function HomeDetail(props: Props) {
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
+  const [polls, setPolls] = useState([])
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
 
@@ -36,7 +37,7 @@ function HomeDetail(props: Props) {
   const homeMap = {
     table: {
       polls: {
-        data: data.polls,
+        data: polls,
         columns: expanded => pollcolumns(expanded),
         component: props => <HomeTable expanded content="Top polls" component="polls" {...props} />,
       },
@@ -166,11 +167,11 @@ function HomeDetail(props: Props) {
   }
 
   useEffect(() => {
-    // console.log('executives', data.executives)
     const executiveIds = data.executives.map(ex => ex.id)
 
     getPollsData(data.polls).then(pollsData => {
-      console.log('pollsData', pollsData.filter(Boolean))
+      const result = pollsData.filter(Boolean) as any
+      setPolls(result)
     })
 
     getMakerDaoData()
