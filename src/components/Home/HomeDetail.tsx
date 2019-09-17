@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChartWrapper } from '../../components/common'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import { Card, Table, Chart, Modal, TableWrapper } from '../common'
@@ -11,6 +11,8 @@ import {
   Executivecolumns,
 } from './helpers'
 import { Line, YAxis } from 'recharts'
+
+import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
 
 const TABLE_PREVIEW = 5
 
@@ -162,6 +164,28 @@ function HomeDetail(props: Props) {
     setModalChart(isChart)
     setModalData(data)
   }
+
+  useEffect(() => {
+    // console.log('executives', data.executives)
+    const executiveIds = data.executives.map(ex => ex.id)
+
+    getPollsData(data.polls).then(pollsData => {
+      console.log('pollsData', pollsData.filter(Boolean))
+    })
+
+    getMakerDaoData()
+      .then(({ executiveVotes, historicalPolls }) => {
+        console.log(executiveIds)
+        const test = executiveVotes.filter(vote => {
+          console.log(vote.source, executiveIds.indexOf(vote.source.toLocaleLowerCase()))
+          return executiveIds.indexOf(vote.source.toLocaleLowerCase()) > -1
+        })
+        console.log('mix', test)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [data])
 
   return (
     <>

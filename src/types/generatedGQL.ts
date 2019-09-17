@@ -301,11 +301,12 @@ export interface pollsDetail {
 //==============================================================
 
 export enum ActionType {
-  CRETATE_EXECUTIVE_VOTE = 'CRETATE_EXECUTIVE_VOTE',
-  CRETATE_POLL_VOTE = 'CRETATE_POLL_VOTE',
+  CAST = 'CAST',
+  ETCH = 'ETCH',
   FREE = 'FREE',
   LIFT = 'LIFT',
   LOCK = 'LOCK',
+  POLL_CREATED = 'POLL_CREATED',
   VOTE = 'VOTE',
   VOTER = 'VOTER',
 }
