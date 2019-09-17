@@ -60,7 +60,6 @@ function PollsInfo() {
 
   return (
     <PollsContainer>
-      {console.log(data)}
       <PageTitle>Polling</PageTitle>
       <List data={data} columns={pollcolumns} />
     </PollsContainer>
