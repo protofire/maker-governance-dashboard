@@ -1,5 +1,5 @@
 import React from 'react'
-import { format, fromUnixTime } from 'date-fns'
+import { format, fromUnixTime, formatDistance } from 'date-fns'
 import { Link } from '../common/styled'
 
 export const Pollcolumns = () => {
@@ -34,11 +34,11 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Name',
-      accessor: 'name',
+      accessor: 'title',
     },
     {
       Header: 'Overview',
-      accessor: 'overview',
+      accessor: 'proposal_blurb',
     },
     {
       Header: 'MKR in support',
@@ -46,7 +46,8 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Started',
-      accessor: 'started',
+      accessor: 'date',
+      Cell: ({ row }) => formatDistance(new Date(row.original.date), new Date(), { addSuffix: true }),
     },
     {
       Header: 'Executed',
