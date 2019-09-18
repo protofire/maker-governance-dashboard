@@ -19,7 +19,7 @@ import { GOVERNANCE_INFO_QUERY } from './queries'
 const items = [
   { to: '/', label: 'DASHBOARD' },
   { to: '/executive', label: 'EXECUTIVE VOTES' },
-  { to: '/polling', label: 'POLLING' },
+  { to: '/polls', label: 'POLLS' },
 ]
 
 const AppWrapper = styled.div`
@@ -62,7 +62,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/executive" component={Executive} />
-          <Route exact path="/polling" component={Polls} />
+          <Route exact path="/polls" component={Polls} />
         </Switch>
       </AppWrapper>
       <Footer>

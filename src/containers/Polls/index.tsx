@@ -60,7 +60,7 @@ function PollsInfo() {
 
   return (
     <PollsContainer>
-      <PageTitle>Polling</PageTitle>
+      <PageTitle>Polls</PageTitle>
       <List data={data} columns={pollcolumns} />
     </PollsContainer>
   )

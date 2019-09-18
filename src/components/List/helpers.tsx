@@ -1,6 +1,7 @@
 import React from 'react'
 import { format, fromUnixTime, formatDistance } from 'date-fns'
 import { Link } from '../common/styled'
+import { timeLeft } from '../../utils'
 
 export const Pollcolumns = () => {
   return [
@@ -22,6 +23,11 @@ export const Pollcolumns = () => {
       Header: 'Ended',
       accessor: 'endDate',
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
+    },
+    {
+      Header: 'Status',
+      accessor: 'endDate',
+      Cell: ({ row }) => timeLeft(row.original.endDate),
     },
   ]
 }

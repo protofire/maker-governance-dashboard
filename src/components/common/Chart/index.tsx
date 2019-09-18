@@ -56,7 +56,6 @@ const ChartContainer = styled(ResponsiveContainer)`
 `
 function Chart(props) {
   const { data, width, height, children, modalStyles, xLabel } = props
-
   return (
     <>
       <ChartContainer {...modalStyles}>
