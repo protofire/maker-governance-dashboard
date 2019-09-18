@@ -29,7 +29,7 @@ function HomeDetail(props: Props) {
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const [polls, setPolls] = useState([])
+  const [polls, setPolls] = useState<any[]>([])
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
 
@@ -167,21 +167,11 @@ function HomeDetail(props: Props) {
   }
 
   useEffect(() => {
-    const executiveIds = data.executives.map(ex => ex.id)
-
-    getPollsData(data.polls).then(pollsData => {
-      const result = pollsData.filter(Boolean) as any
-      setPolls(result)
-    })
-
-    getMakerDaoData()
-      .then(({ executiveVotes, historicalPolls }) => {
-        console.log(executiveIds)
-        const test = executiveVotes.filter(vote => {
-          console.log(vote.source, executiveIds.indexOf(vote.source.toLocaleLowerCase()))
-          return executiveIds.indexOf(vote.source.toLocaleLowerCase()) > -1
-        })
-        console.log('mix', test)
+    Promise.all([getPollsData(data.polls), getMakerDaoData()])
+      .then(result => {
+        const polls = result[0].filter(Boolean)
+        const { historicalPolls } = result[1]
+        setPolls([...polls, ...historicalPolls])
       })
       .catch(error => {
         console.log(error)

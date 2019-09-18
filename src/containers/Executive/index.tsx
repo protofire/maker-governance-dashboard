@@ -47,13 +47,9 @@ function ExecutiveInfo() {
 
   useEffect(() => {
     if (excutivesData.data && excutivesData.data.spells) {
-      const executiveIds = excutivesData.data.spells.map(ex => ex.id)
       getMakerDaoData()
         .then(({ executiveVotes }) => {
-          const test = executiveVotes.filter(vote => {
-            return executiveIds.indexOf(vote.source.toLocaleLowerCase()) > -1
-          })
-          setData(test)
+          setData(executiveVotes)
         })
         .catch(error => {
           console.log(error)

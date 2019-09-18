@@ -15,7 +15,7 @@ import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
 import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
 
 // Utils
-import { getPollsData } from '../../utils/makerdao'
+import { getPollsData, getMakerDaoData } from '../../utils/makerdao'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -36,7 +36,7 @@ const PollsContainer = styled.div``
 
 function PollsInfo() {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
-  const [data, setData] = useState([])
+  const [data, setData] = useState<any[]>([])
   const pollcolumns = React.useMemo(() => Pollcolumns(), [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
@@ -48,9 +48,10 @@ function PollsInfo() {
 
   useEffect(() => {
     if (pollsData.data && pollsData.data.polls) {
-      getPollsData(pollsData.data.polls).then(pollsData => {
-        const result = pollsData.filter(Boolean) as any
-        setData(result)
+      Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
+        const polls = result[0].filter(Boolean)
+        const { historicalPolls } = result[1]
+        setData([...polls, ...historicalPolls])
       })
     }
   }, [pollsData.data])

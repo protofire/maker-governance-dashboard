@@ -26,8 +26,7 @@ export const Pollcolumns = () => {
     },
     {
       Header: 'Status',
-      accessor: 'endDate',
-      Cell: ({ row }) => timeLeft(row.original.endDate),
+      accessor: row => timeLeft(row.endDate),
     },
   ]
 }
