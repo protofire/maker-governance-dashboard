@@ -6,7 +6,10 @@ import {
   getModalContainer,
   WrappedContainer,
   getVotersVsMkrData,
+  getVotesVsPollsData,
+  getGiniData,
   defaultFilters,
+  getComponentData,
   Pollcolumns,
   Executivecolumns,
 } from './helpers'
@@ -34,6 +37,7 @@ function HomeDetail(props: Props) {
   const executiveColumns = expanded => Executivecolumns(expanded)
 
   // Data map for building this page
+  const giniData = getGiniData([...data.free, ...data.lock], chartFilters.gini)
   const homeMap = {
     table: {
       polls: {
@@ -59,6 +63,16 @@ function HomeDetail(props: Props) {
             {...props}
           />
         ),
+      },
+      votesVsPolls: {
+        data: getVotesVsPollsData(data.executives, polls, chartFilters.votesVsPolls),
+        component: props => (
+          <VotesVsPolls expanded content="Executive Votes" versus="Polls" component="votesVsPolls" {...props} />
+        ),
+      },
+      gini: {
+        data: giniData,
+        component: props => <Gini expanded content="MKR Gini Coefficient" component="gini" {...props} />,
       },
     },
   }
@@ -104,14 +118,7 @@ function HomeDetail(props: Props) {
 
   // VotersVsMkr graph data
   const VotersVsMkr = props => {
-    const data = {
-      type: 'chart',
-      component: props.component,
-      content: props.content,
-      versus: props.versus,
-      expanded: props.expanded,
-    }
-
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentVoter = governanceInfo
       ? Number(governanceInfo.countProxies) + Number(governanceInfo.countAddresses)
       : '-'
@@ -145,14 +152,66 @@ function HomeDetail(props: Props) {
     )
   }
 
+  // VotesVsPolls graph data
+  const VotesVsPolls = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    const countVotes = governanceInfo ? Number(governanceInfo.countSpells) : '-'
+    const countPolls = governanceInfo ? Number(governanceInfo.countPolls) : '-'
+    return (
+      <ChartWrapper {...getWrapperProps(data)}>
+        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
+          <YAxis yAxisId="0" datakey="countVotes" />
+          <YAxis yAxisId="1" datakey="countPolls" orientation="right" />
+
+          <Line
+            dot={false}
+            name={`Executive Votes - Current ${countVotes}`}
+            stroke="#9227a0"
+            strokeWidth={2}
+            type="monotone"
+            dataKey="countVotes"
+            yAxisId="0"
+          />
+          <Line
+            dot={false}
+            name={`Polls - Current ${countPolls}`}
+            stroke="#a06d27"
+            strokeWidth={2}
+            type="monotone"
+            dataKey="countPolls"
+            yAxisId="1"
+          />
+        </Chart>
+      </ChartWrapper>
+    )
+  }
+
+  // Gini graph data
+  const Gini = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const currentGini = giniData[giniData.length - 1].gini
+    return (
+      <ChartWrapper {...getWrapperProps(data)}>
+        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
+          <YAxis />
+          <Line
+            dot={false}
+            name={`Gini Coefficient - Current ${currentGini}`}
+            stroke="#ffc353"
+            strokeWidth={2}
+            type="monotone"
+            dataKey="gini"
+          />
+        </Chart>
+      </ChartWrapper>
+    )
+  }
+
   //Table Data
   const HomeTable = props => {
-    const data = {
-      content: props.content,
-      type: 'table',
-      component: props.component,
-      expanded: props.expanded,
-    }
+    const data = getComponentData('table', props.component, props.content, props.expanded)
+
     return (
       <TableWrapper {...getWrapperProps(data)}>
         <Table {...getModalProps(data.type, data.component, data.expanded)} />
@@ -190,9 +249,13 @@ function HomeDetail(props: Props) {
         <Card type="table" style={{ padding: 0 }}>
           <HomeTable content="Top polls" component="polls" />
         </Card>
+        <Card style={{ height: 340 }}>
+          <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
+        </Card>
         <Card style={{ height: 340 }}></Card>
-        <Card style={{ height: 340 }}></Card>
-        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}>
+          <Gini content="MKR Gini Coefficient" component="gini" />
+        </Card>
         <Card style={{ height: 340 }}></Card>
       </WrappedContainer>
       {isModalOpen && (

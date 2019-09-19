@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { format, fromUnixTime } from 'date-fns'
+import gini from 'gini'
 import { Card, TitleContainer, Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
@@ -21,6 +22,22 @@ const formatMkrData = (el, data, prev) => {
     .reduce((acum, value) => (value.type === ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)), prev)
 }
 
+export const getVotesVsPollsData = (votes: Array<any>, polls: Array<any>, time: string): Array<any> => {
+  const periods = periodsMap[time]()
+
+  let countVotes = votes.filter(el => el.timestamp < periods[0].from).length
+  let countPolls = polls.filter(el => el.startDate < periods[0].from).length
+  return periods.map(el => {
+    countVotes += votes.filter(d => d.timestamp >= el.from && d.timestamp <= el.to).length
+    countPolls += polls.filter(d => d.startDate >= el.from && d.startDate <= el.to).length
+    return {
+      ...el,
+      countVotes,
+      countPolls,
+    }
+  })
+}
+
 export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
   const periods = periodsMap[time]()
 
@@ -28,15 +45,68 @@ export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, ti
   let mkr = initializeMkr(periods[0].from, mkrLockFree, 0)
   return periods.map(el => {
     mkr = formatMkrData(el, mkrLockFree, mkr)
-    count += data.filter(d => {
-      return d.timestamp >= el.from && d.timestamp <= el.to
-    }).length
+    count += data.filter(d => d.timestamp >= el.from && d.timestamp <= el.to).length
     return {
       ...el,
       count,
       mkr: mkr.toFixed(2),
     }
   })
+}
+
+const initGiniMkr = (data, initial) => {
+  return data
+    .filter(d => d.timestamp < initial.to)
+    .reduce((acum, value) => {
+      let mkr = acum[value.sender] || 0
+      mkr = value.type === 'FREE' ? mkr - Number(value.wad) : mkr + Number(value.wad)
+
+      return {
+        ...acum,
+        [value.sender]: mkr,
+      }
+    }, {})
+}
+
+const formatGiniData = (el, data, prev) => {
+  return data
+    .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+    .reduce((acum, value) => {
+      let mkr = acum[value.sender] || 0
+      mkr = value.type === 'FREE' ? mkr - Number(value.wad) : mkr + Number(value.wad)
+
+      return {
+        ...acum,
+        [value.sender]: mkr,
+      }
+    }, prev)
+}
+
+export const getGiniData = (totalMkr: Array<any>, time: string): Array<any> => {
+  const periods = periodsMap[time]()
+  let mkr = initGiniMkr(totalMkr, periods[0])
+
+  const res = periods.reduce((acc, el) => {
+    mkr = formatGiniData(el, totalMkr, mkr)
+    return {
+      ...acc,
+      [el.label]: {
+        ...mkr,
+      },
+    }
+  }, {})
+
+  return Object.keys(res).reduce((acc: any[], k) => {
+    return [
+      ...acc,
+      {
+        label: k,
+        gini: Object.keys(res[k]).length
+          ? gini.unordered(Object.keys(res[k]).map(a => (res[k][a] < 0 ? 0 : res[k][a])))
+          : 0,
+      },
+    ]
+  }, [])
 }
 
 const initializeMkr = (el, data, prev) => {
@@ -46,6 +116,8 @@ const initializeMkr = (el, data, prev) => {
 }
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
+  votesVsPolls: LAST_YEAR,
+  gini: LAST_YEAR,
 }
 
 export const WrappedContainer = styled.div`
@@ -75,6 +147,22 @@ export const WrappedContainer = styled.div`
     }
   }
 `
+
+export const getComponentData = (
+  type: string,
+  component: string,
+  content: string,
+  expanded: boolean,
+  versus = undefined,
+) => {
+  return {
+    type,
+    component,
+    content,
+    expanded,
+    versus,
+  }
+}
 
 export const Pollcolumns = (isModalOpen: boolean) => {
   return [
