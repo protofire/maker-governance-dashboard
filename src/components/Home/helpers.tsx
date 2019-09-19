@@ -102,7 +102,7 @@ export const getGiniData = (totalMkr: Array<any>, time: string): Array<any> => {
       {
         label: k,
         gini: Object.keys(res[k]).length
-          ? gini.unordered(Object.keys(res[k]).map(a => (res[k][a] < 0 ? 0 : res[k][a])))
+          ? gini.unordered(Object.keys(res[k]).map(a => (res[k][a] < 0 ? 0 : res[k][a]))).toFixed(2)
           : 0,
       },
     ]
