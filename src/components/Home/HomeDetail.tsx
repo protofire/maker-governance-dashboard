@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { ChartWrapper } from '../../components/common'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
-import { Card, Table, Chart, Modal, TableWrapper } from '../common'
+import { VotesVsPollsChart, VotersVsMkrChart, GiniChart } from './Charts'
+import { Card, Table, Modal, TableWrapper } from '../common'
 import {
   getModalContainer,
   WrappedContainer,
@@ -13,7 +13,6 @@ import {
   Pollcolumns,
   Executivecolumns,
 } from './helpers'
-import { Line, YAxis } from 'recharts'
 
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
 
@@ -124,31 +123,12 @@ function HomeDetail(props: Props) {
       : '-'
     const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
     return (
-      <ChartWrapper {...getWrapperProps(data)}>
-        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
-          <YAxis yAxisId="0" datakey="count" />
-          <YAxis yAxisId="1" datakey="mkr" orientation="right" />
-
-          <Line
-            dot={false}
-            name={`Number of voters - Current ${currentVoter}`}
-            stroke="#2730a0"
-            strokeWidth={2}
-            type="monotone"
-            dataKey="count"
-            yAxisId="0"
-          />
-          <Line
-            dot={false}
-            name={`Total MKR stacked - Current ${currentMkr}`}
-            stroke="#27a02c"
-            strokeWidth={2}
-            type="monotone"
-            dataKey="mkr"
-            yAxisId="1"
-          />
-        </Chart>
-      </ChartWrapper>
+      <VotersVsMkrChart
+        currentVoters={currentVoter}
+        currentMkr={currentMkr}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
     )
   }
 
@@ -156,34 +136,15 @@ function HomeDetail(props: Props) {
   const VotesVsPolls = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
 
-    const countVotes = governanceInfo ? Number(governanceInfo.countSpells) : '-'
-    const countPolls = governanceInfo ? Number(governanceInfo.countPolls) : '-'
+    const currentVotes = governanceInfo ? Number(governanceInfo.countSpells) : '-'
+    const currentPolls = governanceInfo ? Number(governanceInfo.countPolls) : '-'
     return (
-      <ChartWrapper {...getWrapperProps(data)}>
-        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
-          <YAxis yAxisId="0" datakey="countVotes" />
-          <YAxis yAxisId="1" datakey="countPolls" orientation="right" />
-
-          <Line
-            dot={false}
-            name={`Executive Votes - Current ${countVotes}`}
-            stroke="#9227a0"
-            strokeWidth={2}
-            type="monotone"
-            dataKey="countVotes"
-            yAxisId="0"
-          />
-          <Line
-            dot={false}
-            name={`Polls - Current ${countPolls}`}
-            stroke="#a06d27"
-            strokeWidth={2}
-            type="monotone"
-            dataKey="countPolls"
-            yAxisId="1"
-          />
-        </Chart>
-      </ChartWrapper>
+      <VotesVsPollsChart
+        currentVotes={currentVotes}
+        currentPolls={currentPolls}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
     )
   }
 
@@ -192,19 +153,11 @@ function HomeDetail(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentGini = giniData[giniData.length - 1].gini
     return (
-      <ChartWrapper {...getWrapperProps(data)}>
-        <Chart {...getModalProps(data.type, data.component, data.expanded)}>
-          <YAxis />
-          <Line
-            dot={false}
-            name={`Gini Coefficient - Current ${currentGini}`}
-            stroke="#ffc353"
-            strokeWidth={2}
-            type="monotone"
-            dataKey="gini"
-          />
-        </Chart>
-      </ChartWrapper>
+      <GiniChart
+        currentGini={currentGini}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
     )
   }
 
