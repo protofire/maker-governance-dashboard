@@ -31,6 +31,7 @@ const TableWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  background-color: white;
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
   ${TableSection} {
@@ -84,6 +85,17 @@ const RowsSection = styled.div`
     }
   }
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
+  ${TableRow} {
+    ${props =>
+      props.expanded &&
+      css`
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 20px;
+      `}
+  }
 `
 
 const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
@@ -98,6 +110,7 @@ const Pagination = styled.div`
     font-size: 12px;
     color: #666666;
   }
+  padding: 1rem;
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -174,32 +187,32 @@ function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps
               ),
           )}
         </RowsSection>
+        {expanded && (
+          <Pagination>
+            <PageSelect
+              value={pageSize}
+              onChange={e => {
+                setPageSize(Number(e.target.value))
+              }}
+            >
+              {[10, 20, 30, 40, 50].map(pageSize => (
+                <option key={pageSize} value={pageSize}>
+                  Rows per page: {pageSize}
+                </option>
+              ))}
+            </PageSelect>
+            <Pager>
+              {pageIndex + 1}-{pageSize} of {pageOptions.length}
+            </Pager>
+            <PageIconContainer onClick={() => previousPage()} disabled={!canPreviousPage}>
+              <PreviousIcon />
+            </PageIconContainer>
+            <PageIconContainer onClick={() => nextPage()} disabled={!canNextPage}>
+              <NextIcon />
+            </PageIconContainer>
+          </Pagination>
+        )}
       </TableWrapper>
-      {expanded && (
-        <Pagination>
-          <PageSelect
-            value={pageSize}
-            onChange={e => {
-              setPageSize(Number(e.target.value))
-            }}
-          >
-            {[10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Rows per page: {pageSize}
-              </option>
-            ))}
-          </PageSelect>
-          <Pager>
-            {pageIndex + 1}-{pageSize} of {pageOptions.length}
-          </Pager>
-          <PageIconContainer onClick={() => previousPage()} disabled={!canPreviousPage}>
-            <PreviousIcon />
-          </PageIconContainer>
-          <PageIconContainer onClick={() => nextPage()} disabled={!canNextPage}>
-            <NextIcon />
-          </PageIconContainer>
-        </Pagination>
-      )}
     </>
   )
 }

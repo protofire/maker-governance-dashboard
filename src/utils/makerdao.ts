@@ -1,0 +1,180 @@
+import matter from 'gray-matter'
+import { getUnixTime } from 'date-fns'
+const Hash = require('ipfs-only-hash')
+
+const network = 'mainnet'
+const prod = 'https://cms-gov.makerfoundation.com'
+const path = 'content/governance-dashboard'
+
+const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
+
+const check = async res => {
+  if (!res.ok) {
+    throw new Error(`unable to fetch topics: ${res.status} - ${await res.text()}`)
+  }
+}
+
+/**
+ * @desc return a promise that resolves after specified time
+ * @param {Number} time
+ * @return {Promise}
+ */
+export const promiseWait = time => new Promise(resolve => setTimeout(resolve, time || 0))
+
+/**
+ * @desc retry an async function a set number of times
+ * @param  {Object} { times, fn, delay }
+ * @return {Promise}
+ */
+export const promiseRetry = ({ times = 3, fn, delay = 500, args = [] }) => {
+  return fn(...args).catch(err =>
+    times > 0
+      ? promiseWait(delay).then(() => promiseRetry({ times: times - 1, fn, delay, args }))
+      : Promise.reject(err),
+  )
+}
+
+const fetchNetwork = async (url, network = 'mainnet') => {
+  const res = await fetch(`${url}/${path}?network=${network}`)
+  await check(res)
+  return await res.json()
+}
+
+const fetchTopics = async network => {
+  return fetchNetwork(prod, network)
+}
+
+function extractProposals(topics, network) {
+  const executiveTopics = topics.filter(t => t.govVote === false)
+  return executiveTopics.reduce((acc, topic) => {
+    const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
+      ...otherProps,
+      source: source.startsWith('{') ? JSON.parse(source)[network] : source,
+      active: topic.active,
+      govVote: topic.govVote,
+      topicKey: topic.key,
+      topicTitle: topic.topic,
+    }))
+    return acc.concat(proposals)
+  }, [])
+}
+
+export const formatHistoricalPolls = topics => {
+  const govTopics = topics.filter(t => t.govVote === true)
+  const allPolls = govTopics.reduce((result, { end_timestamp, date, topic_blurb, topic, key, proposals }) => {
+    const options = proposals.map(p => p.title)
+    const totalVotes = proposals.reduce((acc, proposal) => acc + proposal.end_approvals, 0)
+
+    const poll = {
+      legacyPoll: true,
+      active: false,
+      content: proposals[0] ? proposals[0].about : topic_blurb,
+      endDate: end_timestamp,
+      options: options,
+      source: proposals[0] && proposals[0].source ? proposals[0].source : POLLING_EMITTER,
+      startDate: getUnixTime(new Date(date)),
+      summary: topic_blurb,
+      title: topic,
+      totalVotes: isNaN(totalVotes) ? '----' : totalVotes,
+      pollId: key,
+      voteId: key,
+      topicKey: key,
+    }
+
+    result.push(poll)
+    return result
+  }, [])
+
+  return allPolls
+}
+
+export async function getMakerDaoData() {
+  const topics = await promiseRetry({
+    fn: fetchTopics,
+    times: 4,
+    delay: 1,
+  })
+
+  const executiveVotes = extractProposals(topics, network)
+  const historicalPolls = formatHistoricalPolls(topics)
+
+  return { executiveVotes, historicalPolls }
+}
+
+// Polls data
+const fetchPollFromUrl = async url => {
+  const res = await fetch(url)
+  await check(res)
+  const contentType = res.headers.get('content-type')
+  if (!contentType) return null
+  if (contentType.indexOf('application/json') !== -1) {
+    const json = await res.json()
+    if (!json.about || typeof json.about !== 'string') return null
+    return json
+  } else if (contentType.indexOf('text/plain') !== -1) {
+    return res.text()
+  } else return null
+}
+
+const generateIPFSHash = async (data, options) => {
+  // options object has the key encoding which defines the encoding type
+  // of the data string that has been passed in
+  const bufferData = Buffer.from(data, options.encoding || 'ascii')
+  const hash = await Hash.of(bufferData)
+  return hash
+}
+
+const formatOptions = options => {
+  const optionVals = Object.values(options)
+  // Remove option 0: abstain
+  optionVals.shift()
+  return optionVals
+}
+
+const isPollActive = (startDate, endDate) => {
+  const now = new Date()
+  return startDate <= now && endDate > now ? true : false
+}
+
+const formatYamlToJson = async data => {
+  const json = data.about ? matter(data.about) : matter(data)
+  if (!json.data.title || !json.data.options)
+    throw new Error('Invalid poll document: no options or title field found in front matter')
+  const { content } = json
+  const { title, summary, options, discussion_link } = json.data
+  return {
+    voteId: data.voteId
+      ? data.voteId
+      : await generateIPFSHash(data.replace(/(\r\n|\n|\r)/gm, '\n'), {
+          encoding: 'ascii',
+        }),
+    title,
+    summary,
+    options: formatOptions(options),
+    discussion_link,
+    content,
+    rawData: data.about || data,
+  }
+}
+
+export function getPollsData(polls) {
+  return Promise.all(
+    polls.map(async poll => {
+      try {
+        const pollDocument = await fetchPollFromUrl(poll.url)
+        if (pollDocument) {
+          const documentData = await formatYamlToJson(pollDocument)
+          const pollData = { ...poll, ...documentData }
+          pollData.active = isPollActive(pollData.startDate, pollData.endDate)
+          pollData.source = POLLING_EMITTER
+
+          return pollData
+        } else {
+          return
+        }
+      } catch (e) {
+        console.log(`Error fetching data for poll with ID ${poll.pollId} from ${poll.url}`)
+      }
+    }),
+  )
+}

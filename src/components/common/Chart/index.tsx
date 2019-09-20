@@ -54,9 +54,9 @@ const ChartContainer = styled(ResponsiveContainer)`
     }
   }
 `
-function Chart(props) {
-  const { data, width, height, children, modalStyles, xLabel } = props
 
+const ChartComponent = React.memo(function Chart(props: any) {
+  const { data, width, height, children, modalStyles, xLabel } = props
   return (
     <>
       <ChartContainer {...modalStyles}>
@@ -70,6 +70,6 @@ function Chart(props) {
       </ChartContainer>
     </>
   )
-}
+})
 
-export default Chart
+export default ChartComponent
