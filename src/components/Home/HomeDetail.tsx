@@ -32,6 +32,7 @@ function HomeDetail(props: Props) {
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [polls, setPolls] = useState<any[]>([])
+
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
 
@@ -118,13 +119,13 @@ function HomeDetail(props: Props) {
   // VotersVsMkr graph data
   const VotersVsMkr = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVoter = governanceInfo
+    const currentVoters = governanceInfo
       ? Number(governanceInfo.countProxies) + Number(governanceInfo.countAddresses)
       : '-'
     const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
     return (
       <VotersVsMkrChart
-        currentVoters={currentVoter}
+        currentVoters={currentVoters}
         currentMkr={currentMkr}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
@@ -137,7 +138,7 @@ function HomeDetail(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
 
     const currentVotes = governanceInfo ? Number(governanceInfo.countSpells) : '-'
-    const currentPolls = governanceInfo ? Number(governanceInfo.countPolls) : '-'
+    const currentPolls = polls.length
     return (
       <VotesVsPollsChart
         currentVotes={currentVotes}
