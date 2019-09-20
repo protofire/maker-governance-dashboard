@@ -187,6 +187,7 @@ export interface getHomeData_lock {
    *  Action name (act)
    */
   type: ActionType
+  sender: any
 }
 
 export interface getHomeData_free {
@@ -204,6 +205,7 @@ export interface getHomeData_free {
    *  Action name (act)
    */
   type: ActionType
+  sender: any
 }
 
 export interface getHomeData {
