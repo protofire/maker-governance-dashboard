@@ -1,4 +1,5 @@
 import matter from 'gray-matter'
+import { getUnixTime } from 'date-fns'
 const Hash = require('ipfs-only-hash')
 
 const network = 'mainnet'
@@ -44,8 +45,8 @@ const fetchTopics = async network => {
 }
 
 function extractProposals(topics, network) {
-  // const executiveTopics = topics.filter(t => t.govVote === false);
-  return topics.reduce((acc, topic) => {
+  const executiveTopics = topics.filter(t => t.govVote === false)
+  return executiveTopics.reduce((acc, topic) => {
     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
       ...otherProps,
       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
@@ -68,10 +69,10 @@ export const formatHistoricalPolls = topics => {
       legacyPoll: true,
       active: false,
       content: proposals[0] ? proposals[0].about : topic_blurb,
-      endDate: new Date(end_timestamp),
+      endDate: end_timestamp,
       options: options,
       source: proposals[0] && proposals[0].source ? proposals[0].source : POLLING_EMITTER,
-      startDate: new Date(date),
+      startDate: getUnixTime(new Date(date)),
       summary: topic_blurb,
       title: topic,
       totalVotes: isNaN(totalVotes) ? '----' : totalVotes,
@@ -161,7 +162,6 @@ export function getPollsData(polls) {
     polls.map(async poll => {
       try {
         const pollDocument = await fetchPollFromUrl(poll.url)
-        console.log(pollDocument)
         if (pollDocument) {
           const documentData = await formatYamlToJson(pollDocument)
           const pollData = { ...poll, ...documentData }

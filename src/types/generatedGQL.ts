@@ -31,6 +31,67 @@ export interface GetGovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetExecutiveVotesInfo
+// ====================================================
+
+export interface GetExecutiveVotesInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
+  countSpells: any
+}
+
+export interface GetExecutiveVotesInfo {
+  governanceInfo: GetExecutiveVotesInfo_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetExecutivesVotesData
+// ====================================================
+
+export interface GetExecutivesVotesData_spells {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+}
+
+export interface GetExecutivesVotesData {
+  spells: GetExecutivesVotesData_spells[]
+}
+
+export interface GetExecutivesVotesDataVariables {
+  executives: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetPolls
 // ====================================================
 
@@ -126,6 +187,7 @@ export interface getHomeData_lock {
    *  Action name (act)
    */
   type: ActionType
+  sender: any
 }
 
 export interface getHomeData_free {
@@ -143,6 +205,7 @@ export interface getHomeData_free {
    *  Action name (act)
    */
   type: ActionType
+  sender: any
 }
 
 export interface getHomeData {
@@ -194,6 +257,85 @@ export interface GovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetPollsInfo
+// ====================================================
+
+export interface GetPollsInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
+  countPolls: any
+}
+
+export interface GetPollsInfo {
+  governanceInfo: GetPollsInfo_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPollsData
+// ====================================================
+
+export interface GetPollsData_polls {
+  __typename: 'Poll'
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  startDate: any
+  endDate: any
+}
+
+export interface GetPollsData {
+  polls: GetPollsData_polls[]
+}
+
+export interface GetPollsDataVariables {
+  polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: executivesDetail
+// ====================================================
+
+export interface executivesDetail {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: makerGovernanceDetail
 // ====================================================
 
@@ -236,42 +378,6 @@ export interface actionsDetail {
    *  Action name (act)
    */
   type: ActionType
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: executivesDetail
-// ====================================================
-
-export interface executivesDetail {
-  __typename: 'Spell'
-  /**
-   *  ID represent the contract address
-   */
-  id: string
-  /**
-   *  Timestamp when the spell voted by the first time
-   */
-  timestamp: any
-  /**
-   *  Timestamp when the spell is casted
-   */
-  casted: any | null
-  /**
-   *  How much MKR it has when the spell is casted
-   */
-  castedWith: any | null
-  /**
-   *  Timestamp when the spell is casted
-   */
-  lifted: any | null
-  /**
-   *  How much MKR it has when the spell is lifted to hat
-   */
-  liftedWith: any | null
 }
 
 /* tslint:disable */

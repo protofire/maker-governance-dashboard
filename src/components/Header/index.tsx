@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { toNiceDate } from '../../utils'
 import styled, { css } from 'styled-components'
 import HamburgerMenu from 'react-hamburger-menu'
 
@@ -41,12 +42,12 @@ const NavLeft = styled.div`
   padding: 2rem 2.5rem;
   margin: 0 auto;
   display: flex;
-  flex: 1;
   align-items: center;
   a {
     font-weight: 500;
-    margin-right: 2rem;
     margin-left: 2rem;
+    display:flex
+    align-items:center
   }
   @media (max-width: 480px) {
     padding-right: 0;
@@ -59,10 +60,10 @@ const NavRight = styled.div`
   max-width: 1140px;
   margin: 0 auto;
   display: flex;
-  flex: 1;
   flex-direction: row-reverse;
   @media (max-width: 480px) {
     flex-direction: row;
+    font-size: 12px;
     justify-content: center;
   }
   span {
@@ -89,7 +90,6 @@ const Breadcrumb = styled.div`
 const HamburgerContainer = styled.div`
   width: 100%;
   display: flex;
-  flex: 1;
   flex-direction: column;
   position: absolute;
   top: 62px;
@@ -125,11 +125,11 @@ const StyledLink = styled(NavLink)`
   text-decoration: none;
   color: #666666;
   &:hover {
-    color: #000000;
+    color: #000000 !important;
   }
   &:visited,
   &:active {
-    color: inherit;
+    color: #666666;
   }
 `
 
@@ -140,6 +140,7 @@ interface Item {
 
 type Props = {
   items: Item[]
+  lastSynced?: string
 }
 
 const HamburgerContent = props => {
@@ -160,7 +161,7 @@ const HamburgerContent = props => {
 }
 
 function Header(props: Props) {
-  const { items } = props
+  const { items, lastSynced } = props
   const [isOpenMenu, setOpenMenu] = useState(false)
   return (
     <>
@@ -171,14 +172,16 @@ function Header(props: Props) {
             <img alt="logo" src="./maker.png" />
             <Breadcrumb>
               {items.map(({ to, label }) => (
-                <StyledLink activeStyle={{ color: '#000000' }} key={to} to={to}>
+                <StyledLink exact activeStyle={{ color: '#000000' }} key={to} to={to}>
                   {label}
                 </StyledLink>
               ))}
             </Breadcrumb>
           </NavLeft>
           <NavRight>
-            <span>Mainnet</span>
+            <span>
+              Mainnet | Last sync: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
+            </span>
           </NavRight>
           <RightMenu>
             <HamburgerMenu

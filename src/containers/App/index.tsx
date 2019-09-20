@@ -1,14 +1,26 @@
-import React, { Fragment } from 'react'
+import React from 'react'
+import { useQuery } from '@apollo/react-hooks'
 import { Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import GlobalStyle from '../../theme/globalStyle'
 
+// Pages
 import Home from '../Home'
+import Polls from '../Polls'
+import Executive from '../Executive'
+
 import Breadcrumb from '../../components/Breadcrumb'
 import Header from '../../components/Header'
 
-const items = [{ to: '/', label: 'DASHBOARD' }]
+//Queries
+import { GOVERNANCE_INFO_QUERY } from './queries'
+
+const items = [
+  { to: '/', label: 'DASHBOARD' },
+  { to: '/executive', label: 'EXECUTIVE VOTES' },
+  { to: '/polls', label: 'POLLS' },
+]
 
 const AppWrapper = styled.div`
   min-height: 400px;
@@ -38,15 +50,19 @@ const Footer = styled.div`
 `
 
 function App() {
+  const { data, ...result } = useQuery(GOVERNANCE_INFO_QUERY)
+
   return (
-    <Fragment>
+    <>
       <GlobalStyle />
       <Breadcrumb>
-        <Header items={items} />
+        <Header lastSynced={result.loading || !data ? undefined : data.governanceInfo.lastSynced} items={items} />
       </Breadcrumb>
       <AppWrapper>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/executive" component={Executive} />
+          <Route exact path="/polls" component={Polls} />
         </Switch>
       </AppWrapper>
       <Footer>
@@ -54,7 +70,7 @@ function App() {
           Built by <img alt="protofire" src="./protofire.png" />
         </span>
       </Footer>
-    </Fragment>
+    </>
   )
 }
 

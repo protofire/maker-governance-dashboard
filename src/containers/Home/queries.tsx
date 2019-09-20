@@ -77,9 +77,11 @@ export const ACTIONS_QUERY = gql`
     }
     lock: actions(where: { type: LOCK }, first: $lock) {
       ...actionsDetail
+      sender
     }
     free: actions(where: { type: FREE }, first: $free) {
       ...actionsDetail
+      sender
     }
   }
   ${pollsDetailFragment}
