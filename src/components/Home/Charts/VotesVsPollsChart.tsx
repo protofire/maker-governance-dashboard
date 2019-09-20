@@ -7,8 +7,7 @@ const VotesVsPollsChart = props => {
   return (
     <ChartWrapper {...wrapperProps}>
       <Chart {...modalProps}>
-        <YAxis yAxisId="0" datakey="countVotes" />
-        <YAxis yAxisId="1" datakey="countPolls" orientation="right" />
+        <YAxis datakey="countPolls" />
 
         <Line
           dot={false}
@@ -17,7 +16,6 @@ const VotesVsPollsChart = props => {
           strokeWidth={2}
           type="monotone"
           dataKey="countVotes"
-          yAxisId="0"
         />
         <Line
           dot={false}
@@ -26,7 +24,6 @@ const VotesVsPollsChart = props => {
           strokeWidth={2}
           type="monotone"
           dataKey="countPolls"
-          yAxisId="1"
         />
       </Chart>
     </ChartWrapper>
