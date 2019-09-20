@@ -47,8 +47,12 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'MKR in support',
-      accessor: 'castedWith',
-      Cell: ({ row }) => (row.original.castedWith ? (row.original.castedWith / Math.pow(10, 18)).toFixed(2) : ''),
+      accessor: row =>
+        row.castedWith === undefined
+          ? row.end_approvals
+          : row.castedWith
+          ? (row.castedWith / Math.pow(10, 18)).toFixed(2)
+          : '-',
     },
     {
       Header: 'Started',
