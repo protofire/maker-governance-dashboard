@@ -35,7 +35,7 @@ const ExecutiveContainer = styled.div``
 
 function ExecutiveInfo() {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
-  const [data, setData] = useState([])
+  const [data, setData] = useState<any[]>([])
   const executivecolumns = React.useMemo(() => Executivecolumns(), [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
@@ -49,7 +49,7 @@ function ExecutiveInfo() {
     if (excutivesData.data && excutivesData.data.spells) {
       getMakerDaoData()
         .then(({ executiveVotes }) => {
-          setData(executiveVotes)
+          setData([...executiveVotes, ...excutivesData.data.spells])
         })
         .catch(error => {
           console.log(error)

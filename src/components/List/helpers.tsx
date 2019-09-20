@@ -39,7 +39,7 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Name',
-      accessor: 'title',
+      accessor: row => row.title || row.id,
     },
     {
       Header: 'Overview',
@@ -47,12 +47,20 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'MKR in support',
-      accessor: 'mkr',
+      accessor: row =>
+        row.castedWith === undefined
+          ? row.end_approvals
+          : row.castedWith
+          ? (row.castedWith / Math.pow(10, 18)).toFixed(2)
+          : '-',
     },
     {
       Header: 'Started',
       accessor: 'date',
-      Cell: ({ row }) => formatDistance(new Date(row.original.date), new Date(), { addSuffix: true }),
+      Cell: ({ row }) =>
+        !row.original.timestamp
+          ? formatDistance(new Date(row.original.date), new Date(), { addSuffix: true })
+          : formatDistance(fromUnixTime(row.original.timestamp), new Date(), { addSuffix: true }),
     },
     {
       Header: 'Executed',
