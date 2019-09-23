@@ -7,6 +7,7 @@ import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon
 import { ChartSelect } from './Chart'
 import ChartWrapper from './ChartWrapper'
 import TableWrapper from './TableWrapper'
+import DescriptionWrapper from './DescriptionWrapper'
 
 import {
   TableContainer,
@@ -21,6 +22,7 @@ import {
   ViewAll,
   Separator,
   Versus,
+  DescriptionBox,
 } from './styled'
 
 export {
@@ -48,6 +50,8 @@ export {
   ChartWrapper,
   ViewAll,
   TableWrapper,
+  DescriptionWrapper,
   Separator,
   Versus,
+  DescriptionBox,
 }

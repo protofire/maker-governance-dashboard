@@ -31,6 +31,8 @@ export const toNiceDate = timestamp => {
   return format(fromUnixTime(timestamp), 'PP')
 }
 
+export const getModalContainer = Content => <Content />
+
 export const timeLeft = (end): string => {
   const today = new Date()
   const end_date = fromUnixTime(end)

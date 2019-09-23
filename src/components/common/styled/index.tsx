@@ -140,3 +140,14 @@ export const ViewAll = styled.span`
   font-size: 12px;
   color: #00ba9c;
 `
+export const DescriptionBox = styled.div`
+  max-width: ${props => (!props.expanded ? '300px' : 'none')};
+  width: 100%;
+  color: #777777;
+  margin: 0 auto;
+  font-size: 13px;
+  display: -webkit-box;
+  -webkit-line-clamp: 15;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`

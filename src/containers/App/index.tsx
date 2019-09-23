@@ -9,6 +9,7 @@ import GlobalStyle from '../../theme/globalStyle'
 import Home from '../Home'
 import Polls from '../Polls'
 import Executive from '../Executive'
+import Vote from '../Vote'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Header from '../../components/Header'
@@ -62,12 +63,13 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/executive" component={Executive} />
+          <Route exact path="/executive/:id" component={Vote} />
           <Route exact path="/polls" component={Polls} />
         </Switch>
       </AppWrapper>
       <Footer>
         <span>
-          Built by <img alt="protofire" src="./protofire.png" />
+          Built by <img alt="protofire" src="/protofire.png" />
         </span>
       </Footer>
     </>

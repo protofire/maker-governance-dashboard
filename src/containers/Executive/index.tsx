@@ -33,13 +33,18 @@ const Error = () => <div>ERROR: There was an error trying to fetch the data. </d
 
 const ExecutiveContainer = styled.div``
 
-function ExecutiveInfo() {
+function ExecutiveInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
   const executivecolumns = React.useMemo(() => Executivecolumns(), [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const excutivesData = useQuery(VOTES_FIRST_QUERY, { variables: resultVariables })
+
+  const getVote = row => {
+    //Temporal fix as we don't have all the executive votes thru the API
+    if (row.key) props.history.push(`/executive/${row.key}`)
+  }
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
@@ -62,7 +67,7 @@ function ExecutiveInfo() {
   return (
     <ExecutiveContainer>
       <PageTitle>Executive Votes</PageTitle>
-      <List data={data} columns={executivecolumns} />
+      <List handleRow={getVote} data={data} columns={executivecolumns} />
     </ExecutiveContainer>
   )
 }

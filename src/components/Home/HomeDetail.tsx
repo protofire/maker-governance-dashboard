@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import { VotesVsPollsChart, VotersVsMkrChart, GiniChart } from './Charts'
 import { Card, Table, Modal, TableWrapper } from '../common'
+import { getModalContainer } from '../../utils'
 import {
-  getModalContainer,
   WrappedContainer,
   getVotersVsMkrData,
   getVotesVsPollsData,

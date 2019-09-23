@@ -14,8 +14,6 @@ const periodsMap = {
   [LAST_DAY]: getLastDay,
 }
 
-export const getModalContainer = Content => <Content />
-
 const formatMkrData = (el, data, prev) => {
   return data
     .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
