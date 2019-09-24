@@ -55,6 +55,7 @@ const NavLeft = styled.div`
     margin-left: 10px;
   }
 `
+const NavRightTitle = styled.span``
 
 const NavRight = styled.div`
   max-width: 1140px;
@@ -65,11 +66,15 @@ const NavRight = styled.div`
     flex-direction: row;
     font-size: 12px;
     justify-content: center;
+    ${NavRightTitle} {
+      margin-left: 1rem;
+    }
   }
   span {
     margin-right: 1rem;
   }
 `
+
 const RightMenu = styled(NavRight)`
   position: relative;
   margin-right: 10px;
@@ -179,9 +184,9 @@ function Header(props: Props) {
             </Breadcrumb>
           </NavLeft>
           <NavRight>
-            <span>
+            <NavRightTitle>
               Mainnet | Last sync: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
-            </span>
+            </NavRightTitle>
           </NavRight>
           <RightMenu>
             <HamburgerMenu
