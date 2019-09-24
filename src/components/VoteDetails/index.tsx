@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
 import { getModalContainer } from '../../utils'
@@ -81,7 +82,7 @@ function VoteDetails(props: Props) {
       <>
         <DescriptionWrapper {...getWrapperProps(data)}>
           <DescriptionBox expanded={props.expanded}>
-            <span>{vote.about}</span>
+            <ReactMarkdown source={voteMap.table[props.component].data} />
           </DescriptionBox>
         </DescriptionWrapper>
       </>

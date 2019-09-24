@@ -144,8 +144,6 @@ export const DescriptionBox = styled.div`
   color: #777777;
   margin: 0 auto;
   font-size: 13px;
-  display: -webkit-box;
-  -webkit-line-clamp: 15;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
 `
