@@ -97,12 +97,10 @@ export const TitleContainer = styled.div`
       display: none;
     }
     ${ChartTitleContainer} {
-      flex-direction: column;
+      flex-wrap: wrap;
     }
     select {
-      width: 80px;
-      position: relative;
-      right: 4px;
+      width: 85px;
     }
   }
 `
