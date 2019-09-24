@@ -28,7 +28,7 @@ export const shortenAccount = (account: string): string =>
   account.slice(0, 6) + '...' + account.slice(account.length - 4)
 
 export const toNiceDate = timestamp => {
-  return format(fromUnixTime(timestamp), 'PP')
+  return format(fromUnixTime(timestamp), 'PPp')
 }
 
 export const timeLeft = (end): string => {
