@@ -1,20 +1,24 @@
 import styled from 'styled-components'
-import { fromUnixTime, differenceInSeconds, format, formatDistanceToNow } from 'date-fns'
+import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 
 import { shortenAccount } from '../../utils'
 import { Card, TitleContainer } from '../common/styled'
 import { LAST_YEAR } from '../../constants'
 
-export const getVoteTableData = vote => [
-  { value: shortenAccount(vote.source), label: 'Source' },
-  { value: format(new Date(vote.date), 'P'), label: 'Started' },
-  { value: vote.govVote ? 'Yes' : 'No', label: 'Voted' },
-  { value: differenceInSeconds(fromUnixTime(vote.end_timestamp), new Date()) > 0 ? 'No' : 'Yes', label: 'Ended' },
-  { value: vote.active ? 'Active' : 'Closed', label: 'Status' },
-  { value: formatDistanceToNow(new Date(vote.date), { addSuffix: false }), label: 'Time opened' },
-  { value: vote.end_approvals, label: 'MKR in support' },
-  { value: vote.verified ? 'Yes' : 'No', label: 'Executed' },
-]
+export const getVoteTableData = vote => {
+  const startDate = vote.timestamp ? fromUnixTime(vote.timestamp) : new Date(vote.date)
+  const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
+  return [
+    { value: shortenAccount(vote.source), label: 'Source' },
+    { value: format(startDate, 'P'), label: 'Started' },
+    { value: mkr_approvals ? 'Yes' : 'No', label: 'Voted' },
+    { value: vote.casted ? 'Yes' : 'No', label: 'Ended' },
+    { value: vote.casted ? 'Closed' : 'Active', label: 'Status' },
+    { value: formatDistanceToNow(startDate, { addSuffix: false }), label: 'Time opened' },
+    { value: mkr_approvals, label: 'MKR in support' },
+    { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
+  ]
+}
 
 export const TableContainer = styled.div`
   display: flex;

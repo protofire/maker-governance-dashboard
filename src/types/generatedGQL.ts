@@ -3,27 +3,16 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetGovernanceInfo
+// GraphQL query operation: GetGovernanceInfoApp
 // ====================================================
 
-export interface GetGovernanceInfo_governanceInfo {
+export interface GetGovernanceInfoApp_governanceInfo {
   __typename: 'GovernanceInfo'
-  id: string
-  countProxies: any
-  countAddresses: any
-  countSlates: any
-  countSpells: any
-  countLock: any
-  countFree: any
-  countPolls: any
-  locked: any
-  lastBlock: any
   lastSynced: any
-  hat: any
 }
 
-export interface GetGovernanceInfo {
-  governanceInfo: GetGovernanceInfo_governanceInfo | null
+export interface GetGovernanceInfoApp {
+  governanceInfo: GetGovernanceInfoApp_governanceInfo | null
 }
 
 /* tslint:disable */
@@ -85,6 +74,34 @@ export interface GetExecutivesVotesData {
 
 export interface GetExecutivesVotesDataVariables {
   executives: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetGovernanceInfo
+// ====================================================
+
+export interface GetGovernanceInfo_governanceInfo {
+  __typename: 'GovernanceInfo'
+  id: string
+  countProxies: any
+  countAddresses: any
+  countSlates: any
+  countSpells: any
+  countLock: any
+  countFree: any
+  countPolls: any
+  locked: any
+  lastBlock: any
+  lastSynced: any
+  hat: any
+}
+
+export interface GetGovernanceInfo {
+  governanceInfo: GetGovernanceInfo_governanceInfo | null
 }
 
 /* tslint:disable */
@@ -293,6 +310,59 @@ export interface GetPollsData {
 
 export interface GetPollsDataVariables {
   polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetSpell
+// ====================================================
+
+export interface GetSpell_spell {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
+  timeLineCount: any
+  /**
+   *  Total voters supporting this spell
+   */
+  totalVotes: any | null
+}
+
+export interface GetSpell {
+  spell: GetSpell_spell | null
+}
+
+export interface GetSpellVariables {
+  id: string
 }
 
 /* tslint:disable */
