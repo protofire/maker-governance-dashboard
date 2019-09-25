@@ -7,12 +7,13 @@ const ListContainer = styled.div``
 type Props = {
   columns: Array<any>
   data: Array<any>
+  handleRow?: (row: any) => void
 }
 function List(props: Props) {
-  const { data, columns } = props
+  const { data, columns, handleRow } = props
   return (
     <ListContainer>
-      <Table expanded data={data} columns={columns} />
+      <Table handleRow={handleRow} expanded data={data} columns={columns} />
     </ListContainer>
   )
 }

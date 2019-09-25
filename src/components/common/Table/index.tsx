@@ -9,6 +9,7 @@ type TableProps = {
   data?: Array<any>
   expanded?: boolean
   limitPerPage?: number
+  handleRow?: (row: any) => void
   scrollable?: boolean
 }
 
@@ -83,6 +84,14 @@ const RowsSection = styled.div`
     &:nth-child(odd) {
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
+    &:hover {
+      ${props =>
+        props.expanded &&
+        css`
+          cursor: pointer;
+          background-color: #fafafa;
+        `}
+    }
   }
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
   ${TableRow} {
@@ -128,7 +137,8 @@ const Pager = styled.span`
   margin-right: 1rem;
 `
 
-function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps) {
+function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow }: TableProps) {
+  const handleFn = handleRow ? handleRow : () => {}
   const pageData = limitPerPage ? { pageSize: limitPerPage } : {}
   const tableState = useTableState(pageData)
 
@@ -179,7 +189,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable }: TableProps
           {page.map(
             row =>
               prepareRow(row) || (
-                <TableSection {...row.getRowProps()}>
+                <TableSection onClick={() => handleFn(row.original)} {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     return <TableRow {...cell.getCellProps()}>{cell.render('Cell')}</TableRow>
                   })}

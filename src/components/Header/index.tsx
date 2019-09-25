@@ -174,7 +174,7 @@ function Header(props: Props) {
       <Nav overlay={isOpenMenu}>
         <NavHeader>
           <NavLeft>
-            <img alt="logo" src="./maker.png" />
+            <img alt="logo" src="/maker.png" />
             <Breadcrumb>
               {items.map(({ to, label }) => (
                 <StyledLink exact activeStyle={{ color: '#000000' }} key={to} to={to}>
