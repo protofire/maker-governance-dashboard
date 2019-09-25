@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
 import { getModalContainer } from '../../utils'
+import { VotersVsMkrChart } from './Charts'
 
 import {
   WrappedContainer,
@@ -12,15 +13,17 @@ import {
   getVoteTableData,
   defaultFilters,
   getComponentData,
+  getVotersVsMkrData,
 } from './helpers'
 
 const VoteDetailContainer = styled.div``
 
 type Props = {
   vote: any
+  votingActions: Array<any>
 }
 function VoteDetails(props: Props) {
-  const { vote } = props
+  const { vote, votingActions } = props
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
@@ -32,7 +35,20 @@ function VoteDetails(props: Props) {
         component: props => <Description expanded content="Description" component="description" {...props} />,
       },
     },
-    chart: {},
+    chart: {
+      votersVsMkr: {
+        data: getVotersVsMkrData(votingActions, chartFilters.votersVsMkr),
+        component: props => (
+          <VotersVsMkr
+            expanded
+            content="Number of voters"
+            versus="Total MKR staked"
+            component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+    },
   }
 
   const setModal = (data: any, isChart: boolean = false): void => {
@@ -49,7 +65,6 @@ function VoteDetails(props: Props) {
     setChartFilters(obj)
   }
 
-  /* for chart components
   const getModalProps = (type, component, expanded = false) => {
     const data = voteMap[type][component].data
     return {
@@ -59,7 +74,7 @@ function VoteDetails(props: Props) {
       data,
     }
   }
-*/
+
   const getWrapperProps = data => {
     const { content, versus = null, component, expanded } = data
     const isChart = data.type === 'table' ? false : true
@@ -72,6 +87,20 @@ function VoteDetails(props: Props) {
       onChange: e => setFilter(e, component),
       isModalOpen: expanded,
     }
+  }
+  //Voters vs mkr data
+  const VotersVsMkr = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const currentVoters = vote.totalVotes ? vote.totalVotes : '-'
+    const currentMkr = vote.approvals ? Number(vote.approvals).toFixed(2) : '-'
+    return (
+      <VotersVsMkrChart
+        currentVoters={currentVoters}
+        currentMkr={currentMkr}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
   }
 
   //Description Data
@@ -108,7 +137,9 @@ function VoteDetails(props: Props) {
         <Card style={{ height: 300 }}>
           <Description content="Description" component="description" />
         </Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card style={{ height: 300 }}>
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
+        </Card>
         <Card style={{ height: 300 }}></Card>
         <Card style={{ height: 300 }}></Card>
         <Card style={{ height: 300 }}></Card>

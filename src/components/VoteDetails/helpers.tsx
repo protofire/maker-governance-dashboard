@@ -2,9 +2,19 @@ import styled from 'styled-components'
 import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 
-import { shortenAccount } from '../../utils'
+import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount } from '../../utils'
+
 import { Card, TitleContainer } from '../common/styled'
-import { LAST_YEAR } from '../../constants'
+import {
+  LAST_YEAR,
+  LAST_MONTH,
+  LAST_WEEK,
+  LAST_DAY,
+  VOTING_ACTION_FREE,
+  VOTING_ACTION_LOCK,
+  VOTING_ACTION_ADD,
+  VOTING_ACTION_REMOVE,
+} from '../../constants'
 
 export const getVoteTableData = vote => {
   const startDate = vote.timestamp
@@ -21,6 +31,13 @@ export const getVoteTableData = vote => {
     { value: mkr_approvals, label: 'MKR in support' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]
+}
+
+const periodsMap = {
+  [LAST_YEAR]: getLastYear,
+  [LAST_MONTH]: getLastMonth,
+  [LAST_WEEK]: getLastWeek,
+  [LAST_DAY]: getLastDay,
 }
 
 export const TableContainer = styled.div`
@@ -94,4 +111,41 @@ export const getComponentData = (
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
+}
+
+const initializeMkr = (el, data, prev) => {
+  return data
+    .filter(d => d.timestamp < el)
+    .reduce(
+      (acum, value) => (value.type === VOTING_ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)),
+      prev,
+    )
+}
+
+const formatMkrData = (el, data, prev) => {
+  return data
+    .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+    .reduce(
+      (acum, value) => (value.type === VOTING_ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)),
+      prev,
+    )
+}
+
+export const getVotersVsMkrData = (data: Array<any>, time: string): Array<any> => {
+  const periods = periodsMap[time]()
+  const countData = data.filter(el => el.type === VOTING_ACTION_ADD || el.type === VOTING_ACTION_REMOVE)
+  const mkrData = data.filter(el => el.type === VOTING_ACTION_LOCK || el.type === VOTING_ACTION_FREE)
+
+  let count = countData.filter(el => el.timestamp < periods[0].from).length
+  let mkr = initializeMkr(periods[0].from, mkrData, 0)
+
+  return periods.map(el => {
+    mkr = formatMkrData(el, mkrData, mkr)
+    count += countData.filter(d => d.timestamp >= el.from && d.timestamp <= el.to).length
+    return {
+      ...el,
+      count,
+      mkr: mkr.toFixed(2),
+    }
+  })
 }

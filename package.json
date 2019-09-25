@@ -40,6 +40,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-fragment": "API_URI=https://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance node src/schemaQuery.js",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
     "generateGQLTypes": "node scripts/generateGQLTypes.js"

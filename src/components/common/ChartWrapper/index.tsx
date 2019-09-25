@@ -9,14 +9,14 @@ type Props = {
   versus?: string
   children: React.ReactNode
   isModalOpen: boolean
+  styles: any
 }
 
 function ChartWrapper(props: Props) {
-  const { value, onChange, handleModal, children, content, versus, isModalOpen } = props
-
+  const { value, onChange, handleModal, children, content, versus, isModalOpen, styles } = props
   return (
     <>
-      <TitleContainer type="chart">
+      <TitleContainer style={styles} type="chart">
         <ChartTitle content={content} versus={versus}>
           <ChartSelect value={value} values={filters} onChange={onChange} />
         </ChartTitle>

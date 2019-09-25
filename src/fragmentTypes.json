@@ -1,0 +1,16 @@
+{
+  "__schema": {
+    "types": [
+      {
+        "kind": "INTERFACE",
+        "name": "VotingAction",
+        "possibleTypes": [
+          { "name": "AddAction" },
+          { "name": "RemoveAction" },
+          { "name": "LockAction" },
+          { "name": "FreeAction" }
+        ]
+      }
+    ]
+  }
+}

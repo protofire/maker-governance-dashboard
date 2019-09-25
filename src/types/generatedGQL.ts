@@ -370,6 +370,110 @@ export interface GetSpellVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetVotingActions
+// ====================================================
+
+export interface GetVotingActions_spell_timeLine_AddAction {
+  __typename: 'AddAction'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface GetVotingActions_spell_timeLine_RemoveAction {
+  __typename: 'RemoveAction'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface GetVotingActions_spell_timeLine_LockAction {
+  __typename: 'LockAction'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export interface GetVotingActions_spell_timeLine_FreeAction {
+  __typename: 'FreeAction'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export type GetVotingActions_spell_timeLine =
+  | GetVotingActions_spell_timeLine_AddAction
+  | GetVotingActions_spell_timeLine_RemoveAction
+  | GetVotingActions_spell_timeLine_LockAction
+  | GetVotingActions_spell_timeLine_FreeAction
+
+export interface GetVotingActions_spell {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  timeLine: GetVotingActions_spell_timeLine[] | null
+}
+
+export interface GetVotingActions {
+  spell: GetVotingActions_spell | null
+}
+
+export interface GetVotingActionsVariables {
+  id: string
+  timeLineCount?: number | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: executivesDetail
 // ====================================================
 
