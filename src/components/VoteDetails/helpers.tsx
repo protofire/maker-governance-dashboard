@@ -1,12 +1,15 @@
 import styled from 'styled-components'
 import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
 
 import { shortenAccount } from '../../utils'
 import { Card, TitleContainer } from '../common/styled'
 import { LAST_YEAR } from '../../constants'
 
 export const getVoteTableData = vote => {
-  const startDate = vote.timestamp ? fromUnixTime(vote.timestamp) : new Date(vote.date)
+  const startDate = vote.timestamp
+    ? utcToZonedTime(fromUnixTime(vote.timestamp), Intl.DateTimeFormat().resolvedOptions().timeZone)
+    : new Date(vote.date)
   const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   return [
     { value: shortenAccount(vote.source), label: 'Source' },
