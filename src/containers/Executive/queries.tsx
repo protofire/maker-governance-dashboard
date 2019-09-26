@@ -8,6 +8,7 @@ const executivesDetailFragment = gql`
     castedWith
     lifted
     liftedWith
+    approvals
   }
 `
 

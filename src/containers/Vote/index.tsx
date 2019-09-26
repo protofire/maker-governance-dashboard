@@ -22,7 +22,7 @@ type Props = {
 
 const getExecutiveVariables = data => {
   return {
-    id: data.source.toLowerCase(),
+    id: data.id.toLowerCase(),
     timeLineCount: data.timeLineCount ? Number(data.timeLineCount) : DEFAULT_FETCH_ROWS,
   }
 }
@@ -41,7 +41,7 @@ function VoteInfo(props: Props) {
   const { match } = props
   const voteId = match.params.id
 
-  const [resultVariables, setResultVariables] = useState(getExecutiveVariables({ source: '0x0' }))
+  const [resultVariables, setResultVariables] = useState(getExecutiveVariables({ id: voteId }))
   const [data, setData] = useState<any>({})
   const { data: votingData, ...votingResult } = useQuery(VOTING_ACTIONS_QUERY, { variables: resultVariables })
 
@@ -52,7 +52,6 @@ function VoteInfo(props: Props) {
       .then(({ executiveVotes }) => {
         const vote = executiveVotes.find(el => el.key === voteId)
         setData(vote)
-        setResultVariables(getExecutiveVariables({ source: vote.source }))
       })
       .catch(error => {
         console.log(error)
@@ -60,11 +59,11 @@ function VoteInfo(props: Props) {
   }, [voteId])
 
   useEffect(() => {
-    if (vData && vData.spell && data.source) {
+    if (vData && vData.spell && voteId) {
       setData(actual => ({ ...actual, ...vData.spell }))
-      setResultVariables(getExecutiveVariables({ source: data.source, timeLineCount: vData.spell.timeLineCount }))
+      setResultVariables(getExecutiveVariables({ id: voteId, timeLineCount: vData.spell.timeLineCount }))
     }
-  }, [vData, data.source])
+  }, [vData, voteId])
 
   if (!data || vResult.error || votingResult.error) return <Error />
   if (Object.keys(data).length === 0 || vResult.loading || votingResult.loading) return <Loading />

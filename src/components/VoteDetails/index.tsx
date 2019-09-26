@@ -135,7 +135,7 @@ function VoteDetails(props: Props) {
           </TableContainer>
         </Card>
         <Card style={{ height: 300 }}>
-          <Description content="Description" component="description" />
+          {vote.about && <Description content="Description" component="description" />}
         </Card>
         <Card style={{ height: 300 }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />

@@ -23,7 +23,7 @@ export const getVoteTableData = vote => {
     : new Date(vote.date)
   const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   return [
-    { value: shortenAccount(vote.source), label: 'Source' },
+    { value: shortenAccount(vote.id), label: 'Source' },
     { value: format(startDate, 'P'), label: 'Started' },
     { value: mkr_approvals ? 'Yes' : 'No', label: 'Voted' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Ended' },
@@ -145,12 +145,14 @@ export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
   const periods = getDailyFromTo(from, to)
   const countData = data.filter(el => el.type === VOTING_ACTION_ADD || el.type === VOTING_ACTION_REMOVE)
 
-  let count = countData.filter(el => el.timestamp < periods[0].from).length
+  let count = 0
   let mkr = initializeMkr(periods[0].from, data, new BigNumber(0))
 
   return periods.map(el => {
     mkr = formatMkrData(el, data, mkr)
-    count += countData.filter(d => d.timestamp >= el.from && d.timestamp <= el.to).length
+    count = countData
+      .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+      .reduce((acc, d) => (d.type === VOTING_ACTION_ADD ? ++acc : --acc), count)
     return {
       ...el,
       count,
