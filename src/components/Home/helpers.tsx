@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { format, fromUnixTime } from 'date-fns'
 import gini from 'gini'
+import BigNumber from 'bignumber.js'
 import { Card, TitleContainer, Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
@@ -56,8 +57,8 @@ const initGiniMkr = (data, initial) => {
   return data
     .filter(d => d.timestamp < initial.to)
     .reduce((acum, value) => {
-      let mkr = acum[value.sender] || 0
-      mkr = value.type === 'FREE' ? mkr - Number(value.wad) : mkr + Number(value.wad)
+      let mkr = acum[value.sender] || new BigNumber(0)
+      mkr = value.type === 'FREE' ? mkr.minus(new BigNumber(value.wad)) : mkr.plus(new BigNumber(value.wad))
 
       return {
         ...acum,
@@ -70,8 +71,8 @@ const formatGiniData = (el, data, prev) => {
   return data
     .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
     .reduce((acum, value) => {
-      let mkr = acum[value.sender] || 0
-      mkr = value.type === 'FREE' ? mkr - Number(value.wad) : mkr + Number(value.wad)
+      let mkr = acum[value.sender] || new BigNumber(0)
+      mkr = value.type === 'FREE' ? mkr.minus(new BigNumber(value.wad)) : mkr.plus(new BigNumber(value.wad))
 
       return {
         ...acum,
@@ -100,7 +101,7 @@ export const getGiniData = (totalMkr: Array<any>, time: string): Array<any> => {
       {
         label: k,
         gini: Object.keys(res[k]).length
-          ? gini.unordered(Object.keys(res[k]).map(a => (res[k][a] < 0 ? 0 : res[k][a]))).toFixed(2)
+          ? gini.unordered(Object.keys(res[k]).map(a => res[k][a].toNumber())).toFixed(2)
           : 0,
       },
     ]

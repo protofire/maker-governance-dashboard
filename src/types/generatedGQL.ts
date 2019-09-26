@@ -375,6 +375,9 @@ export interface GetSpellVariables {
 
 export interface GetVotingActions_spell_timeLine_AddAction {
   __typename: 'AddAction'
+  /**
+   *  Equals to: <ADD | ADD-ARRAY>-<transactionHash>-<logIndex>
+   */
   id: string
   /**
    *  Action timestamp as seconds (time)
@@ -384,6 +387,9 @@ export interface GetVotingActions_spell_timeLine_AddAction {
    *  Transaction hash (tx)
    */
   transactionHash: any
+  /**
+   *  Voter's Address
+   */
   sender: any
   /**
    *  Amount of loked MKR the sender had at the moment this action is performed
@@ -393,6 +399,9 @@ export interface GetVotingActions_spell_timeLine_AddAction {
 
 export interface GetVotingActions_spell_timeLine_RemoveAction {
   __typename: 'RemoveAction'
+  /**
+   *  Equals to: <REMOVE | REMOVE-ARRAY>-<transactionHash>-<logIndex>
+   */
   id: string
   /**
    *  Action timestamp as seconds (time)
@@ -402,6 +411,9 @@ export interface GetVotingActions_spell_timeLine_RemoveAction {
    *  Transaction hash (tx)
    */
   transactionHash: any
+  /**
+   *  Voter's Address
+   */
   sender: any
   /**
    *  Amount of loked MKR the sender had at the moment this action is performed
@@ -411,6 +423,9 @@ export interface GetVotingActions_spell_timeLine_RemoveAction {
 
 export interface GetVotingActions_spell_timeLine_LockAction {
   __typename: 'LockAction'
+  /**
+   *  Equals to: <LOCK>-<transactionHash>-<logIndex>
+   */
   id: string
   /**
    *  Action timestamp as seconds (time)
@@ -420,6 +435,9 @@ export interface GetVotingActions_spell_timeLine_LockAction {
    *  Transaction hash (tx)
    */
   transactionHash: any
+  /**
+   *  Voter's Address
+   */
   sender: any
   /**
    *  Amount of MKR locked or withdrawn
@@ -429,6 +447,9 @@ export interface GetVotingActions_spell_timeLine_LockAction {
 
 export interface GetVotingActions_spell_timeLine_FreeAction {
   __typename: 'FreeAction'
+  /**
+   *  Equals to: <FREE>-<transactionHash>-<logIndex>
+   */
   id: string
   /**
    *  Action timestamp as seconds (time)
@@ -438,6 +459,9 @@ export interface GetVotingActions_spell_timeLine_FreeAction {
    *  Transaction hash (tx)
    */
   transactionHash: any
+  /**
+   *  Voter's Address
+   */
   sender: any
   /**
    *  Amount of MKR locked or withdrawn
