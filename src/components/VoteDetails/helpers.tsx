@@ -1,8 +1,9 @@
 import styled from 'styled-components'
-import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { getUnixTime, fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
+import BigNumber from 'bignumber.js'
 
-import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount } from '../../utils'
+import { getDailyFromTo, getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount } from '../../utils'
 
 import { Card, TitleContainer } from '../common/styled'
 import {
@@ -113,39 +114,47 @@ export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
 }
 
-const initializeMkr = (el, data, prev) => {
+const initializeMkr = (el, data, prev: BigNumber) => {
   return data
     .filter(d => d.timestamp < el)
-    .reduce(
-      (acum, value) => (value.type === VOTING_ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)),
-      prev,
-    )
+    .reduce((acum, value) => {
+      if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
+        return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      } else {
+        return acum.plus(value.type === VOTING_ACTION_LOCK ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      }
+    }, prev)
 }
 
-const formatMkrData = (el, data, prev) => {
+const formatMkrData = (el, data, prev: BigNumber) => {
   return data
     .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
-    .reduce(
-      (acum, value) => (value.type === VOTING_ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)),
-      prev,
-    )
+    .reduce((acum, value) => {
+      if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
+        return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      } else {
+        return acum.plus(value.type === VOTING_ACTION_LOCK ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      }
+    }, prev)
 }
 
-export const getVotersVsMkrData = (data: Array<any>, time: string): Array<any> => {
-  const periods = periodsMap[time]()
+export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
+  const from = vote.timestamp
+  const to = getUnixTime(Date.now())
+
+  const periods = getDailyFromTo(from, to)
   const countData = data.filter(el => el.type === VOTING_ACTION_ADD || el.type === VOTING_ACTION_REMOVE)
-  const mkrData = data.filter(el => el.type === VOTING_ACTION_LOCK || el.type === VOTING_ACTION_FREE)
 
   let count = countData.filter(el => el.timestamp < periods[0].from).length
-  let mkr = initializeMkr(periods[0].from, mkrData, 0)
+  let mkr = initializeMkr(periods[0].from, data, new BigNumber(0))
 
   return periods.map(el => {
-    mkr = formatMkrData(el, mkrData, mkr)
+    mkr = formatMkrData(el, data, mkr)
     count += countData.filter(d => d.timestamp >= el.from && d.timestamp <= el.to).length
     return {
       ...el,
       count,
-      mkr: mkr.toFixed(2),
+      mkr: mkr.toNumber().toFixed(2),
     }
   })
 }

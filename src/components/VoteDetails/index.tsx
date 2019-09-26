@@ -37,7 +37,7 @@ function VoteDetails(props: Props) {
     },
     chart: {
       votersVsMkr: {
-        data: getVotersVsMkrData(votingActions, chartFilters.votersVsMkr),
+        data: getVotersVsMkrData(votingActions, vote),
         component: props => (
           <VotersVsMkr
             expanded

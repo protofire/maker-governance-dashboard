@@ -65,6 +65,7 @@ function VoteInfo(props: Props) {
       setResultVariables(getExecutiveVariables({ source: data.source, timeLineCount: vData.spell.timeLineCount }))
     }
   }, [vData, data.source])
+
   if (!data || vResult.error || votingResult.error) return <Error />
   if (Object.keys(data).length === 0 || vResult.loading || votingResult.loading) return <Loading />
 

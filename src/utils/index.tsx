@@ -8,6 +8,7 @@ import {
   getUnixTime,
   fromUnixTime,
   format,
+  addDays,
   subDays,
   startOfDay,
   endOfDay,
@@ -82,6 +83,23 @@ export const getLastMonth = () => {
     }
   })
   return periods.reverse()
+}
+
+export const getDailyFromTo = (from, to) => {
+  const start = startOfDay(fromUnixTime(from))
+  const end = endOfDay(fromUnixTime(to))
+  const getDaysDifference = differenceInDays(end, start)
+
+  const periods = Array.from({ length: getDaysDifference + 1 }, (v, i) => i).map(num => {
+    const from = startOfDay(addDays(start, num))
+    const to = endOfDay(addDays(start, num))
+    return {
+      from: getUnixTime(from),
+      to: getUnixTime(to),
+      label: format(from, 'dd MMM').toUpperCase(),
+    }
+  })
+  return periods
 }
 
 export const getLastWeek = () => {
