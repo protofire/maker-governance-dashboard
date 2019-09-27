@@ -42,8 +42,7 @@ function ExecutiveInfo(props) {
   const excutivesData = useQuery(VOTES_FIRST_QUERY, { variables: resultVariables })
 
   const getVote = row => {
-    //Temporal fix as we don't have all the executive votes thru the API
-    if (row.key) props.history.push(`/executive/${row.key}`)
+    if (row.id) props.history.push(`/executive/${row.id}`)
   }
 
   useEffect(() => {
@@ -54,7 +53,17 @@ function ExecutiveInfo(props) {
     if (excutivesData.data && excutivesData.data.spells) {
       getMakerDaoData()
         .then(({ executiveVotes }) => {
-          setData([...executiveVotes, ...excutivesData.data.spells])
+          setData(
+            excutivesData.data.spells.map(spell => {
+              const proposal = executiveVotes.find(prop => {
+                return prop.source.toLowerCase() === spell.id.toLowerCase()
+              })
+              return {
+                ...spell,
+                ...proposal,
+              }
+            }),
+          )
         })
         .catch(error => {
           console.log(error)

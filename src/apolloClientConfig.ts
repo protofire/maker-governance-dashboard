@@ -1,9 +1,15 @@
 import { ApolloClient } from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
+
+import introspectionQueryResultData from './fragmentTypes.json'
+
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData,
+})
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -32,5 +38,5 @@ const link = split(
 
 export const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({ fragmentMatcher }),
 })

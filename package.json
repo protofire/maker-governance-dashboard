@@ -14,6 +14,7 @@
     "apollo-link-error": "^1.1.11",
     "apollo-link-http": "^1.5.15",
     "apollo-link-ws": "^1.0.18",
+    "bignumber.js": "^9.0.0",
     "date-fns": "^2.1.0",
     "date-fns-tz": "^1.0.7",
     "dotenv-flow": "^3.1.0",
@@ -22,7 +23,9 @@
     "graphql": "^14.5.4",
     "graphql-tag": "^2.10.1",
     "gray-matter": "^4.0.2",
+    "install": "^0.13.0",
     "ipfs-only-hash": "^1.0.2",
+    "npm": "^6.11.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-hamburger-menu": "^1.1.1",
@@ -40,6 +43,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-fragment": "API_URI=https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance node src/schemaQuery.js",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
     "generateGQLTypes": "node scripts/generateGQLTypes.js"

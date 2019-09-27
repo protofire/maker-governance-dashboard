@@ -1,10 +1,21 @@
 import styled from 'styled-components'
-import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { getUnixTime, fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
+import BigNumber from 'bignumber.js'
 
-import { shortenAccount } from '../../utils'
+import { getDailyFromTo, getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount } from '../../utils'
+
 import { Card, TitleContainer } from '../common/styled'
-import { LAST_YEAR } from '../../constants'
+import {
+  LAST_YEAR,
+  LAST_MONTH,
+  LAST_WEEK,
+  LAST_DAY,
+  VOTING_ACTION_FREE,
+  VOTING_ACTION_LOCK,
+  VOTING_ACTION_ADD,
+  VOTING_ACTION_REMOVE,
+} from '../../constants'
 
 export const getVoteTableData = vote => {
   const startDate = vote.timestamp
@@ -12,7 +23,7 @@ export const getVoteTableData = vote => {
     : new Date(vote.date)
   const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   return [
-    { value: shortenAccount(vote.source), label: 'Source' },
+    { value: shortenAccount(vote.id), label: 'Source' },
     { value: format(startDate, 'P'), label: 'Started' },
     { value: mkr_approvals ? 'Yes' : 'No', label: 'Voted' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Ended' },
@@ -21,6 +32,13 @@ export const getVoteTableData = vote => {
     { value: mkr_approvals, label: 'MKR in support' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]
+}
+
+const periodsMap = {
+  [LAST_YEAR]: getLastYear,
+  [LAST_MONTH]: getLastMonth,
+  [LAST_WEEK]: getLastWeek,
+  [LAST_DAY]: getLastDay,
 }
 
 export const TableContainer = styled.div`
@@ -94,4 +112,51 @@ export const getComponentData = (
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
+}
+
+const initializeMkr = (el, data, prev: BigNumber) => {
+  return data
+    .filter(d => d.timestamp < el)
+    .reduce((acum, value) => {
+      if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
+        return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      } else {
+        return acum.plus(value.type === VOTING_ACTION_LOCK ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      }
+    }, prev)
+}
+
+const formatMkrData = (el, data, prev: BigNumber) => {
+  return data
+    .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+    .reduce((acum, value) => {
+      if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
+        return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      } else {
+        return acum.plus(value.type === VOTING_ACTION_LOCK ? new BigNumber(value.wad) : new BigNumber(value.locked))
+      }
+    }, prev)
+}
+
+export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
+  const from = vote.timestamp
+  const to = getUnixTime(Date.now())
+
+  const periods = getDailyFromTo(from, to)
+  const countData = data.filter(el => el.type === VOTING_ACTION_ADD || el.type === VOTING_ACTION_REMOVE)
+
+  let count = 0
+  let mkr = initializeMkr(periods[0].from, data, new BigNumber(0))
+
+  return periods.map(el => {
+    mkr = formatMkrData(el, data, mkr)
+    count = countData
+      .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+      .reduce((acc, d) => (d.type === VOTING_ACTION_ADD ? ++acc : --acc), count)
+    return {
+      ...el,
+      count,
+      mkr: mkr.toNumber().toFixed(2),
+    }
+  })
 }

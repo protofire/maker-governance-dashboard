@@ -6,4 +6,10 @@ export const LAST_DAY = 'last_day'
 export const ACTION_FREE = 'FREE'
 export const ACTION_LOCK = 'LOCK'
 
+//Voting actions
+export const VOTING_ACTION_FREE = 'FreeAction'
+export const VOTING_ACTION_LOCK = 'LockAction'
+export const VOTING_ACTION_ADD = 'AddAction'
+export const VOTING_ACTION_REMOVE = 'RemoveAction'
+
 export const DEFAULT_FETCH_ROWS = 300

@@ -1,5 +1,5 @@
 import React from 'react'
-import { format, fromUnixTime, formatDistance } from 'date-fns'
+import { format, fromUnixTime, formatDistance, differenceInMonths } from 'date-fns'
 import { Link } from '../common/styled'
 import { timeLeft } from '../../utils'
 
@@ -36,6 +36,12 @@ export const Executivecolumns = () => {
     {
       Header: 'Status',
       accessor: 'status',
+      Cell: ({ row }) =>
+        row.original.casted
+          ? 'Passed'
+          : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12
+          ? 'Open'
+          : 'Limbo',
     },
     {
       Header: 'Name',
@@ -47,12 +53,7 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'MKR in support',
-      accessor: row =>
-        row.castedWith === undefined
-          ? row.end_approvals
-          : row.castedWith
-          ? (row.castedWith / Math.pow(10, 18)).toFixed(2)
-          : '-',
+      accessor: row => Number(row.approvals).toFixed(2),
     },
     {
       Header: 'Started',
@@ -65,6 +66,7 @@ export const Executivecolumns = () => {
     {
       Header: 'Executed',
       accessor: 'executed',
+      Cell: ({ row }) => (row.original.casted ? format(fromUnixTime(row.original.casted), 'dd MMM yy') : 'NO'),
     },
   ]
 }
