@@ -139,6 +139,9 @@ const formatMkrData = (el, data, prev: BigNumber) => {
 }
 
 export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
+  if (!vote || !vote.timestamp) {
+    return []
+  }
   const from = vote.timestamp
   const to = getUnixTime(Date.now())
 
