@@ -3,14 +3,11 @@ import { getUnixTime, fromUnixTime, format, formatDistanceToNow } from 'date-fns
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
 
-import { getDailyFromTo, getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount } from '../../utils'
+import { getDailyFromTo, shortenAccount } from '../../utils'
 
 import { Card, TitleContainer } from '../common/styled'
 import {
   LAST_YEAR,
-  LAST_MONTH,
-  LAST_WEEK,
-  LAST_DAY,
   VOTING_ACTION_FREE,
   VOTING_ACTION_LOCK,
   VOTING_ACTION_ADD,
@@ -32,13 +29,6 @@ export const getVoteTableData = vote => {
     { value: mkr_approvals, label: 'MKR in support' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]
-}
-
-const periodsMap = {
-  [LAST_YEAR]: getLastYear,
-  [LAST_MONTH]: getLastMonth,
-  [LAST_WEEK]: getLastWeek,
-  [LAST_DAY]: getLastDay,
 }
 
 export const TableContainer = styled.div`
@@ -139,6 +129,9 @@ const formatMkrData = (el, data, prev: BigNumber) => {
 }
 
 export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
+  if (!vote || !vote.timestamp) {
+    return []
+  }
   const from = vote.timestamp
   const to = getUnixTime(Date.now())
 
