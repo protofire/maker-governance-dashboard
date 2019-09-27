@@ -16,6 +16,14 @@ import {
   getVotersVsMkrData,
 } from './helpers'
 
+const NoData = styled.span`
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+`
+
 const VoteDetailContainer = styled.div``
 
 type Props = {
@@ -135,7 +143,11 @@ function VoteDetails(props: Props) {
           </TableContainer>
         </Card>
         <Card style={{ height: 300 }}>
-          {vote.about && <Description content="Description" component="description" />}
+          {vote.about ? (
+            <Description content="Description" component="description" />
+          ) : (
+            <NoData>No data to display.</NoData>
+          )}
         </Card>
         <Card style={{ height: 300 }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
