@@ -1,5 +1,8 @@
 import React from 'react'
-import { ChartTitle, TitleContainer, ExpandIcon, ChartSelect } from '../../common'
+import styled from 'styled-components'
+
+import { ChartTitle, ExpandIcon, ChartSelect } from '../../common'
+import { TitleContainer } from '../styled/index'
 import { filters, getIconContainer } from '../../../utils'
 type Props = {
   value: string
@@ -12,16 +15,20 @@ type Props = {
   styles: any
 }
 
+const ChartTitleContainer = styled(TitleContainer)`
+  padding-top: 9px;
+`
+
 function ChartWrapper(props: Props) {
   const { value, onChange, handleModal, children, content, versus, isModalOpen, styles } = props
   return (
     <>
-      <TitleContainer style={styles} type="chart">
+      <ChartTitleContainer style={styles} type="chart">
         <ChartTitle content={content} versus={versus}>
           <ChartSelect value={value} values={filters} onChange={onChange} />
         </ChartTitle>
         {getIconContainer(ExpandIcon, handleModal, isModalOpen)}
-      </TitleContainer>
+      </ChartTitleContainer>
       {children}
     </>
   )
