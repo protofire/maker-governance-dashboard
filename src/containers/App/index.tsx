@@ -10,6 +10,7 @@ import Home from '../Home'
 import Polls from '../Polls'
 import Executive from '../Executive'
 import Vote from '../Vote'
+import Poll from '../Poll'
 
 import Breadcrumb from '../../components/Breadcrumb'
 import Header from '../../components/Header'
@@ -65,6 +66,7 @@ function App() {
           <Route exact path="/executive" component={Executive} />
           <Route exact path="/executive/:id" component={Vote} />
           <Route exact path="/polls" component={Polls} />
+          <Route exact path="/poll/:id" component={Poll} />
         </Switch>
       </AppWrapper>
       <Footer>

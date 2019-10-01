@@ -9,6 +9,8 @@ type Props = {
   isModalOpen: boolean
 }
 
+const DescriptionText = styled.span``
+
 const DescriptionContainer = styled.div`
   font-size: 13px;
   display: flex;
@@ -19,14 +21,12 @@ const DescriptionContainer = styled.div`
   bottom: 6px;
 `
 
-const DescriptionText = styled.span``
-
 function DescriptionWrapper(props: Props) {
   const { handleModal, children, content, isModalOpen } = props
 
   return (
     <>
-      <DescriptionContainer>
+      <DescriptionContainer isModalOpen={isModalOpen}>
         <DescriptionText>{content}</DescriptionText>
         {getIconContainer(
           () => (
