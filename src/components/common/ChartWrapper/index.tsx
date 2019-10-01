@@ -13,6 +13,7 @@ type Props = {
   children: React.ReactNode
   isModalOpen: boolean
   hideFilters: boolean
+  hideIcon: boolean
   styles: any
 }
 
@@ -21,14 +22,14 @@ const ChartTitleContainer = styled(TitleContainer)`
 `
 
 function ChartWrapper(props: Props) {
-  const { value, onChange, handleModal, children, content, versus, isModalOpen, styles, hideFilters } = props
+  const { value, onChange, handleModal, children, content, versus, isModalOpen, styles, hideFilters, hideIcon } = props
   return (
     <>
       <ChartTitleContainer style={styles} type="chart">
         <ChartTitle content={content} versus={versus}>
           {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
         </ChartTitle>
-        {getIconContainer(ExpandIcon, handleModal, isModalOpen)}
+        {!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}
       </ChartTitleContainer>
       {children}
     </>

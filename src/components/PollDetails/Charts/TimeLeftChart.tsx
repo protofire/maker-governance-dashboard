@@ -35,8 +35,7 @@ const TimeLeftChart = props => {
   const number = data ? data[0].text.split(' ')[0] : 0
   const unit = data ? data[0].text.split(' ')[1] : 'days'
   return (
-    <ChartWrapper styles={customStyles} {...wrapperProps}>
-      {console.log(data)}
+    <ChartWrapper hideIcon hideFilters styles={customStyles} {...wrapperProps}>
       <ValueContainer>
         {data[0].text === 'Ended' ? (
           <span style={{ fontSize: 16 }}>{data[0].text}</span>
@@ -49,10 +48,6 @@ const TimeLeftChart = props => {
       </ValueContainer>
       <PieChart width={300} height={300}>
         <Pie data={data} innerRadius={100} dataKey="value">
-          <text textAnchor="middle" fill={'red'}>
-            {'jefucho'}
-          </text>
-
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
