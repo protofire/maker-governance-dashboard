@@ -10,7 +10,7 @@ const customStyles = {
 const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps, currentVoters, currentMkr } = props
   return (
-    <ChartWrapper styles={customStyles} {...wrapperProps}>
+    <ChartWrapper hideFilters styles={customStyles} {...wrapperProps}>
       <Chart {...modalProps}>
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />
