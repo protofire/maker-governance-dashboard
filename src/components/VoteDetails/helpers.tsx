@@ -31,6 +31,15 @@ export const getVoteTableData = vote => {
   ]
 }
 
+export const getTopSupportersTableData = (supporters, vote) => {
+  const total = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
+  const data = Object.entries(supporters).map((el: any) => ({
+    sender: shortenAccount(el[0]),
+    supports: ((el[1].mkr * 100) / total).toFixed(1),
+  }))
+
+  return data.sort((a: any, b: any) => b.supports - a.supports)
+}
 export const TableContainer = styled.div`
   display: flex;
   flex: 1;
@@ -149,7 +158,26 @@ export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
     return {
       ...el,
       count,
-      mkr: mkr.toNumber().toFixed(2),
+      mkr: Number(mkr.toNumber().toFixed(2)),
     }
   })
+}
+
+const getSupporterMkr = (acum, value) => {
+  if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
+    return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
+  } else {
+    return acum.plus(value.type === VOTING_ACTION_LOCK ? new BigNumber(value.wad) : new BigNumber(value.locked))
+  }
+}
+
+export const getTopSupporters = (data: Array<any>): Array<any> => {
+  return data.reduce((acum, value) => {
+    let mkr = acum[value.sender] ? acum[value.sender].original : new BigNumber(0)
+    mkr = getSupporterMkr(mkr, value)
+    return {
+      ...acum,
+      [value.sender]: { mkr: mkr.toNumber().toFixed(2), original: mkr },
+    }
+  }, {})
 }

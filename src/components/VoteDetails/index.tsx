@@ -14,6 +14,8 @@ import {
   defaultFilters,
   getComponentData,
   getVotersVsMkrData,
+  getTopSupporters,
+  getTopSupportersTableData,
 } from './helpers'
 
 const NoData = styled.span`
@@ -36,6 +38,7 @@ function VoteDetails(props: Props) {
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
+  const topSupporters = getTopSupporters(votingActions)
   const voteMap = {
     table: {
       description: {
@@ -154,7 +157,21 @@ function VoteDetails(props: Props) {
         </Card>
         <Card style={{ height: 300 }}></Card>
         <Card style={{ height: 300 }}></Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card type="table" style={{ padding: 0 }}>
+          <Container>
+            <TableTitle>Top Supporters</TableTitle>
+          </Container>
+          <TableContainer>
+            {getTopSupportersTableData(topSupporters, vote)
+              .slice(0, 8)
+              .map(el => (
+                <TableRow key={el.sender}>
+                  <span>{el.supports}%</span>
+                  <span>{el.sender}</span>
+                </TableRow>
+              ))}
+          </TableContainer>
+        </Card>
       </WrappedContainer>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
