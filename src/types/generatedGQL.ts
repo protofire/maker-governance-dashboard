@@ -284,6 +284,56 @@ export interface GovernanceInfo {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetPollsInfoPage
+// ====================================================
+
+export interface GetPollsInfoPage_governanceInfo {
+  __typename: 'GovernanceInfo'
+  countPolls: any
+}
+
+export interface GetPollsInfoPage {
+  governanceInfo: GetPollsInfoPage_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPollsDataPage
+// ====================================================
+
+export interface GetPollsDataPage_polls {
+  __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  startDate: any
+  endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+}
+
+export interface GetPollsDataPage {
+  polls: GetPollsDataPage_polls[]
+}
+
+export interface GetPollsDataPageVariables {
+  polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: GetPollsInfo
 // ====================================================
 

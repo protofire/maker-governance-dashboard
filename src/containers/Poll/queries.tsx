@@ -13,7 +13,7 @@ const pollsDetailFragment = gql`
 `
 
 export const GOVERNANCE_INFO_QUERY = gql`
-  query GetPollsInfo {
+  query GetPollsInfoPage {
     governanceInfo(id: "0x0") {
       countPolls
     }
@@ -21,7 +21,7 @@ export const GOVERNANCE_INFO_QUERY = gql`
 `
 
 export const POLLS_FIRST_QUERY = gql`
-  query GetPollsData($polls: Int!) {
+  query GetPollsDataPage($polls: Int!) {
     polls(first: $polls) {
       ...pollsDetailPage
     }
