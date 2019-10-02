@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { fromUnixTime } from 'date-fns'
+
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
@@ -45,6 +47,12 @@ function ExecutiveInfo(props) {
     if (row.id) props.history.push(`/executive/${row.id}`)
   }
 
+  const defaultSort = (a, b) => {
+    const dateA = a.timestamp ? fromUnixTime(a.timestamp) : new Date(a.date)
+    const dateB = b.timestamp ? fromUnixTime(b.timestamp) : new Date(b.date)
+    return dateA > dateB ? -1 : 1
+  }
+
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
@@ -76,7 +84,7 @@ function ExecutiveInfo(props) {
   return (
     <ExecutiveContainer>
       <PageTitle>Executive Votes</PageTitle>
-      <List handleRow={getVote} data={data} columns={executivecolumns} />
+      <List handleRow={getVote} data={data.sort(defaultSort)} columns={executivecolumns} />
     </ExecutiveContainer>
   )
 }

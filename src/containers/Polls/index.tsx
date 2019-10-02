@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import { fromUnixTime } from 'date-fns'
 
 import styled from 'styled-components'
 
@@ -45,6 +46,9 @@ function PollsInfo(props) {
   const getPoll = row => {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
+
+  const defaultSort = (a, b) => (fromUnixTime(a.startDate) > fromUnixTime(b.startDate) ? -1 : 1)
+
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
@@ -53,8 +57,7 @@ function PollsInfo(props) {
     if (pollsData.data && pollsData.data.polls) {
       Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
         const polls = result[0].filter(Boolean)
-        const { historicalPolls } = result[1]
-        setData([...polls, ...historicalPolls])
+        setData([...polls])
       })
     }
   }, [pollsData.data])
@@ -65,7 +68,7 @@ function PollsInfo(props) {
   return (
     <PollsContainer>
       <PageTitle>Polls</PageTitle>
-      <List handleRow={getPoll} data={data} columns={pollcolumns} />
+      <List handleRow={getPoll} data={data.sort(defaultSort)} columns={pollcolumns} />
     </PollsContainer>
   )
 }

@@ -16,12 +16,14 @@ export const Pollcolumns = () => {
     },
     {
       Header: 'Started',
-      accessor: 'startDate',
+      accessor: row => fromUnixTime(row.startDate),
+      sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
     },
     {
       Header: 'Ended',
-      accessor: 'endDate',
+      accessor: row => fromUnixTime(row.endDate),
+      sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
     },
     {
@@ -57,7 +59,8 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Started',
-      accessor: 'date',
+      accessor: row => (!row.timestamp ? new Date(row.date) : fromUnixTime(row.timestamp)),
+      sortType: 'datetime',
       Cell: ({ row }) =>
         !row.original.timestamp
           ? formatDistance(new Date(row.original.date), new Date(), { addSuffix: true })

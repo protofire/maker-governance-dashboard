@@ -55,9 +55,7 @@ function PollInfo(props: Props) {
     if (pollsData.data && pollsData.data.polls) {
       Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
         const polls = result[0].filter(Boolean)
-        const { historicalPolls } = result[1]
-        const totalPolls = [...polls, ...historicalPolls]
-        setData(totalPolls.find(el => el.id === pollId))
+        setData(polls.find((el: any) => el.id === pollId))
       })
     }
   }, [pollsData.data, pollId])
