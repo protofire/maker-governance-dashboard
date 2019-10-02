@@ -178,7 +178,6 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow }:
                 <HeaderRow {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
                   <span>
-                    {console.log(column)}
                     {column.isSorted ? (
                       column.isSortedDesc ? (
                         <ArrowSort up={false} />
