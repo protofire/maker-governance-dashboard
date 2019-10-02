@@ -178,7 +178,16 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow }:
                 <HeaderRow {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
                   <span>
-                    {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
+                    {console.log(column)}
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <ArrowSort up={false} />
+                      ) : (
+                        <ArrowSort up={true} />
+                      )
+                    ) : (
+                      column.defaultDescSorted && <ArrowSort up={false} />
+                    )}
                   </span>
                 </HeaderRow>
               ))}

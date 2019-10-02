@@ -16,6 +16,7 @@ export const Pollcolumns = () => {
     },
     {
       Header: 'Started',
+      defaultDescSorted: true,
       accessor: row => fromUnixTime(row.startDate),
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
@@ -59,6 +60,7 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Started',
+      defaultDescSorted: true,
       accessor: row => (!row.timestamp ? new Date(row.date) : fromUnixTime(row.timestamp)),
       sortType: 'datetime',
       Cell: ({ row }) =>
