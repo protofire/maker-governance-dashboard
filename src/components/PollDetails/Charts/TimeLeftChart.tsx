@@ -18,7 +18,7 @@ const ValueContainer = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: center;
-  left: 9.6rem;
+  left: ${props => (props.ended ? '9.3rem' : '9.6rem')};
   span:first-child {
     color: #000000;
     font-size: 26px;
@@ -36,7 +36,7 @@ const TimeLeftChart = props => {
   const unit = data ? data[0].text.split(' ')[1] : 'days'
   return (
     <ChartWrapper hideIcon hideFilters styles={customStyles} {...wrapperProps}>
-      <ValueContainer>
+      <ValueContainer ended={data[0].text === 'Ended'}>
         {data[0].text === 'Ended' ? (
           <span style={{ fontSize: 16 }}>{data[0].text}</span>
         ) : (
