@@ -66,6 +66,10 @@ export interface GetExecutivesVotesData_spells {
    *  How much MKR it has when the spell is lifted to hat
    */
   liftedWith: any | null
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
 }
 
 export interface GetExecutivesVotesData {
@@ -114,6 +118,9 @@ export interface GetGovernanceInfo {
 
 export interface GetPolls_polls {
   __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
   id: string
   creator: any | null
   url: string | null
@@ -136,6 +143,9 @@ export interface GetPolls {
 
 export interface getHomeData_polls {
   __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
   id: string
   creator: any | null
   url: string | null
@@ -296,6 +306,9 @@ export interface GetPollsInfo {
 
 export interface GetPollsData_polls {
   __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
   id: string
   creator: any | null
   url: string | null
@@ -498,10 +511,10 @@ export interface GetVotingActionsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: executivesDetail
+// GraphQL fragment: executivesDetailPage
 // ====================================================
 
-export interface executivesDetail {
+export interface executivesDetailPage {
   __typename: 'Spell'
   /**
    *  ID represent the contract address
@@ -527,6 +540,10 @@ export interface executivesDetail {
    *  How much MKR it has when the spell is lifted to hat
    */
   liftedWith: any | null
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
 }
 
 /* tslint:disable */
@@ -583,17 +600,81 @@ export interface actionsDetail {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL fragment: executivesDetail
+// ====================================================
+
+export interface executivesDetail {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: pollsDetail
 // ====================================================
 
 export interface pollsDetail {
   __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
   id: string
   creator: any | null
   url: string | null
   pollId: any
   startDate: any
   endDate: any
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: pollsDetailPage
+// ====================================================
+
+export interface pollsDetailPage {
+  __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  startDate: any
+  endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
 }
 
 /* tslint:disable */

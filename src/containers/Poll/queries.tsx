@@ -1,13 +1,14 @@
 import gql from 'graphql-tag'
 
 const pollsDetailFragment = gql`
-  fragment pollsDetail on Poll {
+  fragment pollsDetailPage on Poll {
     id
     creator
     url
     pollId
     startDate
     endDate
+    votesCount
   }
 `
 
@@ -22,7 +23,7 @@ export const GOVERNANCE_INFO_QUERY = gql`
 export const POLLS_FIRST_QUERY = gql`
   query GetPollsData($polls: Int!) {
     polls(first: $polls) {
-      ...pollsDetail
+      ...pollsDetailPage
     }
   }
   ${pollsDetailFragment}

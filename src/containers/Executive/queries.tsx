@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 const executivesDetailFragment = gql`
-  fragment executivesDetail on Spell {
+  fragment executivesDetailPage on Spell {
     id
     timestamp
     casted
@@ -23,7 +23,7 @@ export const GOVERNANCE_INFO_QUERY = gql`
 export const VOTES_FIRST_QUERY = gql`
   query GetExecutivesVotesData($executives: Int!) {
     spells(first: $executives) {
-      ...executivesDetail
+      ...executivesDetailPage
     }
   }
   ${executivesDetailFragment}

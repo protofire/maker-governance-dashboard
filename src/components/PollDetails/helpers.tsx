@@ -66,9 +66,9 @@ export const getPollTableData = poll => {
   return [
     { value: shortenAccount(poll.source.toLowerCase()), label: 'Source' },
     { value: format(fromUnixTime(poll.startDate), 'P'), label: 'Started' },
-    { value: !poll.active ? 'Yes' : 'No', label: 'Voted' },
-    { value: !poll.active ? 'Yes' : 'No', label: 'Ended' },
-    { value: !poll.active ? 'Closed' : 'Active', label: 'Status' },
+    { value: Number(poll.votesCount) === 0 ? 'No' : 'Yes', label: 'Voted' },
+    { value: timeLeft(poll.endDate) === 'Ended' ? 'Yes' : 'No', label: 'Ended' },
+    { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Active', label: 'Status' },
     { value: formatDistanceToNow(fromUnixTime(poll.startDate), { addSuffix: false }), label: 'Time opened' },
   ]
 }
@@ -80,17 +80,17 @@ export const getTimeLeftData = (start, end): Array<any> => {
   })
   const total = Number(endedTotal.split(' ')[0])
   const leftTime = formatDistanceStrict(new Date(), fromUnixTime(end))
-
-  const number: any = leftTime.split(' ')[0]
+  let value: any
+  const number: any = Number(leftTime.split(' ')[0])
   const unit = leftTime.split(' ')[1]
-
   const hasMinutes = unit.includes('minutes')
   const hasHours = unit.includes('hours')
-
   if (ended) return [{ value: total, text: 'Ended' }, { value: 0 }]
-  if (hasMinutes) return [{ value: total - Number(number / (24 * 60)), text: leftTime }, { value: total }]
-  if (hasHours) return [{ value: total - Number(number / 24), text: leftTime }, { value: total }]
-  return [{ value: total - Number(number), text: leftTime }, { value: total }]
+  if (hasMinutes) value = total - Number(number / (24 * 60))
+  else if (hasHours) value = total - Number(number / 24)
+  else value = total - number
+
+  return [{ value, text: leftTime }, { value: total / parseFloat(value.toString()) }]
 }
 
 export const getComponentData = (
