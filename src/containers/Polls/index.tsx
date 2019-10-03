@@ -38,6 +38,7 @@ function PollsInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
   const pollcolumns = React.useMemo(() => Pollcolumns(), [])
+  const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const pollsData = useQuery(POLLS_FIRST_QUERY, { variables: resultVariables })
@@ -45,6 +46,7 @@ function PollsInfo(props) {
   const getPoll = row => {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
+
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
@@ -53,8 +55,7 @@ function PollsInfo(props) {
     if (pollsData.data && pollsData.data.polls) {
       Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
         const polls = result[0].filter(Boolean)
-        const { historicalPolls } = result[1]
-        setData([...polls, ...historicalPolls])
+        setData([...polls])
       })
     }
   }, [pollsData.data])
@@ -65,7 +66,7 @@ function PollsInfo(props) {
   return (
     <PollsContainer>
       <PageTitle>Polls</PageTitle>
-      <List handleRow={getPoll} data={data} columns={pollcolumns} />
+      <List handleRow={getPoll} data={data} columns={pollcolumns} sortBy={initialSort} />
     </PollsContainer>
   )
 }
