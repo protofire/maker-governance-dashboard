@@ -4,11 +4,17 @@ import styled, { css } from 'styled-components'
 import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
+interface SortBy {
+  id: string
+  desc: Boolean
+}
+
 type TableProps = {
   columns?: Array<any>
   data?: Array<any>
   expanded?: boolean
   limitPerPage?: number
+  sortBy?: SortBy[]
   handleRow?: (row: any) => void
   scrollable?: boolean
 }
@@ -137,9 +143,12 @@ const Pager = styled.span`
   margin-right: 1rem;
 `
 
-function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow }: TableProps) {
+function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
   const handleFn = handleRow ? handleRow : () => {}
-  const pageData = limitPerPage ? { pageSize: limitPerPage } : {}
+  const pageData = {
+    ...(limitPerPage && { limitPerPage }),
+    ...(sortBy && { sortBy }),
+  }
   const tableState = useTableState(pageData)
 
   // Use the state and functions returned from useTable to build your UI

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+
 import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
@@ -37,6 +38,7 @@ function ExecutiveInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
   const executivecolumns = React.useMemo(() => Executivecolumns(), [])
+  const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const excutivesData = useQuery(VOTES_FIRST_QUERY, { variables: resultVariables })
@@ -76,7 +78,7 @@ function ExecutiveInfo(props) {
   return (
     <ExecutiveContainer>
       <PageTitle>Executive Votes</PageTitle>
-      <List handleRow={getVote} data={data} columns={executivecolumns} />
+      <List handleRow={getVote} data={data} columns={executivecolumns} sortBy={initialSort} />
     </ExecutiveContainer>
   )
 }

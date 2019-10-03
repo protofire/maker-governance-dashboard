@@ -183,8 +183,7 @@ function HomeDetail(props: Props) {
     Promise.all([getPollsData(data.polls), getMakerDaoData()])
       .then(result => {
         const polls = result[0].filter(Boolean)
-        const { historicalPolls } = result[1]
-        setPolls([...polls, ...historicalPolls])
+        setPolls([...polls])
       })
       .catch(error => {
         console.log(error)

@@ -146,4 +146,10 @@ export const DescriptionBox = styled.div`
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
+  ${props =>
+    props.expanded &&
+    css`
+      max-height: 800px;
+      overflow: scroll;
+    `}
 `
