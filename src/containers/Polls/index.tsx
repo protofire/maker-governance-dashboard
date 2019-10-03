@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { fromUnixTime } from 'date-fns'
 
 import styled from 'styled-components'
 
@@ -39,6 +38,7 @@ function PollsInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
   const pollcolumns = React.useMemo(() => Pollcolumns(), [])
+  const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const pollsData = useQuery(POLLS_FIRST_QUERY, { variables: resultVariables })
@@ -46,8 +46,6 @@ function PollsInfo(props) {
   const getPoll = row => {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
-
-  const defaultSort = (a, b) => (fromUnixTime(a.startDate) > fromUnixTime(b.startDate) ? -1 : 1)
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
@@ -68,7 +66,7 @@ function PollsInfo(props) {
   return (
     <PollsContainer>
       <PageTitle>Polls</PageTitle>
-      <List handleRow={getPoll} data={data.sort(defaultSort)} columns={pollcolumns} />
+      <List handleRow={getPoll} data={data} columns={pollcolumns} sortBy={initialSort} />
     </PollsContainer>
   )
 }
