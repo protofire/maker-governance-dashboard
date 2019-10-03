@@ -304,6 +304,18 @@ export interface GetPollsInfoPage {
 // GraphQL query operation: GetPollsDataPage
 // ====================================================
 
+export interface GetPollsDataPage_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface GetPollsDataPage_polls {
   __typename: 'Poll'
   /**
@@ -319,6 +331,7 @@ export interface GetPollsDataPage_polls {
    *  Number votes
    */
   votesCount: any
+  votes: GetPollsDataPage_polls_votes[] | null
 }
 
 export interface GetPollsDataPage {
@@ -710,6 +723,18 @@ export interface pollsDetail {
 // GraphQL fragment: pollsDetailPage
 // ====================================================
 
+export interface pollsDetailPage_votes {
+  __typename: 'PollVote'
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface pollsDetailPage {
   __typename: 'Poll'
   /**
@@ -725,6 +750,7 @@ export interface pollsDetailPage {
    *  Number votes
    */
   votesCount: any
+  votes: pollsDetailPage_votes[] | null
 }
 
 /* tslint:disable */

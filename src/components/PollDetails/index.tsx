@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
 import { getModalContainer } from '../../utils'
+import { getPollData } from './data'
 
 import { TimeLeftChart } from './Charts'
 
@@ -36,6 +37,11 @@ function PollDetails(props: Props) {
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
+
+  const graphData = getPollData(poll).then(data => {
+    console.log(data)
+  })
+
   const voteMap = {
     table: {
       description: {

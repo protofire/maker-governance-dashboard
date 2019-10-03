@@ -9,6 +9,10 @@ const pollsDetailFragment = gql`
     startDate
     endDate
     votesCount
+    votes(first: 1000) {
+      voter
+      option
+    }
   }
 `
 
