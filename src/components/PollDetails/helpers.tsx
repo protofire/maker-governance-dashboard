@@ -4,6 +4,8 @@ import { Card, TitleContainer } from '../common/styled'
 
 import { shortenAccount, timeLeft } from '../../utils'
 
+import { getPollData } from './data'
+
 import { LAST_YEAR } from '../../constants'
 
 export const TableContainer = styled.div`
@@ -92,6 +94,8 @@ export const getTimeLeftData = (start, end): Array<any> => {
 
   return [{ value, text: leftTime }, { value: total / parseFloat(value.toString()) }]
 }
+
+export const getPollPerOptionData = poll => getPollData(poll)
 
 export const getComponentData = (
   type: string,

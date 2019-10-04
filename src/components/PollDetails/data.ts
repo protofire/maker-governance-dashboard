@@ -4,11 +4,6 @@ import { BigNumber } from 'bignumber.js'
 const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
 const TOKEN_REGISTRY_API_URI = process.env.REACT_APP_TOKEN_REGISTRY_GRAPH_HTTP
 
-const query = `
-  query {
-  }
-
-  `
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
 const getPollVotersPerOption = poll => {
@@ -75,7 +70,6 @@ const stakedByAddress = data => {
 
 const getStakedByAddress = async (addresses, endDate) => {
   //Queries
-  console.log('addresses', addresses)
 
   const query = `
     query getStakedByAddress($voters: [Bytes!]!, $endDate: BigInt!  ) {
@@ -151,7 +145,7 @@ export const getPollData = async poll => {
   const ret = Object.keys(mkrOptions).map(key => {
     return {
       label: poll.options[parseInt(key) - 1],
-      mkr: mkrOptions[key],
+      mkr: Number(mkrOptions[key]).toFixed(2),
       voter: votersPerOption[key].length,
     }
   })
@@ -186,10 +180,7 @@ const getAccountBalances = async (addresses, endDate) => {
     endDate,
   })
 
-  console.log(result)
-
   return result
-  //return accountBalances
 }
 
 const getBalanceByAccount = balances => {
@@ -242,24 +233,13 @@ const totalStaked = (poll, lookup, balances, stakedProxies) => {
         return acc.plus(balance)
       }, ZERO)
 
-      console.log(voter)
-      console.log(addedColHotByVoter[voter])
-
       if (!addedColHotByVoter[voter]) {
-        console.log('todo', cold, hot, proxies)
-
         const hotBalance = balances[hot] || ZERO
         const coldBalance = balances[cold] || ZERO
-
-        console.log(hotBalance.toString())
-        console.log(coldBalance.toString())
-        console.log(proxyAmount.toString())
-        console.log(acc.plus(proxyAmount.plus(hotBalance).plus(coldBalance)).toString())
 
         addedColHotByVoter[voter] = true
         return acc.plus(proxyAmount.plus(hotBalance).plus(coldBalance))
       }
-      console.log('proxy', proxyAmount.toString())
       return acc.plus(proxyAmount)
     }, new BigNumber('0'))
 
