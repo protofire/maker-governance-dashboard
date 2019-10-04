@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
-import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
+import { BigNumber } from 'bignumber.js'
+import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
 import { getModalContainer } from '../../utils'
 
-import { TimeLeftChart } from './Charts'
+import { TimeLeftChart, PollPerOptionChart } from './Charts'
 
 import {
   WrappedContainer,
@@ -15,6 +16,7 @@ import {
   defaultFilters,
   getComponentData,
   getTimeLeftData,
+  getPollPerOptionData,
 } from './helpers'
 
 const NoData = styled.span`
@@ -30,12 +32,27 @@ const VoteDetailContainer = styled.div``
 type Props = {
   poll: any
 }
+
+const Loading = () => (
+  <SpinnerContainer>
+    <Spinner />
+  </SpinnerContainer>
+)
+
 function PollDetails(props: Props) {
   const { poll } = props
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
+  const [pollPerOptionData, setPollPerOptionData] = useState<any>([])
+
+  useEffect(() => {
+    getPollPerOptionData(poll).then(data => {
+      setPollPerOptionData(data)
+    })
+  }, [poll])
+
   const voteMap = {
     table: {
       description: {
@@ -47,6 +64,12 @@ function PollDetails(props: Props) {
       timeLeft: {
         data: getTimeLeftData(poll.startDate, poll.endDate),
         component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
+      },
+      pollPerOption: {
+        data: pollPerOptionData,
+        component: props => (
+          <PollPerOption expanded content="Voters" versus="MKR Voter Per Option" component="pollPerOption" {...props} />
+        ),
       },
     },
   }
@@ -101,6 +124,22 @@ function PollDetails(props: Props) {
     )
   }
 
+  //Poll per option data
+  const PollPerOption = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const currentVoters = pollPerOptionData.reduce((acum, el) => acum + el.voter, 0)
+    const currentMkr = pollPerOptionData.reduce((acum, el) => acum.plus(new BigNumber(el.mkr)), new BigNumber('0'))
+
+    return (
+      <PollPerOptionChart
+        currentVoters={currentVoters}
+        currentMkr={currentMkr.toNumber().toFixed(2)}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
   //Description Data
   const Description = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
@@ -143,7 +182,13 @@ function PollDetails(props: Props) {
           <TimeLeft content="Time left" component="timeLeft" />
         </Card>
         <Card style={{ height: 300 }}></Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card style={{ height: 300 }}>
+          {pollPerOptionData.length === 0 ? (
+            <Loading />
+          ) : (
+            <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
+          )}
+        </Card>
         <Card style={{ height: 300 }}></Card>
       </WrappedContainer>
       {isModalOpen && (

@@ -21,6 +21,7 @@
     "fetch": "^1.1.0",
     "gini": "^1.1.7",
     "graphql": "^14.5.4",
+    "graphql-request": "^1.8.2",
     "graphql-tag": "^2.10.1",
     "gray-matter": "^4.0.2",
     "install": "^0.13.0",
