@@ -16,7 +16,7 @@ const PollPerOptionChart = props => {
           yAxisId="1"
           dataKey="mkr"
           stackId="a"
-          fill="#ededed"
+          fill="#999999"
         />
       </Chart>
     </ChartWrapper>

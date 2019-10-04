@@ -96,8 +96,8 @@ const getStakedByAddress = async (addresses, endDate) => {
 export const getPollData = async poll => {
   const votersAddresses = getVoterAddresses(poll)
   const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
+  const voteProxies = getVoteProxies(voteRegistries)
 
-  const voteProxies = await getVoteProxies(voteRegistries)
   const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
   const stakedVoters = stakedByAddress(await getStakedByAddress(getVoterAddresses(poll), poll.endDate))
 
@@ -119,9 +119,9 @@ export const getPollData = async poll => {
   const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
 
   const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(voterTotal)])).reduce((acc, key) => {
-    const sv = stakedVoters[key] || new BigNumber('0')
+    const st = stakedTotal[key] || new BigNumber('0')
     const vt = voterTotal[key] ? new BigNumber(voterTotal[key]) : new BigNumber('0')
-    const amount = sv.plus(vt)
+    const amount = st.plus(vt)
 
     return {
       ...acc,
@@ -138,15 +138,15 @@ export const getPollData = async poll => {
 
     return {
       ...acc,
-      [op]: total.toString(),
+      [op]: total.toNumber().toFixed(2),
     }
   }, {})
 
-  const ret = Object.keys(mkrOptions).map(key => {
+  const ret = poll.options.map((key, i) => {
     return {
-      label: poll.options[parseInt(key) - 1],
-      mkr: Number(mkrOptions[key]).toFixed(2),
-      voter: votersPerOption[key].length,
+      label: key,
+      mkr: mkrOptions[i + 1] || 0,
+      voter: votersPerOption[i + 1] ? votersPerOption[i + 1].length : 0,
     }
   })
 
@@ -164,7 +164,8 @@ const getAccountBalances = async (addresses, endDate) => {
           token:"0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
           account_in: $voters,
           timestamp_lte: $endDate
-        }
+        },
+        orderBy: timestamp, orderDirection: desc
       ) {
         account {
           address

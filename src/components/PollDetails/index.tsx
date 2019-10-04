@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
+import { BigNumber } from 'bignumber.js'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
 import { getModalContainer } from '../../utils'
 
@@ -127,12 +128,12 @@ function PollDetails(props: Props) {
   const PollPerOption = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentVoters = pollPerOptionData.reduce((acum, el) => acum + el.voter, 0)
-    const currentMkr = pollPerOptionData.reduce((acum, el) => acum + Number(el.mkr), 0)
+    const currentMkr = pollPerOptionData.reduce((acum, el) => acum.plus(new BigNumber(el.mkr)), new BigNumber('0'))
 
     return (
       <PollPerOptionChart
         currentVoters={currentVoters}
-        currentMkr={currentMkr}
+        currentMkr={currentMkr.toNumber().toFixed(2)}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
