@@ -1,6 +1,5 @@
 import React from 'react'
 import { format, fromUnixTime, formatDistance, differenceInMonths } from 'date-fns'
-import { Link } from '../common/styled'
 import { timeLeft } from '../../utils'
 
 export const Pollcolumns = () => {
@@ -8,28 +7,27 @@ export const Pollcolumns = () => {
     {
       Header: 'Name',
       accessor: 'title',
-      Cell: ({ row }) => <Link href={row.original.url}>{row.original.title}</Link>,
+      Cell: ({ row }) => <span data-tip={row.original.title}>{row.original.title}</span>,
     },
     {
-      Header: 'Overview',
-      accessor: 'summary',
-    },
-    {
-      Header: 'Started',
+      Header: 'Start',
       accessor: row => fromUnixTime(row.startDate),
       id: 'date',
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
+      width: 100,
     },
     {
-      Header: 'Ended',
+      Header: 'End',
       accessor: row => fromUnixTime(row.endDate),
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
+      width: 100,
     },
     {
       Header: 'Status',
       accessor: row => timeLeft(row.endDate),
+      width: 100,
     },
   ]
 }

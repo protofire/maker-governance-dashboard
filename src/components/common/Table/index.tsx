@@ -1,5 +1,7 @@
 import React from 'react'
 import { useTable, useTableState, usePagination, useSortBy } from 'react-table'
+import ReactTooltip from 'react-tooltip'
+
 import styled, { css } from 'styled-components'
 import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
@@ -22,10 +24,22 @@ type TableProps = {
 const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
+  ${props =>
+    props.width &&
+    css`
+      flex: none !important;
+      width: ${props.width}px !important;
+    `}
 `
 const HeaderRow = styled.span`
   font-size: 12px;
   color: #999999;
+  ${props =>
+    props.width &&
+    css`
+      flex: none !important;
+      width: ${props.width}px !important;
+    `}
 `
 
 const TableSection = styled.div`
@@ -52,6 +66,7 @@ const TableWrapper = styled.div`
           ${TableRow}, ${HeaderRow} {
             flex: 1;
             text-align: left;
+            margin-right: 20px;
           }
         `
       }
@@ -108,7 +123,6 @@ const RowsSection = styled.div`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        margin-right: 20px;
       `}
   }
 `
@@ -179,12 +193,13 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   // Render the UI for your table
   return (
     <>
+      <ReactTooltip place="top" type="dark" effect="solid" />
       <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
         <div>
           {headerGroups.map(headerGroup => (
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <HeaderRow {...column.getHeaderProps(column.getSortByToggleProps())}>
+                <HeaderRow width={column.width} {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
                   <span>
                     {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
@@ -200,7 +215,11 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
               prepareRow(row) || (
                 <TableSection onClick={() => handleFn(row.original)} {...row.getRowProps()}>
                   {row.cells.map(cell => {
-                    return <TableRow {...cell.getCellProps()}>{cell.render('Cell')}</TableRow>
+                    return (
+                      <TableRow width={cell.column.width} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </TableRow>
+                    )
                   })}
                 </TableSection>
               ),
