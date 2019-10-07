@@ -7,6 +7,7 @@ import { shortenAccount, timeLeft } from '../../utils'
 import { getPollData } from './data'
 
 import { LAST_YEAR } from '../../constants'
+import { getUnixTime } from 'date-fns/esm'
 
 export const TableContainer = styled.div`
   display: flex;
@@ -76,7 +77,16 @@ export const getPollTableData = poll => {
 }
 
 export const getTimeLeftData = (start, end): Array<any> => {
-  const ended = timeLeft(end) === 'Ended'
+  const isEnded = timeLeft(end) === 'Ended'
+  const today = getUnixTime(new Date())
+  const seconds = Math.floor(end - today)
+  let minutes = Math.floor(seconds / 60)
+  let hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+
+  hours = hours - days * 24
+  minutes = minutes - days * 24 * 60 - hours * 60
+
   const endedTotal = formatDistanceStrict(fromUnixTime(start), fromUnixTime(end), {
     unit: 'day',
   })
@@ -87,12 +97,12 @@ export const getTimeLeftData = (start, end): Array<any> => {
   const unit = leftTime.split(' ')[1]
   const hasMinutes = unit.includes('minutes')
   const hasHours = unit.includes('hours')
-  if (ended) return [{ value: total, text: 'Ended' }, { value: 0 }]
+  if (isEnded) return [{ value: total, text: 'Ended' }, { value: 0 }]
   if (hasMinutes) value = total - Number(number / (24 * 60))
   else if (hasHours) value = total - Number(number / 24)
   else value = total - number
 
-  return [{ value, text: leftTime }, { value: total / parseFloat(value.toString()) }]
+  return [{ time: { days, hours, minutes }, value, text: leftTime }, { value: total / parseFloat(value.toString()) }]
 }
 
 export const getPollPerOptionData = poll => getPollData(poll)
