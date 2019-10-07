@@ -15,6 +15,7 @@ const VotersVsMkrChart = props => {
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />
         <Line
+          isAnimationActive={modalProps.data ? false : true}
           dot={false}
           name={`Number of voters - Current ${currentVoters}`}
           stroke="#2730a0"
@@ -24,6 +25,7 @@ const VotersVsMkrChart = props => {
           yAxisId="0"
         />
         <Line
+          isAnimationActive={modalProps.data ? false : true}
           dot={false}
           name={`Total MKR stacked - Current ${currentMkr}`}
           stroke="#27a02c"

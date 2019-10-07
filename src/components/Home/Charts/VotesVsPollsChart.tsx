@@ -10,6 +10,7 @@ const VotesVsPollsChart = props => {
         <YAxis datakey="countPolls" />
 
         <Line
+          isAnimationActive={modalProps.data ? false : true}
           dot={false}
           name={`Executive Votes - Current ${currentVotes}`}
           stroke="#9227a0"
@@ -18,6 +19,7 @@ const VotesVsPollsChart = props => {
           dataKey="countVotes"
         />
         <Line
+          isAnimationActive={modalProps.data ? false : true}
           dot={false}
           name={`Polls - Current ${currentPolls}`}
           stroke="#a06d27"
