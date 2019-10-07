@@ -161,8 +161,8 @@ export function getPollsData(polls) {
   return Promise.all(
     polls.map(async poll => {
       try {
-        if (poll.url !== 'https://url.com') {
-          // black list
+        // Poll black list
+        if (!['https://url.com'].includes(poll.url)) {
           const pollDocument = await fetchPollFromUrl(poll.url)
           if (pollDocument) {
             const documentData = await formatYamlToJson(pollDocument)
@@ -171,12 +171,9 @@ export function getPollsData(polls) {
             pollData.source = POLLING_EMITTER
 
             return pollData
-          } else {
-            return
           }
-        } else {
-          return
         }
+        return
       } catch (e) {
         console.log(`Error fetching data for poll with ID ${poll.pollId} from ${poll.url}`)
       }
