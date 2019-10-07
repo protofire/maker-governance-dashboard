@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import { VotesVsPollsChart, VotersVsMkrChart, GiniChart } from './Charts'
-import { Card, Table, Modal, TableWrapper } from '../common'
+import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
+
+import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
+
 import { getModalContainer } from '../../utils'
 import {
   WrappedContainer,
@@ -14,7 +17,11 @@ import {
   Executivecolumns,
 } from './helpers'
 
-import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
+const Loading = () => (
+  <SpinnerContainer>
+    <Spinner />
+  </SpinnerContainer>
+)
 
 const TABLE_PREVIEW = 5
 
@@ -200,7 +207,7 @@ function HomeDetail(props: Props) {
           <HomeTable content="Executive votes" component="executives" />
         </Card>
         <Card type="table" style={{ padding: 0 }}>
-          <HomeTable content="Top polls" component="polls" />
+          {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
         </Card>
         <Card style={{ height: 340 }}>
           <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
