@@ -9,6 +9,7 @@ const GiniChart = props => {
       <Chart {...modalProps}>
         <YAxis />
         <Line
+          isAnimationActive={modalProps.data ? false : true}
           dot={false}
           name={`Gini Coefficient - Current ${currentGini}`}
           stroke="#ffc353"

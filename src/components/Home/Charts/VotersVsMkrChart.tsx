@@ -18,9 +18,11 @@ const VotersVsMkrChart = props => {
           type="monotone"
           dataKey="count"
           yAxisId="0"
+          isAnimationActive={modalProps.data ? false : true}
         />
         <Line
           dot={false}
+          isAnimationActive={modalProps.data ? false : true}
           name={`Total MKR stacked - Current ${currentMkr}`}
           stroke="#27a02c"
           strokeWidth={2}
