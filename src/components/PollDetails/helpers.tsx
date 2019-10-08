@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { fromUnixTime, format, formatDistanceToNow, formatDistanceStrict } from 'date-fns'
+import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
 
 import { shortenAccount, timeLeft } from '../../utils'
@@ -87,22 +87,9 @@ export const getTimeLeftData = (start, end): Array<any> => {
   hours = hours - days * 24
   minutes = minutes - days * 24 * 60 - hours * 60
 
-  const endedTotal = formatDistanceStrict(fromUnixTime(start), fromUnixTime(end), {
-    unit: 'day',
-  })
-  const total = Number(endedTotal.split(' ')[0])
-  const leftTime = formatDistanceStrict(new Date(), fromUnixTime(end))
-  let value: any
-  const number: any = Number(leftTime.split(' ')[0])
-  const unit = leftTime.split(' ')[1]
-  const hasMinutes = unit.includes('minutes')
-  const hasHours = unit.includes('hours')
-  if (isEnded) return [{ value: total, text: 'Ended' }, { value: 0 }]
-  if (hasMinutes) value = total - Number(number / (24 * 60))
-  else if (hasHours) value = total - Number(number / 24)
-  else value = total - number
+  if (isEnded) return [{ value: today, text: 'Ended' }, { value: 0 }]
 
-  return [{ time: { days, hours, minutes }, value, text: leftTime }, { value: total / parseFloat(value.toString()) }]
+  return [{ time: { days, hours, minutes }, value: today / 1000 }, { value: seconds }]
 }
 
 export const getPollPerOptionData = poll => getPollData(poll)
