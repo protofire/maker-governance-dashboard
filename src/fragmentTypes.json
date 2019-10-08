@@ -3,6 +3,15 @@
     "types": [
       {
         "kind": "INTERFACE",
+        "name": "PollAction",
+        "possibleTypes": [
+          { "name": "CreatePollAction" },
+          { "name": "VotePollAction" },
+          { "name": "WithdrawPollAction" }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
         "name": "VotingAction",
         "possibleTypes": [
           { "name": "AddAction" },

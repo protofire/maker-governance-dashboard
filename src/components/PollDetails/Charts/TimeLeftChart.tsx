@@ -95,7 +95,7 @@ const TimeLeftChart = props => {
         )}
       </ValueContainer>
       <PieChart width={300} height={300}>
-        <Pie data={data} innerRadius={100} dataKey="value">
+        <Pie isAnimationActive={data ? false : true} data={data} innerRadius={100} dataKey="value">
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
