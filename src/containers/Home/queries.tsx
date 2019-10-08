@@ -30,6 +30,7 @@ const executivesDetailFragment = gql`
   fragment executivesDetail on Spell {
     id
     timestamp
+    approvals
     casted
     castedWith
     lifted

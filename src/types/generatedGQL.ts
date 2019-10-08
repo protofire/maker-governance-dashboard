@@ -165,6 +165,10 @@ export interface getHomeData_executives {
    */
   timestamp: any
   /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
+  /**
    *  Timestamp when the spell is casted
    */
   casted: any | null
@@ -676,6 +680,10 @@ export interface executivesDetail {
    *  Timestamp when the spell voted by the first time
    */
   timestamp: any
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
   /**
    *  Timestamp when the spell is casted
    */

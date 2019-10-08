@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import { VotesVsPollsChart, VotersVsMkrChart, GiniChart } from './Charts'
 import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
@@ -48,13 +48,15 @@ function HomeDetail(props: Props) {
   const homeMap = {
     table: {
       polls: {
-        data: polls,
+        data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
         columns: expanded => pollcolumns(expanded),
+        sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => <HomeTable expanded content="Top polls" component="polls" {...props} />,
       },
       executives: {
-        data: data.executives,
+        data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
         columns: expanded => executiveColumns(expanded),
+        sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
         component: props => <HomeTable expanded content="Top executives" component="executives" {...props} />,
       },
     },
@@ -114,6 +116,7 @@ function HomeDetail(props: Props) {
         scrollable: expanded,
         data: expanded ? data : data.slice(0, TABLE_PREVIEW),
         columns: homeMap[type][component].columns(expanded),
+        sortBy: expanded ? homeMap[type][component].sortBy : [],
       }
     return {
       modalStyles: expanded ? { width: '99%', aspect: 3 } : undefined,
@@ -206,17 +209,21 @@ function HomeDetail(props: Props) {
         <Card type="table" style={{ padding: 0 }}>
           <HomeTable content="Executive votes" component="executives" />
         </Card>
+        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}></Card>
         <Card type="table" style={{ padding: 0 }}>
           {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
         </Card>
         <Card style={{ height: 340 }}>
-          <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
+          {polls.length === 0 ? (
+            <Loading />
+          ) : (
+            <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
+          )}
         </Card>
-        <Card style={{ height: 340 }}></Card>
         <Card style={{ height: 340 }}>
           <Gini content="MKR Gini Coefficient" component="gini" />
         </Card>
-        <Card style={{ height: 340 }}></Card>
       </WrappedContainer>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>

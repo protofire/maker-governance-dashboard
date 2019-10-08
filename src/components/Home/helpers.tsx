@@ -172,7 +172,9 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     },
     {
       Header: 'Start date',
-      accessor: 'startDate',
+      id: 'startDate',
+      accessor: row => fromUnixTime(row.startDate),
+      sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
       show: isModalOpen,
     },
@@ -198,8 +200,8 @@ export const Executivecolumns = (isModalOpen: boolean) => {
     },
     {
       Header: 'MKR in Support',
-      accessor: 'castedWith',
-      Cell: ({ row }) => (row.original.castedWith / Math.pow(10, 18)).toFixed(2),
+      id: 'approvals',
+      accessor: row => Number(row.approvals).toFixed(2),
     },
     {
       Header: 'Casted date',
@@ -210,7 +212,7 @@ export const Executivecolumns = (isModalOpen: boolean) => {
     {
       Header: 'MKR when lifted',
       accessor: 'liftedWith',
-      Cell: ({ row }) => (row.original.liftedWith / Math.pow(10, 18)).toFixed(2),
+      Cell: ({ row }) => Number(row.original.liftedWith).toFixed(2),
       show: isModalOpen,
     },
     {
