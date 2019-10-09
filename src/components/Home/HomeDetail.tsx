@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
-import { VotesVsPollsChart, VotersVsMkrChart, GiniChart } from './Charts'
+import { VotesVsPollsChart, VotersVsMkrChart, GiniChart, TimeTakenChart } from './Charts'
 import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
 
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
@@ -15,6 +15,7 @@ import {
   getComponentData,
   Pollcolumns,
   Executivecolumns,
+  getTimeTakenForExecutives,
 } from './helpers'
 
 const Loading = () => (
@@ -42,7 +43,7 @@ function HomeDetail(props: Props) {
 
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
-
+  const executives = data.executives
   // Data map for building this page
   const giniData = getGiniData([...data.free, ...data.lock], chartFilters.gini)
   const homeMap = {
@@ -82,6 +83,17 @@ function HomeDetail(props: Props) {
       gini: {
         data: giniData,
         component: props => <Gini expanded content="MKR Gini Coefficient" component="gini" {...props} />,
+      },
+      timeTakenForExecutives: {
+        data: getTimeTakenForExecutives(data.executives),
+        component: props => (
+          <TimeTakenForExecutives
+            expanded
+            content="Time taken for executives"
+            component="timeTakenForExecutives"
+            {...props}
+          />
+        ),
       },
     },
   }
@@ -172,6 +184,20 @@ function HomeDetail(props: Props) {
     )
   }
 
+  // Time taken graph data
+  const TimeTakenForExecutives = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const currentVotes = executives.length
+
+    return (
+      <TimeTakenChart
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        currentVotes={currentVotes}
+      />
+    )
+  }
+
   //Table Data
   const HomeTable = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
@@ -209,7 +235,9 @@ function HomeDetail(props: Props) {
         <Card type="table" style={{ padding: 0 }}>
           <HomeTable content="Executive votes" component="executives" />
         </Card>
-        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}>
+          <TimeTakenForExecutives content="Time taken for executives" component="timeTakenForExecutives" />
+        </Card>
         <Card style={{ height: 340 }}></Card>
         <Card type="table" style={{ padding: 0 }}>
           {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
