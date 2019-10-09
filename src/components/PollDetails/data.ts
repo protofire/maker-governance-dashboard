@@ -2,7 +2,6 @@ import { request } from 'graphql-request'
 import { BigNumber } from 'bignumber.js'
 
 const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
-const TOKEN_REGISTRY_API_URI = process.env.REACT_APP_TOKEN_REGISTRY_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
@@ -99,15 +98,16 @@ export const getPollData = async poll => {
   const voteProxies = getVoteProxies(voteRegistries)
 
   const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
-  const stakedVoters = stakedByAddress(await getStakedByAddress(getVoterAddresses(poll), poll.endDate))
+  const stakedVoters = stakedByAddress(await getStakedByAddress(votersAddresses, poll.endDate))
 
   const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
   const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
-
   const balances = getBalanceByAccount(await getAccountBalances(votersHotCold, poll.endDate))
 
-  const voterTotal = Object.keys(stakedVoters).reduce((acc, key) => {
-    const amount = stakedVoters[key].plus(new BigNumber(balances[key])).toString()
+  const stakedVotersAndBalances = votersHotCold.reduce((acc, key) => {
+    const staked = stakedVoters[key] || ZERO
+    const balance = balances[key] ? new BigNumber(balances[key]) : ZERO
+    const amount = staked.plus(balance).toString()
 
     return {
       ...acc,
@@ -118,16 +118,19 @@ export const getPollData = async poll => {
   const lookup = getLookup(votersAddresses, voteRegistries)
   const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
 
-  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(voterTotal)])).reduce((acc, key) => {
-    const st = stakedTotal[key] || new BigNumber('0')
-    const vt = voterTotal[key] ? new BigNumber(voterTotal[key]) : new BigNumber('0')
-    const amount = st.plus(vt)
+  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
+    (acc, key) => {
+      const st = stakedTotal[key] || new BigNumber('0')
+      const vt = stakedVotersAndBalances[key] ? new BigNumber(stakedVotersAndBalances[key]) : new BigNumber('0')
+      const amount = st.plus(vt)
 
-    return {
-      ...acc,
-      [key]: amount,
-    }
-  }, {})
+      return {
+        ...acc,
+        [key]: amount,
+      }
+    },
+    {},
+  )
 
   const votersPerOption = getPollVotersPerOption(poll)
   const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
@@ -157,12 +160,11 @@ const getAccountBalances = async (addresses, endDate) => {
   // Query
   // FIXME - orderBy: timestamp, orderDirection: desc
   const query = `
-    query getAccountBalances($voters: [Bytes!]!, $endDate: BigInt!  ) {
+    query getAccountBalances($voter: Bytes!, $endDate: BigInt!  ) {
       accountBalanceSnapshots(
-        first:1000,
+        first: 1,
         where:{
-          token:"0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-          account_in: $voters,
+          account: $voter,
           timestamp_lte: $endDate
         },
         orderBy: timestamp, orderDirection: desc
@@ -176,20 +178,29 @@ const getAccountBalances = async (addresses, endDate) => {
     }
   `
 
-  const result: any = await fetchQuery(TOKEN_REGISTRY_API_URI, query, {
-    voters: addresses,
-    endDate,
-  })
+  const result: any = await Promise.all(
+    addresses.map(address =>
+      fetchQuery(GOVERNANCE_API_URI, query, {
+        voter: address,
+        endDate,
+      }),
+    ),
+  )
 
   return result
 }
 
 const getBalanceByAccount = balances => {
-  return balances.accountBalanceSnapshots.reduce((acc, el) => {
-    const first = acc[el.account.address] || el.amount
-    return {
-      ...acc,
-      [el.account.address]: first,
+  return balances.reduce((acc, el) => {
+    const snapshot = el.accountBalanceSnapshots[0]
+
+    if (snapshot) {
+      return {
+        ...acc,
+        [snapshot.account.address]: snapshot.amount,
+      }
+    } else {
+      return acc
     }
   }, {})
 }
