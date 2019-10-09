@@ -11,14 +11,40 @@ const customStyles = {
 }
 const COLORS = ['#61b6b0', '#ededed']
 
-const ValueContainer = styled.div`
-  position: absolute;
-  top: 50%;
+const DaysContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: center;
-  left: ${props => (props.ended ? '9.3rem' : '9.6rem')};
+  justify-content: center;
+  position: relative;
+  right: 10px;
+`
+
+const MinutesHoursContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 1rem;
+    justify-content: space-between;
+  }
+`
+
+const ValueContainer = styled.div`
+  position: absolute;
+  top: ${props => (props.ended ? '50%' : '40%')};
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  left: ${props => (props.ended ? '9.3rem' : '7.6rem')};
   span:first-child {
     color: #000000;
     font-size: 26px;
@@ -32,8 +58,6 @@ const ValueContainer = styled.div`
 
 const TimeLeftChart = props => {
   const { wrapperProps, data } = props
-  const number = data ? data[0].text.split(' ')[0] : 0
-  const unit = data ? data[0].text.split(' ')[1] : 'days'
   return (
     <ChartWrapper hideIcon hideFilters styles={customStyles} {...wrapperProps}>
       <ValueContainer ended={data[0].text === 'Ended'}>
@@ -41,8 +65,32 @@ const TimeLeftChart = props => {
           <span style={{ fontSize: 16 }}>{data[0].text}</span>
         ) : (
           <>
-            <span>{number}</span>
-            <span>{unit.toUpperCase()}</span>
+            <DaysContainer>
+              {data[0].time.days >= 0 && (
+                <>
+                  <span>{data[0].time.days}</span>
+                  <span>DAYS</span>
+                </>
+              )}
+            </DaysContainer>
+            <MinutesHoursContainer>
+              <div>
+                {data[0].time.hours >= 0 && (
+                  <>
+                    <span>{data[0].time.hours}</span>
+                    <span>HOURS</span>
+                  </>
+                )}
+              </div>
+              <div>
+                {data[0].time.minutes >= 0 && (
+                  <>
+                    <span>{data[0].time.minutes}</span>
+                    <span>MINUTES</span>
+                  </>
+                )}
+              </div>
+            </MinutesHoursContainer>
           </>
         )}
       </ValueContainer>
