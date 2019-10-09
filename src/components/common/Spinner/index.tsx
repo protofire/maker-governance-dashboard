@@ -1,17 +1,19 @@
 import React from 'react'
 import styled from 'styled-components'
-
-export const Spinner = () => (
-  <StyledSpinner viewBox="0 0 50 50">
+type Props = {
+  table?: boolean
+}
+export const Spinner = ({ table }: Props) => (
+  <StyledSpinner table={table} viewBox="0 0 50 50">
     <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="2" />
   </StyledSpinner>
 )
 
 const StyledSpinner = styled.svg`
   animation: rotate 1.5s linear infinite;
-  margin: 40px;
-  width: 50px;
-  height: 50px;
+  margin: ${props => (props.table ? '0' : '40px')};
+  width: ${props => (props.table ? '20px' : '50px')};
+  height: ${props => (props.table ? '20px' : '50px')};
 
   & .path {
     stroke: rgb(14, 16, 41);

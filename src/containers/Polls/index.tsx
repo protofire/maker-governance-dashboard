@@ -5,6 +5,7 @@ import styled from 'styled-components'
 
 import List from '../../components/List'
 import { Pollcolumns } from '../../components/List/helpers'
+import { getPollData } from '../../components/PollDetails/data'
 
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 
@@ -47,6 +48,12 @@ function PollsInfo(props) {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
 
+  const setPopularity = popularity => {
+    const totalMkr = popularity.reduce((acc, value) => Number(acc) + Number(value.mkr), 0)
+    const winnerOption = popularity.reduce((prev, current) => (prev.mkr > current.mkr ? prev : current))
+    return { option: winnerOption, mkr: totalMkr ? Number((winnerOption.mkr * 100) / totalMkr).toFixed(2) : '0' }
+  }
+
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
@@ -56,13 +63,16 @@ function PollsInfo(props) {
       Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
         const polls = result[0].filter(Boolean)
         setData([...polls])
+        const pollsWithPopularity = polls.map(poll =>
+          getPollData(poll).then(data => ({ ...poll, popularity: setPopularity(data) })),
+        )
+        Promise.all(pollsWithPopularity).then(data => setData(data))
       })
     }
   }, [pollsData.data])
 
   if (pollsData.loading || gResult.loading || data.length === 0) return <Loading />
   if (pollsData.error || gResult.error) return <Error />
-
   return (
     <PollsContainer>
       <PageTitle>Polls</PageTitle>
