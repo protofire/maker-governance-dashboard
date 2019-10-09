@@ -187,7 +187,7 @@ function HomeDetail(props: Props) {
   // Time taken graph data
   const TimeTakenForExecutives = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVotes = executives.length
+    const currentVotes = executives.filter(vote => vote.casted).length
 
     return (
       <TimeTakenChart
