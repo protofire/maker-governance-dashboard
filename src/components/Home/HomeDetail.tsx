@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
-import { VotesVsPollsChart, VotersVsMkrChart, GiniChart, TimeTakenChart } from './Charts'
+import {
+  VotesVsPollsChart,
+  VotersVsMkrChart,
+  GiniChart,
+  TimeTakenChart,
+  MkrDistributionPerExecutiveChart,
+} from './Charts'
 import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
 
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
@@ -16,6 +22,7 @@ import {
   Pollcolumns,
   Executivecolumns,
   getTimeTakenForExecutives,
+  getMkrDistributionPerExecutive,
 } from './helpers'
 
 const Loading = () => (
@@ -44,6 +51,7 @@ function HomeDetail(props: Props) {
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
   const executives = data.executives
+
   // Data map for building this page
   const giniData = getGiniData([...data.free, ...data.lock], chartFilters.gini)
   const homeMap = {
@@ -70,6 +78,17 @@ function HomeDetail(props: Props) {
             content="Number of voters"
             versus="Total MKR staked"
             component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+      mkrDistributionPerExecutive: {
+        data: getMkrDistributionPerExecutive(executives, governanceInfo ? governanceInfo.hat : null),
+        component: props => (
+          <MkrDistributionPerExecutive
+            expanded
+            content="MKR Distribution Per Executive"
+            component="mkrDistributionPerExecutive"
             {...props}
           />
         ),
@@ -171,6 +190,21 @@ function HomeDetail(props: Props) {
     )
   }
 
+  // MkrDistributionPerExecutive graph data
+  const MkrDistributionPerExecutive = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const hat = governanceInfo ? governanceInfo.hat : null
+    const currentMKR = executives.find(vote => vote.id === hat)
+
+    return (
+      <MkrDistributionPerExecutiveChart
+        currentMkr={currentMKR ? Number(currentMKR.approvals).toFixed(2) : 0}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
   // Gini graph data
   const Gini = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
@@ -238,7 +272,12 @@ function HomeDetail(props: Props) {
         <Card style={{ height: 340 }}>
           <TimeTakenForExecutives content="Time taken for executives" component="timeTakenForExecutives" />
         </Card>
-        <Card style={{ height: 340 }}></Card>
+        <Card style={{ height: 340 }}>
+          <MkrDistributionPerExecutive
+            content="MKR Distribution Per Executive"
+            component="mkrDistributionPerExecutive"
+          />
+        </Card>
         <Card type="table" style={{ padding: 0 }}>
           {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
         </Card>
