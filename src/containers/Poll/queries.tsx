@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-const pollsDetailFragment = gql`
+const pollsDetailFragmentPage = gql`
   fragment pollsDetailPage on Poll {
     id
     creator
@@ -30,5 +30,5 @@ export const POLLS_FIRST_QUERY = gql`
       ...pollsDetailPage
     }
   }
-  ${pollsDetailFragment}
+  ${pollsDetailFragmentPage}
 `
