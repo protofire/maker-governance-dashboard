@@ -63,7 +63,7 @@ const ChartComponent = React.memo(function Chart(props: any) {
         <ComposedChart width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
-            interval={showXaxis ? 1 : 'preserveEnd'}
+            interval={showXaxis ? showXaxis : 'preserveEnd'}
             tick={{ fill: '#cccccc', fontSize: 10 }}
             dataKey={xLabel || 'label'}
           />

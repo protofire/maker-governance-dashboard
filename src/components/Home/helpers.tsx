@@ -224,6 +224,17 @@ export const Executivecolumns = (isModalOpen: boolean) => {
   ]
 }
 
+export const getMkrDistributionPerExecutive = (executives: Array<any>, hat: string) => {
+  const result = executives.map(vote => ({
+    label: format(fromUnixTime(vote.timestamp), 'dd MMM yy'),
+    mkr: Number(vote.approvals).toFixed(2),
+    isHat: hat === vote.id,
+    timestamp: vote.timestamp,
+  }))
+
+  return result.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
+}
+
 export const getTimeTakenForExecutives = executives => {
   const data = [
     { label: '1 day', count: 0 },
