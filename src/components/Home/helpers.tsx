@@ -233,19 +233,21 @@ export const getTimeTakenForExecutives = executives => {
     { label: '1 month', count: 0 },
     { label: '3 months', count: 0 },
     { label: '1 year', count: 0 },
+    { label: '> 1 year', count: 0 },
   ]
   executives.forEach(vote => {
     const days = differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
     const weeks = differenceInWeeks(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
     const months = differenceInMonths(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
 
-    if (days >= 0 && days <= 2) data[0].count += 1
-    else if (days >= 3 && weeks < 1) data[1].count += 1
-    else if (weeks >= 1 && weeks < 2) data[2].count += 1
-    else if (weeks >= 2 && months < 1) data[3].count += 1
-    else if (months >= 1 && months < 3) data[4].count += 1
-    else if (months >= 3 && months < 12) data[5].count += 1
-    else data[6].count += 1
+    if (days >= 0 && days <= 1) data[0].count += 1
+    else if (days > 1 && days <= 3) data[1].count += 1
+    else if (days > 3 && weeks <= 1) data[2].count += 1
+    else if (weeks > 1 && weeks <= 2) data[3].count += 1
+    else if (weeks > 2 && months <= 1) data[4].count += 1
+    else if (months > 1 && months <= 3) data[5].count += 1
+    else if (months > 3 && months <= 12) data[6].count += 1
+    else data[7].count += 1
   })
   return data
 }

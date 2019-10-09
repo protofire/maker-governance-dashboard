@@ -6,7 +6,7 @@ const TimeTakenChart = props => {
   const { wrapperProps, modalProps, currentVotes } = props
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
-      <Chart {...modalProps} showXaxis>
+      <Chart {...modalProps}>
         <YAxis />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
