@@ -2,12 +2,39 @@ import React from 'react'
 import { format, fromUnixTime, formatDistance, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 
+//Common components
+import { Spinner, SpinnerContainer } from '../common'
+
+const Loading = () => (
+  <SpinnerContainer>
+    <Spinner table />
+  </SpinnerContainer>
+)
+
 export const Pollcolumns = () => {
   return [
     {
       Header: 'Name',
       accessor: 'title',
       Cell: ({ row }) => <span data-tip={row.original.title}>{row.original.title}</span>,
+    },
+    {
+      Header: 'Winning Option',
+      accessor: 'win-option',
+      Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.label : <Loading />),
+      width: 100,
+    },
+    {
+      Header: 'Winning Option Weight',
+      accessor: 'win-mkr',
+      Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.mkr : <Loading />),
+      width: 100,
+    },
+    {
+      Header: 'Popularity',
+      accessor: 'popularity',
+      Cell: ({ row }) => (row.original.popularity ? `${row.original.popularity.mkr}%` : <Loading />),
+      width: 100,
     },
     {
       Header: 'Start',
