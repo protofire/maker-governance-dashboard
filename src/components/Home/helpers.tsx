@@ -246,7 +246,7 @@ export const getTimeTakenForExecutives = executives => {
   })
 
   return executives
-    .filter(vote => vote.casted && differenceInDays(Date.now(), fromUnixTime(vote.casted)) <= 30)
+    .filter(vote => vote.casted && differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp)) <= 30)
     .reduce((acc, vote) => {
       const days = differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
       return acc.map(bucket => {

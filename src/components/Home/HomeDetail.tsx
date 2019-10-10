@@ -223,7 +223,7 @@ function HomeDetail(props: Props) {
   const TimeTakenForExecutives = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentVotes = executives.filter(
-      vote => vote.casted && differenceInDays(Date.now(), fromUnixTime(vote.casted)) <= 30,
+      vote => vote.casted && differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp)) <= 30,
     ).length
 
     return (
