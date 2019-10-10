@@ -72,7 +72,7 @@ function ExecutiveInfo(props) {
         })
     }
   }, [excutivesData.data])
-  if (excutivesData.loading || gResult.loading) return <Loading />
+  if (excutivesData.loading || gResult.loading || data.length === 0) return <Loading />
   if (excutivesData.error || gResult.error) return <Error />
 
   return (
