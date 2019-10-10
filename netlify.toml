@@ -10,9 +10,7 @@
 [context.production.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_TOKEN_REGISTRY_GRAPH_HTTP="https://api.thegraph.com/subgraphs/name/protofire/token-registry"
 
 [context.deploy-preview.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
-  REACT_APP_TOKEN_REGISTRY_GRAPH_HTTP="https://api.thegraph.com/subgraphs/name/protofire/token-registry"
