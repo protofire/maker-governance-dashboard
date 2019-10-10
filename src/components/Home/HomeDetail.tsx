@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { fromUnixTime, differenceInDays } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -221,7 +222,9 @@ function HomeDetail(props: Props) {
   // Time taken graph data
   const TimeTakenForExecutives = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVotes = executives.filter(vote => vote.casted).length
+    const currentVotes = executives.filter(
+      vote => vote.casted && differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp)) <= 30,
+    ).length
 
     return (
       <TimeTakenChart
