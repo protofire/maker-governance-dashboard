@@ -1,5 +1,5 @@
 import React from 'react'
-import { format, fromUnixTime, formatDistance, differenceInMonths } from 'date-fns'
+import { format, fromUnixTime, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 
 //Common components
@@ -65,23 +65,25 @@ export const Executivecolumns = () => {
       Header: 'Status',
       accessor: 'status',
       Cell: ({ row }) =>
-        row.original.casted
-          ? 'Passed'
-          : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12
-          ? 'Open'
-          : 'Limbo',
+        row.original.casted ? (
+          <span style={{ color: '#00ba9c' }}>Passed</span>
+        ) : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12 ? (
+          <span style={{ color: '#fac202' }}>Open</span>
+        ) : (
+          'Limbo'
+        ),
+      width: 100,
     },
     {
       Header: 'Name',
-      accessor: row => row.title || row.id,
-    },
-    {
-      Header: 'Overview',
-      accessor: 'proposal_blurb',
+      Cell: ({ row }) => (
+        <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+      ),
     },
     {
       Header: 'MKR in support',
       accessor: row => Number(row.approvals).toFixed(2),
+      width: 100,
     },
     {
       Header: 'Started',
@@ -89,14 +91,16 @@ export const Executivecolumns = () => {
       accessor: row => (!row.timestamp ? new Date(row.date) : fromUnixTime(row.timestamp)),
       sortType: 'datetime',
       Cell: ({ row }) =>
-        !row.original.timestamp
-          ? formatDistance(new Date(row.original.date), new Date(), { addSuffix: true })
-          : formatDistance(fromUnixTime(row.original.timestamp), new Date(), { addSuffix: true }),
+        row.original.timestamp
+          ? format(fromUnixTime(row.original.timestamp), 'dd MMM yy')
+          : format(new Date(row.date), 'dd MMM yy'),
+      width: 100,
     },
     {
       Header: 'Executed',
       accessor: 'executed',
       Cell: ({ row }) => (row.original.casted ? format(fromUnixTime(row.original.casted), 'dd MMM yy') : 'NO'),
+      width: 100,
     },
   ]
 }
