@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { format, fromUnixTime, differenceInDays, differenceInWeeks, differenceInMonths } from 'date-fns'
+import { format, fromUnixTime, differenceInDays } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Card, TitleContainer, Link } from '../common/styled'
@@ -236,31 +236,27 @@ export const getMkrDistributionPerExecutive = (executives: Array<any>, hat: stri
 }
 
 export const getTimeTakenForExecutives = executives => {
-  const data = [
-    { label: '1 day', count: 0 },
-    { label: '3 days', count: 0 },
-    { label: '1 week', count: 0 },
-    { label: '2 weeks', count: 0 },
-    { label: '1 month', count: 0 },
-    { label: '3 months', count: 0 },
-    { label: '1 year', count: 0 },
-    { label: '> 1 year', count: 0 },
-  ]
-  executives
-    .filter(vote => vote.casted)
-    .forEach(vote => {
-      const days = differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
-      const weeks = differenceInWeeks(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
-      const months = differenceInMonths(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
+  const buckets = Array.from({ length: 30 }, (v, i) => i).map(num => {
+    return {
+      from: num,
+      to: num + 1,
+      label: `${num + 1} day${num > 0 ? 's' : ''}`,
+      count: 0,
+    }
+  })
 
-      if (days >= 0 && days <= 1) data[0].count += 1
-      else if (days > 1 && days <= 3) data[1].count += 1
-      else if (days > 3 && weeks <= 1) data[2].count += 1
-      else if (weeks > 1 && weeks <= 2) data[3].count += 1
-      else if (weeks > 2 && months <= 1) data[4].count += 1
-      else if (months > 1 && months <= 3) data[5].count += 1
-      else if (months > 3 && months <= 12) data[6].count += 1
-      else data[7].count += 1
-    })
-  return data
+  return executives
+    .filter(vote => vote.casted && differenceInDays(Date.now(), fromUnixTime(vote.casted)) <= 30)
+    .reduce((acc, vote) => {
+      const days = differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp))
+      return acc.map(bucket => {
+        return {
+          ...bucket,
+          count:
+            (days > bucket.from || (days === 0 && bucket.from === 0)) && days <= bucket.to
+              ? bucket.count + 1
+              : bucket.count,
+        }
+      })
+    }, buckets)
 }
