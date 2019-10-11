@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import styled from 'styled-components'
 
 // Utils
-import { getPollsData, getMakerDaoData } from '../../utils/makerdao'
+import { getPollsData } from '../../utils/makerdao'
 
 //Queries
 import { POLL_QUERY_BY_ID } from './queries'
@@ -37,12 +37,8 @@ function PollInfo(props: Props) {
   const pollData = useQuery(POLL_QUERY_BY_ID, { skip: !pollId, variables: { id: pollId } })
 
   useEffect(() => {
-    if (pollData.data && pollData.data.poll) {
-      Promise.all([getPollsData([pollData.data.poll]), getMakerDaoData()]).then(result => {
-        const polls = result[0].filter(Boolean)
-        setData(polls[0])
-      })
-    }
+    if (pollData.data && pollData.data.poll)
+      getPollsData([pollData.data.poll]).then(result => setData(result.filter(Boolean)[0]))
   }, [pollData.data, pollId])
 
   if (pollData.loading || Object.keys(data).length === 0) return <Loading />

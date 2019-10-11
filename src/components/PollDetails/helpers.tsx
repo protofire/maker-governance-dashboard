@@ -114,7 +114,7 @@ const getPollPeriods = poll => {
   const start = fromUnixTime(poll.startDate)
   const end = fromUnixTime(poll.endDate)
 
-  const long = differenceInDays(end, start)
+  const long = differenceInDays(endOfDay(end), startOfDay(start))
 
   return Array.from({ length: long }, (v, i) => {
     let from = startOfDay(addDays(start, i))

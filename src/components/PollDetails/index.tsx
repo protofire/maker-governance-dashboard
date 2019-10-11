@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
+import randomColor from 'randomcolor'
+
 import styled from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
@@ -47,6 +49,7 @@ function PollDetails(props: Props) {
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [pollPerOptionData, setPollPerOptionData] = useState<any>([])
+  const colors = useMemo(() => poll.options.map(() => randomColor()), [poll.options])
 
   useEffect(() => {
     getPollPerOptionData(poll).then(data => {
@@ -142,6 +145,7 @@ function PollDetails(props: Props) {
     return (
       <VotersDistributionChart
         options={poll.options}
+        colors={colors}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
