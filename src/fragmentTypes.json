@@ -12,6 +12,11 @@
       },
       {
         "kind": "INTERFACE",
+        "name": "TokenEvent",
+        "possibleTypes": [{ "name": "BurnEvent" }, { "name": "MintEvent" }, { "name": "TransferEvent" }]
+      },
+      {
+        "kind": "INTERFACE",
         "name": "VotingAction",
         "possibleTypes": [
           { "name": "AddAction" },

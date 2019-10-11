@@ -7,11 +7,28 @@ const pollsDetailFragmentPage = gql`
     url
     pollId
     startDate
+    timeLineCount
     endDate
     votesCount
     votes(first: 1000) {
+      id
       voter
       option
+    }
+    timeLine(first: 1000) {
+      id
+      timestamp
+      type: __typename
+      ... on VotePollAction {
+        sender
+        option
+      }
+      ... on CreatePollAction {
+        block
+      }
+      ... on WithdrawPollAction {
+        block
+      }
     }
   }
 `
@@ -24,9 +41,9 @@ export const GOVERNANCE_INFO_QUERY = gql`
   }
 `
 
-export const POLLS_FIRST_QUERY = gql`
-  query GetPollsDataPage($polls: Int!) {
-    polls(first: $polls) {
+export const POLL_QUERY_BY_ID = gql`
+  query GetPollsDataPage($id: ID!) {
+    poll(id: $id) {
       ...pollsDetailPage
     }
   }

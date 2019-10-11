@@ -3,13 +3,11 @@ import { useQuery } from '@apollo/react-hooks'
 
 import styled from 'styled-components'
 
-import { DEFAULT_FETCH_ROWS } from '../../constants'
-
 // Utils
 import { getPollsData, getMakerDaoData } from '../../utils/makerdao'
 
 //Queries
-import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
+import { POLL_QUERY_BY_ID } from './queries'
 
 //Common components
 import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
@@ -35,33 +33,20 @@ function PollInfo(props: Props) {
   const { match } = props
   const pollId = match.params.id
 
-  const getPollsVariables = data => {
-    const governance = data.governanceInfo
-    return {
-      polls: Number(governance.countPolls) || DEFAULT_FETCH_ROWS,
-    }
-  }
-
   const [data, setData] = useState<any>({})
-  const [resultVariables, setResultVariables] = useState(getPollsVariables({ governanceInfo: {} }))
-  const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
-  const pollsData = useQuery(POLLS_FIRST_QUERY, { variables: resultVariables })
+  const pollData = useQuery(POLL_QUERY_BY_ID, { skip: !pollId, variables: { id: pollId } })
 
   useEffect(() => {
-    if (gData) setResultVariables(getPollsVariables(gData))
-  }, [gData])
-
-  useEffect(() => {
-    if (pollsData.data && pollsData.data.polls) {
-      Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
+    if (pollData.data && pollData.data.poll) {
+      Promise.all([getPollsData([pollData.data.poll]), getMakerDaoData()]).then(result => {
         const polls = result[0].filter(Boolean)
-        setData(polls.find((el: any) => el.id === pollId))
+        setData(polls[0])
       })
     }
-  }, [pollsData.data, pollId])
+  }, [pollData.data, pollId])
 
-  if (pollsData.loading || gResult.loading || Object.keys(data).length === 0) return <Loading />
-  if (pollsData.error || gResult.error) return <Error />
+  if (pollData.loading || Object.keys(data).length === 0) return <Loading />
+  if (pollData.error) return <Error />
 
   return (
     <PollContainer>

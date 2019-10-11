@@ -45,7 +45,7 @@ const getVoterRegistries = async (addresses, endDate) => {
   return [...result.cold, ...result.hot]
 }
 
-const getVoterAddresses = poll => {
+export const getVoterAddresses = poll => {
   const pollVoters = getPollVotersPerOption(poll)
   return Object.keys(pollVoters).flatMap(option => pollVoters[option])
 }
