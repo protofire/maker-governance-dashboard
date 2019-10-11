@@ -116,7 +116,7 @@ const getPollPeriods = poll => {
 
   const long = differenceInDays(endOfDay(end), startOfDay(start))
 
-  return Array.from({ length: long }, (v, i) => {
+  return Array.from({ length: long + 1 }, (v, i) => {
     let from = startOfDay(addDays(start, i))
     return {
       label: format(from, 'dd MMM'),
