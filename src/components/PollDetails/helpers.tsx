@@ -1,10 +1,10 @@
 import styled from 'styled-components'
-import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { fromUnixTime, format, formatDistanceToNow, addDays, startOfDay, endOfDay, differenceInDays } from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
 
 import { shortenAccount, timeLeft } from '../../utils'
 
-import { getPollData } from './data'
+import { getPollData, getVoterAddresses } from './data'
 
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
@@ -108,4 +108,62 @@ export const getComponentData = (
     expanded,
     versus,
   }
+}
+
+const getPollPeriods = poll => {
+  const start = fromUnixTime(poll.startDate)
+  const end = fromUnixTime(poll.endDate)
+
+  const long = differenceInDays(endOfDay(end), startOfDay(start))
+
+  return Array.from({ length: long + 1 }, (v, i) => {
+    let from = startOfDay(addDays(start, i))
+    return {
+      label: format(from, 'dd MMM'),
+      from,
+      to: endOfDay(addDays(start, i)),
+    }
+  })
+}
+
+export const getPollVotersHistogramData = poll => {
+  const periods = getPollPeriods(poll)
+
+  const pollOptions = ['Abstein', ...poll.options]
+  const options = pollOptions.reduce((acc, el) => {
+    return {
+      ...acc,
+      [el]: 0,
+    }
+  }, {})
+
+  const voters = getVoterAddresses(poll).reduce((acc, voter) => {
+    return {
+      ...acc,
+      [voter]: 0,
+    }
+  }, {})
+
+  return periods.map(period => {
+    poll.timeLine.forEach(el => {
+      if (
+        el.type === 'VotePollAction' &&
+        el.timestamp >= getUnixTime(period.from) &&
+        el.timestamp <= getUnixTime(period.to)
+      ) {
+        const prevVote = voters[el.sender]
+        const option = pollOptions[el.option]
+
+        options[option] += 1
+        voters[el.sender] = option
+
+        if (prevVote) options[prevVote] -= 1
+      }
+    })
+
+    return {
+      ...period,
+      ...options,
+    }
+  })
 }

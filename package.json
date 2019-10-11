@@ -27,6 +27,7 @@
     "install": "^0.13.0",
     "ipfs-only-hash": "^1.0.2",
     "npm": "^6.11.3",
+    "randomcolor": "^0.5.4",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-hamburger-menu": "^1.1.1",
@@ -45,7 +46,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build-fragment": "API_URI=https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance node src/schemaQuery.js",
+    "build-fragment": "API_URI=https://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance node src/schemaQuery.js",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
     "generateGQLTypes": "node scripts/generateGQLTypes.js"

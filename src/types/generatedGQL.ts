@@ -308,8 +308,12 @@ export interface GetPollsInfoPage {
 // GraphQL query operation: GetPollsDataPage
 // ====================================================
 
-export interface GetPollsDataPage_polls_votes {
+export interface GetPollsDataPage_poll_votes {
   __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
   /**
    *  Voters's Address
    */
@@ -320,7 +324,64 @@ export interface GetPollsDataPage_polls_votes {
   option: any
 }
 
-export interface GetPollsDataPage_polls {
+export interface GetPollsDataPage_poll_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
+export interface GetPollsDataPage_poll_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface GetPollsDataPage_poll_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type GetPollsDataPage_poll_timeLine =
+  | GetPollsDataPage_poll_timeLine_VotePollAction
+  | GetPollsDataPage_poll_timeLine_CreatePollAction
+  | GetPollsDataPage_poll_timeLine_WithdrawPollAction
+
+export interface GetPollsDataPage_poll {
   __typename: 'Poll'
   /**
    *  Equals to: <Poll ID>
@@ -330,20 +391,28 @@ export interface GetPollsDataPage_polls {
   url: string | null
   pollId: any
   startDate: any
+  /**
+   *  Number of record in timeLine
+   */
+  timeLineCount: any
   endDate: any
   /**
    *  Number votes
    */
   votesCount: any
-  votes: GetPollsDataPage_polls_votes[] | null
+  votes: GetPollsDataPage_poll_votes[] | null
+  /**
+   *  Poll historical data
+   */
+  timeLine: GetPollsDataPage_poll_timeLine[] | null
 }
 
 export interface GetPollsDataPage {
-  polls: GetPollsDataPage_polls[]
+  poll: GetPollsDataPage_poll | null
 }
 
 export interface GetPollsDataPageVariables {
-  polls: number
+  id: string
 }
 
 /* tslint:disable */
@@ -751,6 +820,10 @@ export interface pollsDetail {
 export interface pollsDetailPage_votes {
   __typename: 'PollVote'
   /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
    *  Voters's Address
    */
   voter: any
@@ -759,6 +832,63 @@ export interface pollsDetailPage_votes {
    */
   option: any
 }
+
+export interface pollsDetailPage_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
+export interface pollsDetailPage_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface pollsDetailPage_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type pollsDetailPage_timeLine =
+  | pollsDetailPage_timeLine_VotePollAction
+  | pollsDetailPage_timeLine_CreatePollAction
+  | pollsDetailPage_timeLine_WithdrawPollAction
 
 export interface pollsDetailPage {
   __typename: 'Poll'
@@ -770,12 +900,20 @@ export interface pollsDetailPage {
   url: string | null
   pollId: any
   startDate: any
+  /**
+   *  Number of record in timeLine
+   */
+  timeLineCount: any
   endDate: any
   /**
    *  Number votes
    */
   votesCount: any
   votes: pollsDetailPage_votes[] | null
+  /**
+   *  Poll historical data
+   */
+  timeLine: pollsDetailPage_timeLine[] | null
 }
 
 /* tslint:disable */

@@ -70,7 +70,6 @@ function PollsInfo(props) {
       })
     }
   }, [pollsData.data])
-
   if (pollsData.loading || gResult.loading || data.length === 0) return <Loading />
   if (pollsData.error || gResult.error) return <Error />
   return (

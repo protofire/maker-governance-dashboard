@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
+import randomColor from 'randomcolor'
 import styled from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
 import { getModalContainer } from '../../utils'
 
-import { TimeLeftChart, PollPerOptionChart } from './Charts'
+import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart } from './Charts'
 
 import {
   WrappedContainer,
@@ -17,6 +18,7 @@ import {
   getComponentData,
   getTimeLeftData,
   getPollPerOptionData,
+  getPollVotersHistogramData,
 } from './helpers'
 
 const NoData = styled.span`
@@ -46,13 +48,13 @@ function PollDetails(props: Props) {
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [pollPerOptionData, setPollPerOptionData] = useState<any>([])
+  const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
   useEffect(() => {
     getPollPerOptionData(poll).then(data => {
       setPollPerOptionData(data)
     })
   }, [poll])
-
   const voteMap = {
     table: {
       description: {
@@ -64,6 +66,17 @@ function PollDetails(props: Props) {
       timeLeft: {
         data: getTimeLeftData(poll.startDate, poll.endDate),
         component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
+      },
+      votersDistribution: {
+        data: getPollVotersHistogramData(poll),
+        component: props => (
+          <VotersDistribution
+            expanded
+            content="Voters distribution between options"
+            component="votersDistribution"
+            {...props}
+          />
+        ),
       },
       pollPerOption: {
         data: pollPerOptionData,
@@ -118,6 +131,20 @@ function PollDetails(props: Props) {
     return (
       <TimeLeftChart
         data={voteMap.chart[props.component].data}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
+  //Poll voters distribution per option data
+  const VotersDistribution = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <VotersDistributionChart
+        options={poll.options}
+        colors={colors}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -181,7 +208,9 @@ function PollDetails(props: Props) {
         <Card style={{ height: 300 }}>
           <TimeLeft content="Time left" component="timeLeft" />
         </Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card style={{ height: 300 }}>
+          <VotersDistribution content="Voters distribution between options" component="votersDistribution" />
+        </Card>
         <Card style={{ height: 300 }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
