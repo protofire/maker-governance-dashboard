@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 
+import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 
 import List from '../../components/List'
@@ -16,7 +17,7 @@ import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
 import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
 
 // Utils
-import { getPollsData, getMakerDaoData } from '../../utils/makerdao'
+import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -31,13 +32,14 @@ const Loading = () => (
   </SpinnerContainer>
 )
 
-const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
+const ErrorEl = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 const PollsContainer = styled.div``
 
 function PollsInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
+  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
   const pollcolumns = React.useMemo(() => Pollcolumns(), [])
   const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
@@ -50,28 +52,50 @@ function PollsInfo(props) {
 
   const setPopularity = popularity => {
     const totalMkr = popularity.reduce((acc, value) => Number(acc) + Number(value.mkr), 0)
-    const winnerOption = popularity.reduce((prev, current) => (prev.mkr > current.mkr ? prev : current))
+    const winnerOption = popularity.reduce(
+      (prev, current) => (Number(prev.mkr) > Number(current.mkr) ? prev : current),
+      0,
+    )
     return { option: winnerOption, mkr: totalMkr ? Number((winnerOption.mkr * 100) / totalMkr).toFixed(2) : '0' }
   }
+  const getParticipation = (data, mkrSupply) => {
+    const totalMkr: BigNumber = data.reduce((acc, value) => acc.plus(new BigNumber(value.mkr)), new BigNumber('0'))
+    return totalMkr
+      .times(100)
+      .div(mkrSupply)
+      .toString()
+  }
+
+  useEffect(() => {
+    getMKRSupply().then(supply => setMkrSupply(supply))
+  }, [])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
 
   useEffect(() => {
-    if (pollsData.data && pollsData.data.polls) {
-      Promise.all([getPollsData(pollsData.data.polls), getMakerDaoData()]).then(result => {
-        const polls = result[0].filter(Boolean)
+    if (pollsData.data && pollsData.data.polls && mkrSupply) {
+      getPollsData(pollsData.data.polls).then(result => {
+        const polls = result.filter(Boolean)
         setData([...polls])
-        const pollsWithPopularity = polls.map(poll =>
-          getPollData(poll).then(data => ({ ...poll, popularity: setPopularity(data) })),
-        )
-        Promise.all(pollsWithPopularity).then(data => setData(data))
+
+        Promise.all(
+          polls.map(poll => {
+            return getPollData(poll).then(data => {
+              return { ...poll, popularity: setPopularity(data), participation: getParticipation(data, mkrSupply) }
+            })
+          }),
+        ).then(pollsWithPopularityAndParticipation => {
+          setData(pollsWithPopularityAndParticipation)
+        })
       })
     }
-  }, [pollsData.data])
+  }, [pollsData.data, mkrSupply])
+
   if (pollsData.loading || gResult.loading || data.length === 0) return <Loading />
-  if (pollsData.error || gResult.error) return <Error />
+  if (pollsData.error || gResult.error) return <ErrorEl />
+
   return (
     <PollsContainer>
       <PageTitle>Polls</PageTitle>
