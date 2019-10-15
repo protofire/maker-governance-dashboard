@@ -6,7 +6,7 @@ import { BigNumber } from 'bignumber.js'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
 import { getModalContainer } from '../../utils'
 
-import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart } from './Charts'
+import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 
 import {
   WrappedContainer,
@@ -19,6 +19,7 @@ import {
   getTimeLeftData,
   getPollPerOptionData,
   getPollVotersHistogramData,
+  getPollMakerHistogramData,
 } from './helpers'
 
 const NoData = styled.span`
@@ -48,13 +49,18 @@ function PollDetails(props: Props) {
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [pollPerOptionData, setPollPerOptionData] = useState<any>([])
+  const [mkrDistributionData, setMkrDistributionData] = useState<any>([])
+
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
   useEffect(() => {
-    getPollPerOptionData(poll).then(data => {
-      setPollPerOptionData(data)
-    })
+    getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
   }, [poll])
+
+  useEffect(() => {
+    getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
+  }, [poll])
+
   const voteMap = {
     table: {
       description: {
@@ -74,6 +80,17 @@ function PollDetails(props: Props) {
             expanded
             content="Voters distribution between options"
             component="votersDistribution"
+            {...props}
+          />
+        ),
+      },
+      makerDistribution: {
+        data: mkrDistributionData,
+        component: props => (
+          <MakerDistribution
+            expanded
+            content="MKR distribution between options"
+            component="makerDistribution"
             {...props}
           />
         ),
@@ -151,6 +168,20 @@ function PollDetails(props: Props) {
     )
   }
 
+  //Poll MKR distribution between options data
+  const MakerDistribution = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <MakerDistributionChart
+        options={poll.options}
+        colors={colors}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
   //Poll per option data
   const PollPerOption = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
@@ -184,6 +215,7 @@ function PollDetails(props: Props) {
 
   return (
     <VoteDetailContainer>
+      {console.log(mkrDistributionData)}
       <WrappedContainer>
         <Card type="table" style={{ padding: 0 }}>
           <Container>
@@ -218,7 +250,13 @@ function PollDetails(props: Props) {
             <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
           )}
         </Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card style={{ height: 300 }}>
+          {mkrDistributionData.length === 0 ? (
+            <Loading />
+          ) : (
+            <MakerDistribution content="MKR distribution between options" component="makerDistribution" />
+          )}
+        </Card>
       </WrappedContainer>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
