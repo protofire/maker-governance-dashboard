@@ -181,3 +181,27 @@ export const getTopSupporters = (data: Array<any>): Array<any> => {
     }
   }, {})
 }
+
+export const getApprovalsByAddress = (votingActions: Array<any>): Array<any> => {
+  const buckets = Array.from({ length: 6 }, (v, i) => Math.pow(10, i)).map((num, index, array) => {
+    let from = index === 0 ? 0 : array[index - 1] + 1
+    return {
+      from,
+      to: num,
+      label: `<${num}`,
+      mkr: 0,
+    }
+  })
+
+  const data = getTopSupporters(votingActions)
+
+  return Object.keys(data).reduce((acc, vote) => {
+    const address = data[vote]
+    return acc.map(bucket => {
+      return {
+        ...bucket,
+        mkr: address.mkr >= bucket.from && address.mkr < bucket.to ? bucket.mkr + Number(address.mkr) : bucket.mkr,
+      }
+    })
+  }, buckets)
+}

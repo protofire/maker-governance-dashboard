@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
 import { getModalContainer } from '../../utils'
-import { VotersVsMkrChart } from './Charts'
+import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
 
 import {
   WrappedContainer,
@@ -16,6 +16,7 @@ import {
   getVotersVsMkrData,
   getTopSupporters,
   getTopSupportersTableData,
+  getApprovalsByAddress,
 } from './helpers'
 
 const NoData = styled.span`
@@ -57,6 +58,12 @@ function VoteDetails(props: Props) {
             component="votersVsMkr"
             {...props}
           />
+        ),
+      },
+      approvalsByAddress: {
+        data: getApprovalsByAddress(votingActions),
+        component: props => (
+          <ApprovalsByAddress expanded content="Approvals by address" component="approvalsByAddress" {...props} />
         ),
       },
     },
@@ -114,6 +121,19 @@ function VoteDetails(props: Props) {
     )
   }
 
+  //Approvals by address
+  const ApprovalsByAddress = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    const currentMkr = Object.keys(topSupporters).reduce((accum, el) => accum + Number(topSupporters[el].mkr), 0)
+    return (
+      <ApprovalsByAddressChart
+        currentMkr={currentMkr.toFixed(2)}
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
   //Description Data
   const Description = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
@@ -155,7 +175,9 @@ function VoteDetails(props: Props) {
         <Card style={{ height: 300 }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
-        <Card style={{ height: 300 }}></Card>
+        <Card style={{ height: 300 }}>
+          <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
+        </Card>
         <Card style={{ height: 300 }}></Card>
         <Card type="table" style={{ padding: 0 }}>
           <Container>
