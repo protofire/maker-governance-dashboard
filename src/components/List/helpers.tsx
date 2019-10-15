@@ -37,6 +37,12 @@ export const Pollcolumns = () => {
       width: 100,
     },
     {
+      Header: 'MKR Participation',
+      accessor: 'participation',
+      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : <Loading />),
+      width: 100,
+    },
+    {
       Header: 'Start',
       accessor: row => fromUnixTime(row.startDate),
       id: 'date',

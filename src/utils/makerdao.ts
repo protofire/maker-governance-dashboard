@@ -1,4 +1,5 @@
 import matter from 'gray-matter'
+import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
 const Hash = require('ipfs-only-hash')
 
@@ -7,6 +8,10 @@ const prod = 'https://cms-gov.makerfoundation.com'
 const path = 'content/governance-dashboard'
 
 const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
+
+const MKR_SUPPLY_API =
+  'https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2&apikey='
+const PRECISION = new BigNumber('10').exponentiatedBy(18)
 
 const check = async res => {
   if (!res.ok) {
@@ -179,4 +184,18 @@ export function getPollsData(polls) {
       }
     }),
   )
+}
+
+export async function getMKRSupply() {
+  try {
+    const res = await fetch(`${MKR_SUPPLY_API}${process.env.ETHERSCAN_API_KEY}`)
+    if (!res.ok) {
+      throw new Error(`unable to fetch MKR supply: ${res.status} - ${await res.text()}`)
+    }
+
+    const supply = await res.json()
+    return new BigNumber(supply.result).div(PRECISION)
+  } catch (e) {
+    console.log(`Error fetching MKR supply`)
+  }
 }
