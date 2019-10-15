@@ -55,9 +55,6 @@ function PollDetails(props: Props) {
 
   useEffect(() => {
     getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
-  }, [poll])
-
-  useEffect(() => {
     getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
   }, [poll])
 
@@ -215,7 +212,6 @@ function PollDetails(props: Props) {
 
   return (
     <VoteDetailContainer>
-      {console.log(mkrDistributionData)}
       <WrappedContainer>
         <Card type="table" style={{ padding: 0 }}>
           <Container>

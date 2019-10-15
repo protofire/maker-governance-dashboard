@@ -213,16 +213,16 @@ export const getPollMakerHistogramData = poll => {
 
   return Promise.all(
     votersPerPeriod.map(async period => {
-      const fakePoll = {
+      const manualPoll = {
         endDate: period.endDate,
         votes: poll.options.flatMap(pop =>
           Array.from(period[pop]).map(voter => ({ option: poll.options.indexOf(pop) + 1, voter })),
         ),
         options: poll.options,
       }
-      const pollData = await getPollData(fakePoll)
+      const pollData = await getPollData(manualPoll)
 
-      const sara = pollData.reduce(
+      return pollData.reduce(
         (acc, el) => {
           return {
             ...acc,
@@ -231,8 +231,6 @@ export const getPollMakerHistogramData = poll => {
         },
         { ...period },
       )
-
-      return sara
     }),
   )
 }
