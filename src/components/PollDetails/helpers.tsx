@@ -118,10 +118,13 @@ const getPollPeriods = poll => {
 
   return Array.from({ length: long + 1 }, (v, i) => {
     let from = startOfDay(addDays(start, i))
+    let to = endOfDay(addDays(start, i))
+
     return {
       label: format(from, 'dd MMM'),
       from,
-      to: endOfDay(addDays(start, i)),
+      to,
+      endDate: getUnixTime(to),
     }
   })
 }
@@ -166,4 +169,68 @@ export const getPollVotersHistogramData = poll => {
       ...options,
     }
   })
+}
+
+export const getPollMakerHistogramData = poll => {
+  const periods = getPollPeriods(poll)
+
+  const pollOptions = ['Abstein', ...poll.options]
+  const options = pollOptions.reduce((acc, el) => {
+    return {
+      ...acc,
+      [el]: new Set(),
+    }
+  }, {})
+
+  const voters = getVoterAddresses(poll).reduce((acc, voter) => {
+    return {
+      ...acc,
+      [voter]: 0,
+    }
+  }, {})
+
+  const votersPerPeriod = periods.map(period => {
+    poll.timeLine.forEach(el => {
+      if (
+        el.type === 'VotePollAction' &&
+        el.timestamp >= getUnixTime(period.from) &&
+        el.timestamp <= getUnixTime(period.to)
+      ) {
+        const prevVote = voters[el.sender]
+        const option = pollOptions[el.option]
+
+        options[option] = new Set([...Array.from(options[option])]).add(el.sender)
+        voters[el.sender] = option
+
+        if (prevVote) options[prevVote] = options[prevVote].delete(el.sender)
+      }
+    })
+    return {
+      ...period,
+      ...options,
+    }
+  })
+
+  return Promise.all(
+    votersPerPeriod.map(async period => {
+      const manualPoll = {
+        endDate: period.endDate,
+        votes: poll.options.flatMap(pop =>
+          Array.from(period[pop]).map(voter => ({ option: poll.options.indexOf(pop) + 1, voter })),
+        ),
+        options: poll.options,
+      }
+      const pollData = await getPollData(manualPoll)
+
+      return pollData.reduce(
+        (acc, el) => {
+          return {
+            ...acc,
+            [el.label]: el.mkr,
+          }
+        },
+        { ...period },
+      )
+    }),
+  )
 }
