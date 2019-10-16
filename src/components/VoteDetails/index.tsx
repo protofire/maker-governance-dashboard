@@ -124,10 +124,10 @@ function VoteDetails(props: Props) {
   //Approvals by address
   const ApprovalsByAddress = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentMkr = Object.keys(topSupporters).reduce((accum, el) => accum + Number(topSupporters[el].mkr), 0)
+    const currentVoters = Object.keys(topSupporters).length
     return (
       <ApprovalsByAddressChart
-        currentMkr={currentMkr.toFixed(2)}
+        currentVoters={currentVoters}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -178,7 +178,6 @@ function VoteDetails(props: Props) {
         <Card style={{ height: 300 }}>
           <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
         </Card>
-        <Card style={{ height: 300 }}></Card>
         <Card type="table" style={{ padding: 0 }}>
           <Container>
             <TableTitle>Top Supporters</TableTitle>
