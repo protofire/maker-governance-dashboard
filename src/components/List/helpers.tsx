@@ -21,18 +21,21 @@ export const Pollcolumns = () => {
     {
       Header: 'Winning Option',
       accessor: 'win-option',
+      sortType: (a, b) => (a.original.popularity.option.label > b.original.popularity.option.label ? 1 : -1),
       Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.label : <Loading />),
       width: 100,
     },
     {
       Header: 'Winning Option Weight',
       accessor: 'win-mkr',
+      sortType: (a, b) => a.original.popularity.option.mkr - b.original.popularity.option.mkr,
       Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.mkr : <Loading />),
       width: 100,
     },
     {
       Header: 'Popularity',
       accessor: 'popularity',
+      sortType: (a, b) => a.original.popularity.mkr - b.original.popularity.mkr,
       Cell: ({ row }) => (row.original.popularity ? `${row.original.popularity.mkr}%` : <Loading />),
       width: 100,
     },

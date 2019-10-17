@@ -168,7 +168,7 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     {
       Header: 'Name',
       accessor: 'title',
-      Cell: ({ row }) => <Link href={row.original.url}>{row.original.title}</Link>,
+      Cell: ({ row }) => <Link>{row.original.title}</Link>,
     },
     {
       Header: 'Start date',
