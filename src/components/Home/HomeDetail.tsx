@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { withRouter } from 'react-router-dom'
 import { fromUnixTime, differenceInDays } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
@@ -37,11 +38,12 @@ const TABLE_PREVIEW = 5
 type Props = {
   data: getHomeData
   gData: GetGovernanceInfo
+  history?: any
   subscribeToChanges?: () => void
 }
 
 function HomeDetail(props: Props) {
-  const { data, gData } = props
+  const { data, gData, history } = props
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
@@ -53,6 +55,14 @@ function HomeDetail(props: Props) {
   const executiveColumns = expanded => Executivecolumns(expanded)
   const executives = data.executives
 
+  const getPoll = row => {
+    if (row.id) history.push(`/poll/${row.id}`)
+  }
+
+  const getVote = row => {
+    if (row.id) history.push(`/executive/${row.id}`)
+  }
+
   // Data map for building this page
   const giniData = getGiniData([...data.free, ...data.lock], chartFilters.gini)
   const homeMap = {
@@ -61,13 +71,15 @@ function HomeDetail(props: Props) {
         data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
-        component: props => <HomeTable expanded content="Top polls" component="polls" {...props} />,
+        component: props => <HomeTable handleRow={getPoll} expanded content="Top polls" component="polls" {...props} />,
       },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
         columns: expanded => executiveColumns(expanded),
         sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
-        component: props => <HomeTable expanded content="Top executives" component="executives" {...props} />,
+        component: props => (
+          <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
+        ),
       },
     },
     chart: {
@@ -140,11 +152,12 @@ function HomeDetail(props: Props) {
     }
   }
 
-  const getModalProps = (type, component, expanded = false) => {
+  const getModalProps = (type, component, expanded = false, handleRow = undefined) => {
     const data = homeMap[type][component].data
     if (type === 'table')
       return {
         expanded,
+        handleRow,
         scrollable: expanded,
         data: expanded ? data : data.slice(0, TABLE_PREVIEW),
         columns: homeMap[type][component].columns(expanded),
@@ -238,10 +251,9 @@ function HomeDetail(props: Props) {
   //Table Data
   const HomeTable = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
-
     return (
       <TableWrapper {...getWrapperProps(data)}>
-        <Table {...getModalProps(data.type, data.component, data.expanded)} />
+        <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
       </TableWrapper>
     )
   }
@@ -304,4 +316,4 @@ function HomeDetail(props: Props) {
   )
 }
 
-export default HomeDetail
+export default withRouter(HomeDetail)
