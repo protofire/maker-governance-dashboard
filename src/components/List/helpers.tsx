@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import { format, fromUnixTime, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 
@@ -16,7 +17,12 @@ export const Pollcolumns = () => {
     {
       Header: 'Name',
       accessor: 'title',
-      Cell: ({ row }) => <span data-tip={row.original.title}>{row.original.title}</span>,
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.title}>{row.original.title}</span>
+        </>
+      ),
     },
     {
       Header: 'Winning Option',
@@ -83,7 +89,10 @@ export const Executivecolumns = () => {
     {
       Header: 'Name',
       Cell: ({ row }) => (
-        <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+        </>
       ),
     },
     {
