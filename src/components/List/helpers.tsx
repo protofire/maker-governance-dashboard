@@ -104,8 +104,9 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Executed',
-      accessor: 'executed',
-      Cell: ({ row }) => (row.original.casted ? format(fromUnixTime(row.original.casted), 'dd MMM yy') : 'NO'),
+      id: 'executed',
+      sortType: (a, b) => a.original.casted - b.original.casted,
+      accessor: row => (row.casted ? format(fromUnixTime(row.casted), 'dd MMM yy') : 'NO'),
       width: 100,
     },
   ]
