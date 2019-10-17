@@ -6,8 +6,8 @@ const MkrDistributionPerExecutiveChart = props => {
   const { wrapperProps, modalProps, currentMkr } = props
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
-      <Chart {...modalProps} showXaxis={2}>
-        <YAxis />
+      <Chart {...modalProps} showXaxis={3}>
+        <YAxis style={{ fontSize: '13px' }} type="number" domain={[0, 'dataMax + 40000']} />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
           name={`Executive vote - Current ${currentMkr}`}
