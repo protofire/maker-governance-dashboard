@@ -1,6 +1,5 @@
 import React from 'react'
 import { useTable, useTableState, usePagination, useSortBy } from 'react-table'
-import ReactTooltip from 'react-tooltip'
 
 import styled, { css } from 'styled-components'
 import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
@@ -193,7 +192,6 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   // Render the UI for your table
   return (
     <>
-      <ReactTooltip place="top" type="dark" effect="solid" />
       <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
         <div>
           {headerGroups.map(headerGroup => (
