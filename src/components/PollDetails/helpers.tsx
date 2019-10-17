@@ -1,5 +1,14 @@
 import styled from 'styled-components'
-import { fromUnixTime, format, formatDistanceToNow, addDays, startOfDay, endOfDay, differenceInDays } from 'date-fns'
+import {
+  fromUnixTime,
+  format,
+  formatDistance,
+  formatDistanceToNow,
+  addDays,
+  startOfDay,
+  endOfDay,
+  differenceInDays,
+} from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
 
 import { shortenAccount, timeLeft } from '../../utils'
@@ -72,7 +81,13 @@ export const getPollTableData = poll => {
     { value: Number(poll.votesCount) === 0 ? 'No' : 'Yes', label: 'Voted' },
     { value: timeLeft(poll.endDate) === 'Ended' ? 'Yes' : 'No', label: 'Ended' },
     { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Active', label: 'Status' },
-    { value: formatDistanceToNow(fromUnixTime(poll.startDate), { addSuffix: false }), label: 'Time opened' },
+    {
+      value:
+        timeLeft(poll.endDate) === 'Ended'
+          ? formatDistance(fromUnixTime(poll.startDate), fromUnixTime(poll.endDate), { addSuffix: false })
+          : formatDistanceToNow(fromUnixTime(poll.startDate), { addSuffix: false }),
+      label: 'Time opened',
+    },
   ]
 }
 
