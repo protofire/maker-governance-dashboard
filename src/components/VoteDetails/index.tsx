@@ -27,7 +27,11 @@ const NoData = styled.span`
   font-size: 16px;
 `
 
-const VoteDetailContainer = styled.div``
+const VoteDetailContainer = styled.div`
+  ${WrappedContainer} {
+    justify-content: space-evenly;
+  }
+`
 
 type Props = {
   vote: any
