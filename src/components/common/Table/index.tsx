@@ -174,7 +174,6 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     // The rest of these things are super handy, too ;)
     canPreviousPage,
     canNextPage,
-    pageOptions,
     nextPage,
     previousPage,
     setPageSize,
@@ -238,7 +237,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
               ))}
             </PageSelect>
             <Pager>
-              {pageIndex + 1}-{pageSize} of {pageOptions.length}
+              {pageIndex + 1}-{pageSize} of {data ? data.length : 0}
             </Pager>
             <PageIconContainer onClick={() => previousPage()} disabled={!canPreviousPage}>
               <PreviousIcon />
