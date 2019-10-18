@@ -46,12 +46,12 @@ export const timeLeft = (end): string => {
   const monthsDiff = differenceInMonths(end_date, today)
   const yearsDiff = differenceInYears(end_date, today)
 
-  if (yearsDiff > 0) return `${yearsDiff} years`
-  if (monthsDiff > 0) return `${monthsDiff} months`
-  if (weeksDiff > 0) return `${weeksDiff} weeks`
-  if (daysDiff > 0) return `${daysDiff} days`
-  if (hoursDiff > 0) return `${hoursDiff} hours`
-  return `${minsDiff} minutes`
+  if (yearsDiff > 0) return yearsDiff === 1 ? `${yearsDiff} year` : `${yearsDiff} year`
+  if (monthsDiff > 0) return monthsDiff === 1 ? `${monthsDiff} month` : `${monthsDiff} months`
+  if (weeksDiff > 0) return weeksDiff === 1 ? `${daysDiff} week` : `${daysDiff} week`
+  if (daysDiff > 0) return daysDiff === 1 ? `${daysDiff} day` : `${daysDiff} days`
+  if (hoursDiff > 0) return hoursDiff === 1 ? `${daysDiff} hour` : `${hoursDiff} hours`
+  return minsDiff === 1 ? `${minsDiff} minute` : `${minsDiff} minutes`
 }
 
 export const getLastYear = () => {
