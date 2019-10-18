@@ -69,7 +69,7 @@ const TimeLeftChart = props => {
               {data[0].time.days >= 0 && (
                 <>
                   <span>{data[0].time.days}</span>
-                  <span>DAYS</span>
+                  <span>{data[0].time.days === 1 ? 'DAY' : 'DAYS'}</span>
                 </>
               )}
             </DaysContainer>
@@ -78,7 +78,7 @@ const TimeLeftChart = props => {
                 {data[0].time.hours >= 0 && (
                   <>
                     <span>{data[0].time.hours}</span>
-                    <span>HOURS</span>
+                    <span>{data[0].time.hours === 1 ? 'HOUR' : 'HOURS'}</span>
                   </>
                 )}
               </div>
@@ -86,7 +86,7 @@ const TimeLeftChart = props => {
                 {data[0].time.minutes >= 0 && (
                   <>
                     <span>{data[0].time.minutes}</span>
-                    <span>MINUTES</span>
+                    <span>{data[0].time.minutes === 1 ? 'MINUTE' : 'MINUTES'}</span>
                   </>
                 )}
               </div>
