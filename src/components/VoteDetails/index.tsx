@@ -27,7 +27,20 @@ const NoData = styled.span`
   font-size: 16px;
 `
 
-const VoteDetailContainer = styled.div``
+const VoteDetailContainer = styled.div`
+  ${DescriptionBox} {
+    max-width: none;
+  }
+`
+const DescriptionCard = styled(Card)`
+  flex: 0 0 61.7% !important;
+  @media (max-width: 768px) {
+    flex: 0 0 40% !important;
+  }
+  @media (max-width: 480px) {
+    flex: unset !important;
+  }
+`
 
 type Props = {
   vote: any
@@ -165,13 +178,13 @@ function VoteDetails(props: Props) {
             ))}
           </TableContainer>
         </Card>
-        <Card style={{ height: 300 }}>
+        <DescriptionCard style={{ height: 300 }}>
           {vote.about ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>No data to display.</NoData>
           )}
-        </Card>
+        </DescriptionCard>
         <Card style={{ height: 300 }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
