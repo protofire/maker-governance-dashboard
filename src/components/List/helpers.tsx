@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import { format, fromUnixTime, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 
@@ -16,23 +17,31 @@ export const Pollcolumns = () => {
     {
       Header: 'Name',
       accessor: 'title',
-      Cell: ({ row }) => <span data-tip={row.original.title}>{row.original.title}</span>,
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.title}>{row.original.title}</span>
+        </>
+      ),
     },
     {
       Header: 'Winning Option',
       accessor: 'win-option',
+      sortType: (a, b) => (a.original.popularity.option.label > b.original.popularity.option.label ? 1 : -1),
       Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.label : <Loading />),
       width: 100,
     },
     {
       Header: 'Winning Option Weight',
       accessor: 'win-mkr',
+      sortType: (a, b) => a.original.popularity.option.mkr - b.original.popularity.option.mkr,
       Cell: ({ row }) => (row.original.popularity ? row.original.popularity.option.mkr : <Loading />),
       width: 100,
     },
     {
       Header: 'Popularity',
       accessor: 'popularity',
+      sortType: (a, b) => a.original.popularity.mkr - b.original.popularity.mkr,
       Cell: ({ row }) => (row.original.popularity ? `${row.original.popularity.mkr}%` : <Loading />),
       width: 100,
     },
@@ -83,7 +92,10 @@ export const Executivecolumns = () => {
     {
       Header: 'Name',
       Cell: ({ row }) => (
-        <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+        </>
       ),
     },
     {
@@ -104,8 +116,9 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Executed',
-      accessor: 'executed',
-      Cell: ({ row }) => (row.original.casted ? format(fromUnixTime(row.original.casted), 'dd MMM yy') : 'NO'),
+      id: 'executed',
+      sortType: (a, b) => a.original.casted - b.original.casted,
+      accessor: row => (row.casted ? format(fromUnixTime(row.casted), 'dd MMM yy') : 'NO'),
       width: 100,
     },
   ]
