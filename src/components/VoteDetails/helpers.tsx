@@ -1,9 +1,9 @@
 import styled from 'styled-components'
-import { getUnixTime, fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { getHours, fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
 
-import { getDailyFromTo, shortenAccount } from '../../utils'
+import { shortenAccount, getHourlyFromTo } from '../../utils'
 
 import { Card, TitleContainer } from '../common/styled'
 import {
@@ -125,9 +125,9 @@ const initializeMkr = (el, data, prev: BigNumber) => {
     }, prev)
 }
 
-const formatMkrData = (el, data, prev: BigNumber) => {
+const formatMkrData = (el, data, prev: BigNumber, timestampGetter = t => t) => {
   return data
-    .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+    .filter(d => timestampGetter(d.timestamp) >= el.from && timestampGetter(d.timestamp) <= el.to)
     .reduce((acum, value) => {
       if (value.type === VOTING_ACTION_FREE || value.type === VOTING_ACTION_REMOVE) {
         return acum.minus(value.type === VOTING_ACTION_FREE ? new BigNumber(value.wad) : new BigNumber(value.locked))
@@ -142,18 +142,15 @@ export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
     return []
   }
   const from = vote.timestamp
-  const to = getUnixTime(Date.now())
-
-  const periods = getDailyFromTo(from, to)
+  const periods = getHourlyFromTo(from)
   const countData = data.filter(el => el.type === VOTING_ACTION_ADD || el.type === VOTING_ACTION_REMOVE)
 
   let count = 0
-  let mkr = initializeMkr(periods[0].from, data, new BigNumber(0))
-
+  let mkr = initializeMkr(from, data, new BigNumber(0))
   return periods.map(el => {
-    mkr = formatMkrData(el, data, mkr)
+    mkr = formatMkrData(el, data, mkr, t => getHours(fromUnixTime(t)))
     count = countData
-      .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
+      .filter(d => getHours(fromUnixTime(d.timestamp)) >= el.from && getHours(fromUnixTime(d.timestamp)) <= el.to)
       .reduce((acc, d) => (d.type === VOTING_ACTION_ADD ? ++acc : --acc), count)
     return {
       ...el,

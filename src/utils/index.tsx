@@ -22,6 +22,8 @@ import {
   differenceInWeeks,
   differenceInMonths,
   differenceInYears,
+  addHours,
+  getHours,
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
 
@@ -83,6 +85,21 @@ export const getLastMonth = () => {
     }
   })
   return periods.reverse()
+}
+
+export const getHourlyFromTo = from => {
+  const start = startOfHour(fromUnixTime(from))
+
+  const periods = Array.from({ length: 24 }, (v, i) => i).map(num => {
+    const from = startOfHour(addHours(start, num))
+    const to = endOfHour(addHours(start, num))
+    return {
+      from: getHours(from),
+      to: getHours(to) + 0.59,
+      label: format(from, 'HH') + 'hs',
+    }
+  })
+  return periods
 }
 
 export const getDailyFromTo = (from, to) => {
