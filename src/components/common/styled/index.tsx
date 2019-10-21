@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const Card = styled.div`
   display: flex;
-  margin-top: 18px;
+  margin-top: 12px;
   flex-direction: column;
   text-align: left;
   padding: 20px 24px;
