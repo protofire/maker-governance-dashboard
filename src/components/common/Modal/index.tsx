@@ -4,10 +4,13 @@ import './index.css'
 
 const customStyles = {
   content: {
+    position: 'relative',
     top: '50%',
-    left: '50%',
+    left: '48%',
     transform: 'translate(-50%, -50%)',
     overflowY: 'hidden',
+    marginLeft: '2rem',
+    marginRight: '2rem',
   },
 }
 
