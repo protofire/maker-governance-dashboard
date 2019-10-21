@@ -54,9 +54,8 @@ const ChartContainer = styled(ResponsiveContainer)`
     }
   }
 `
-
 const ChartComponent = React.memo(function Chart(props: any) {
-  const { data, width, height, children, modalStyles, xLabel, showXaxis } = props
+  const { data, width, height, children, modalStyles, xLabel, showXaxis, legend } = props
   return (
     <>
       <ChartContainer {...modalStyles}>
@@ -68,7 +67,7 @@ const ChartComponent = React.memo(function Chart(props: any) {
             dataKey={xLabel || 'label'}
           />
           <Tooltip />
-          <Legend iconType="rect" align="left" verticalAlign="bottom" />
+          <Legend data={data} content={legend} iconType="rect" align="left" verticalAlign="bottom" />
           {children}
         </ComposedChart>
       </ChartContainer>
