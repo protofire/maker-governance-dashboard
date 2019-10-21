@@ -76,7 +76,7 @@ const TableWrapper = styled.div`
         !props.expanded &&
         css`
           display: flex;
-          width: 120px;
+          width: 200px;
         `}
       a {
         ${props =>

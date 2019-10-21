@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 import { format, fromUnixTime, differenceInDays } from 'date-fns'
 import gini from 'gini'
@@ -168,7 +169,14 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     {
       Header: 'Name',
       accessor: 'title',
-      Cell: ({ row }) => <Link>{row.original.title}</Link>,
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.title}>{row.original.title}</span>
+          </Link>
+        </>
+      ),
     },
     {
       Header: 'Start date',
@@ -196,7 +204,12 @@ export const Executivecolumns = (isModalOpen: boolean) => {
     {
       Header: 'Executive creator',
       accessor: 'id',
-      Cell: ({ row }) => shortenAccount(row.original.id),
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+        </>
+      ),
     },
     {
       Header: 'MKR in Support',
