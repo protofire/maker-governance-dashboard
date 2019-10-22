@@ -121,7 +121,7 @@ function HomeDetail(props: Props) {
         component: props => (
           <TimeTakenForExecutives
             expanded
-            content="Time taken for executives"
+            content="Executive Votes - Time Taken To Pass"
             component="timeTakenForExecutives"
             {...props}
           />
@@ -285,7 +285,7 @@ function HomeDetail(props: Props) {
           <HomeTable content="Executive votes" component="executives" />
         </Card>
         <Card style={{ height: 340 }}>
-          <TimeTakenForExecutives content="Time taken for executives" component="timeTakenForExecutives" />
+          <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
         </Card>
         <Card style={{ height: 340 }}>
           <MkrDistributionPerExecutive
