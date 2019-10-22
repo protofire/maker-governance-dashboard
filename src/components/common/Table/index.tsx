@@ -1,7 +1,8 @@
 import React from 'react'
-import { useTable, useTableState, usePagination, useSortBy } from 'react-table'
+import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'react-table'
 
 import styled, { css } from 'styled-components'
+import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
 import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
@@ -20,6 +21,10 @@ type TableProps = {
   scrollable?: boolean
 }
 
+const FilterContainer = styled.div`
+  margin-top: 10px;
+`
+
 const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
@@ -33,6 +38,12 @@ const TableRow = styled.span`
 const HeaderRow = styled.span`
   font-size: 12px;
   color: #999999;
+  div:first-child {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+  }
   ${props =>
     props.width &&
     css`
@@ -54,6 +65,13 @@ const TableWrapper = styled.div`
   background-color: white;
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
+  ${FilterContainer} {
+    ${props =>
+      !props.expanded &&
+      css`
+        display: none;
+      `}
+  }
   ${TableSection} {
     ${props => {
       if (!props.expanded) {
@@ -129,7 +147,7 @@ const RowsSection = styled.div`
 const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
   position: relative;
   left: 5px;
-  top: 2px;
+  top: 1px;
   transform: ${props => (props.up ? 'rotate(180deg)' : 'rotate(0deg)')};
 `
 
@@ -156,12 +174,43 @@ const Pager = styled.span`
   margin-right: 1rem;
 `
 
+// Let the table remove the filter if the string is empty
+// @ts-ignore
+fuzzyTextFilterFn.autoRemove = val => !val
+
 function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
   const handleFn = handleRow ? handleRow : () => {}
   const pageData = {
     ...(limitPerPage && { limitPerPage }),
     ...(sortBy && { sortBy }),
   }
+  const filterTypes = React.useMemo(
+    () => ({
+      // Add a new fuzzyTextFilterFn filter type.
+      fuzzyText: fuzzyTextFilterFn,
+      // Or, override the default text filter to use
+      // "startWith"
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+                .toLowerCase()
+                .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      },
+    }),
+    [],
+  )
+  const defaultColumn = React.useMemo(
+    () => ({
+      // Let's set up our default Filter UI
+      Filter: DefaultColumnFilter,
+    }),
+    [],
+  )
+
   const tableState = useTableState(pageData)
 
   // Use the state and functions returned from useTable to build your UI
@@ -182,9 +231,12 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     {
       columns,
       data,
+      defaultColumn, // Be sure to pass the defaultColumn option
+      filterTypes,
       state: tableState,
       disableSortRemove: true,
     },
+    useFilters,
     useSortBy,
     usePagination,
   )
@@ -197,11 +249,14 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
           {headerGroups.map(headerGroup => (
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <HeaderRow width={column.width} {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
-                  </span>
+                <HeaderRow key={column.id} width={column.width}>
+                  <div {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <span>
+                      {column.render('Header')}
+                      {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
+                    </span>
+                  </div>
+                  <FilterContainer>{column.canFilter ? column.render('Filter') : null}</FilterContainer>
                 </HeaderRow>
               ))}
             </TableSection>
