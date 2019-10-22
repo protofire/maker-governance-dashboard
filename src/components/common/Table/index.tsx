@@ -158,6 +158,7 @@ const Pager = styled.span`
 
 function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
   const handleFn = handleRow ? handleRow : () => {}
+  console.log(sortBy)
   const pageData = {
     ...(limitPerPage && { limitPerPage }),
     ...(sortBy && { sortBy }),
@@ -183,6 +184,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
       columns,
       data,
       state: tableState,
+      disableSortRemove: true,
     },
     useSortBy,
     usePagination,
