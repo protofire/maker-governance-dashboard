@@ -18,7 +18,7 @@ export const Pollcolumns = () => {
     {
       Header: 'Name',
       accessor: 'title',
-      disableFilters: true,
+      filter: 'fuzzyText',
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
@@ -58,6 +58,13 @@ export const Pollcolumns = () => {
       width: 80,
     },
     {
+      Header: 'Category',
+      Filter: SelectColumnFilter,
+      filter: 'includes',
+      accessor: row => 'uncategorized',
+      width: 100,
+    },
+    {
       Header: 'Start',
       accessor: row => fromUnixTime(row.startDate),
       disableFilters: true,
@@ -76,7 +83,8 @@ export const Pollcolumns = () => {
     },
     {
       Header: 'Status',
-      disableFilters: true,
+      Filter: SelectColumnFilter,
+      filter: 'includes',
       accessor: row => timeLeft(row.endDate),
       width: 100,
     },
@@ -111,14 +119,19 @@ export const Executivecolumns = () => {
           <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
         </>
       ),
-      canFilter: false,
-      filterable: false,
       filter: 'fuzzyText',
     },
     {
       Header: 'MKR in support',
       disableFilters: true,
       accessor: row => Number(row.approvals).toFixed(2),
+      width: 100,
+    },
+    {
+      Header: 'Category',
+      Filter: SelectColumnFilter,
+      filter: 'includes',
+      accessor: row => 'uncategorized',
       width: 100,
     },
     {
