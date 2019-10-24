@@ -50,9 +50,9 @@ function PollsInfo(props) {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
 
-  const setPopularity = popularity => {
-    const totalMkr = popularity.reduce((acc, value) => Number(acc) + Number(value.mkr), 0)
-    const winnerOption = popularity.reduce(
+  const setPlurality = plurality => {
+    const totalMkr = plurality.reduce((acc, value) => Number(acc) + Number(value.mkr), 0)
+    const winnerOption = plurality.reduce(
       (prev, current) => (Number(prev.mkr) > Number(current.mkr) ? prev : current),
       0,
     )
@@ -83,11 +83,11 @@ function PollsInfo(props) {
         Promise.all(
           polls.map(poll => {
             return getPollData(poll).then(data => {
-              return { ...poll, popularity: setPopularity(data), participation: getParticipation(data, mkrSupply) }
+              return { ...poll, plurality: setPlurality(data), participation: getParticipation(data, mkrSupply) }
             })
           }),
-        ).then(pollsWithPopularityAndParticipation => {
-          setData(pollsWithPopularityAndParticipation)
+        ).then(pollsWithPluralityAndParticipation => {
+          setData(pollsWithPluralityAndParticipation)
         })
       })
     }

@@ -76,7 +76,7 @@ const TableWrapper = styled.div`
         !props.expanded &&
         css`
           display: flex;
-          width: 120px;
+          width: 200px;
         `}
       a {
         ${props =>
@@ -183,6 +183,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
       columns,
       data,
       state: tableState,
+      disableSortRemove: true,
     },
     useSortBy,
     usePagination,
