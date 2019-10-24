@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'react-table'
 
 import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
-import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
+import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
 interface SortBy {
@@ -24,7 +24,11 @@ type TableProps = {
 const FilterContainer = styled.div`
   margin-top: 10px;
 `
-
+const FilterIconContainer = styled.span`
+  position: relative;
+  left: 6px;
+  cursor: pointer;
+`
 const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
@@ -41,8 +45,7 @@ const HeaderRow = styled.span`
   div:first-child {
     display: flex;
     flex: 1;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
   }
   ${props =>
     props.width &&
@@ -173,12 +176,24 @@ const PageSelect = styled(Select)``
 const Pager = styled.span`
   margin-right: 1rem;
 `
+const setInitialFilters = columns => {
+  return columns.reduce((accum, column) => {
+    if (!column.disableFilters) {
+      return {
+        ...accum,
+        [column.Header]: false,
+      }
+    } else return { ...accum }
+  }, {})
+}
 
 // Let the table remove the filter if the string is empty
 // @ts-ignore
 fuzzyTextFilterFn.autoRemove = val => !val
 
 function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
+  const [filters, setFilters] = useState(setInitialFilters(columns))
+
   const handleFn = handleRow ? handleRow : () => {}
   const pageData = {
     ...(limitPerPage && { limitPerPage }),
@@ -250,13 +265,22 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
                 <HeaderRow key={column.id} width={column.width}>
-                  <div {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    <span>
+                  <div>
+                    <span {...column.getHeaderProps(column.getSortByToggleProps())}>
                       {column.render('Header')}
                       {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
                     </span>
+                    {column.canFilter && (
+                      <FilterIconContainer
+                        onClick={() =>
+                          setFilters(current => ({ ...current, [column.Header]: !current[column.Header] }))
+                        }
+                      >
+                        <FilterIcon />
+                      </FilterIconContainer>
+                    )}
                   </div>
-                  <FilterContainer>{column.canFilter ? column.render('Filter') : null}</FilterContainer>
+                  {filters[column.Header] && <FilterContainer>{column.render('Filter')}</FilterContainer>}
                 </HeaderRow>
               ))}
             </TableSection>
