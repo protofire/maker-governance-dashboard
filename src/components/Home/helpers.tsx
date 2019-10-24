@@ -206,7 +206,7 @@ export const Pollcolumns = (isModalOpen: boolean) => {
 export const Executivecolumns = (isModalOpen: boolean) => {
   return [
     {
-      Header: 'Executive creator',
+      Header: 'Source',
       accessor: 'id',
       filter: 'fuzzyText',
       Cell: ({ row }) => (

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { getHours, fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
 
@@ -148,9 +148,9 @@ export const getVotersVsMkrData = (data: Array<any>, vote: any): Array<any> => {
   let count = 0
   let mkr = initializeMkr(from, data, new BigNumber(0))
   return periods.map(el => {
-    mkr = formatMkrData(el, data, mkr, t => getHours(fromUnixTime(t)))
+    mkr = formatMkrData(el, data, mkr)
     count = countData
-      .filter(d => getHours(fromUnixTime(d.timestamp)) >= el.from && getHours(fromUnixTime(d.timestamp)) <= el.to)
+      .filter(d => d.timestamp >= el.from && d.timestamp <= el.to)
       .reduce((acc, d) => (d.type === VOTING_ACTION_ADD ? ++acc : --acc), count)
     return {
       ...el,
