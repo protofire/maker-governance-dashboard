@@ -11,7 +11,7 @@ const TimeTakenChart = props => {
         <YAxis />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
-          name={`Executive votes - Passed in last 30 days ${currentVotes}`}
+          name={`Executive Vote Count ${currentVotes}`}
           dataKey="count"
           fill="#61b6b0"
         />
