@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 // A great library for fuzzy filtering/sorting items
 import matchSorter from 'match-sorter'
 
 const FilterWrapper = styled.div`
   position: absolute;
-  width: 300px;
-  height: 115px;
+  @media (min-width: 480px) {
+    min-width: ${props => (props.selector ? 'auto' : '300px')};
+  }
+  min-height: ${props => (props.selector ? 'auto' : '115px')};
   border-radius: 3px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.08);
   border: solid 1px #f3f3f3;
@@ -15,8 +17,8 @@ const FilterWrapper = styled.div`
   &:before {
     content: '';
     position: absolute;
-    top: -11px;
-    left: 12%;
+    top: -12px;
+    left: ${props => (props.selector ? '55%' : '12%')};
     transform: rotate(90deg);
     z-index: 1;
     border: solid 6px transparent;
@@ -28,6 +30,8 @@ const InputContainer = styled.div`
   flex-direction: column !important;
   input {
     border-radius: 2px;
+    box-sizing: border-box;
+    padding-left: 12px;
     border: solid 1px #d9d9d9;
     height: 38px;
     width: 100%;
@@ -59,18 +63,45 @@ const ButtonsContainer = styled.div`
     background-color: #00ba9c;
   }
 `
+const List = styled.ul`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-left: 0;
+  margin: 0;
+  list-style-type: none;
+`
+const ListItem = styled.li`
+  cursor: pointer;
+  padding: 15px;
+  color: #444444;
+  &:hover {
+    background: #00ba9c;
+    color: #fff;
+  }
+  ${props =>
+    props.selected &&
+    css`
+      background: #00ba9c;
+      color: #fff;
+    `}
+`
 
 // Define a default UI for filtering
-export const DefaultColumnFilter = ({ column: { filterValue, setFilter }, ...rest }) => {
+export const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   const [value, setValue] = useState(filterValue || '')
 
   return (
     <FilterWrapper>
       <InputContainer>
-        <input value={value} onChange={e => setValue(e.target.value || undefined)} placeholder={` Search by name...`} />
+        <input
+          defaultValue={value}
+          onChange={e => setValue(e.target.value || undefined)}
+          placeholder={` Search by name...`}
+        />
         <ButtonsContainer>
-          <div>
-            <span>Cancel</span>
+          <div onClick={() => setFilter(undefined)}>
+            <span>Clear</span>
           </div>
           <div onClick={() => setFilter(value)}>
             <span>Search</span>
@@ -96,19 +127,18 @@ export const SelectColumnFilter = ({ column: { filterValue, setFilter, preFilter
 
   // Render a multi-select box
   return (
-    <select
-      value={filterValue}
-      onChange={e => {
-        setFilter(e.target.value || undefined)
-      }}
-    >
-      <option value="">All</option>
-      {options.map((option: any, i) => (
-        <option key={i} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
+    <FilterWrapper selector>
+      <List>
+        <ListItem selected={!filterValue} onClick={() => setFilter(undefined)}>
+          All
+        </ListItem>
+        {options.map((option: any) => (
+          <ListItem selected={filterValue === option} key={option} onClick={() => setFilter(option)} value={option}>
+            {option}
+          </ListItem>
+        ))}
+      </List>
+    </FilterWrapper>
   )
 }
 
