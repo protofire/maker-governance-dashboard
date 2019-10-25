@@ -3,13 +3,19 @@ import ReactMarkdown from 'react-markdown'
 import randomColor from 'randomcolor'
 import styled from 'styled-components'
 import { BigNumber } from 'bignumber.js'
-import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
-import { getModalContainer } from '../../utils'
-
-import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
-
 import {
-  WrappedContainer,
+  Card,
+  Modal,
+  TableTitle,
+  DescriptionWrapper,
+  DescriptionBox,
+  Spinner,
+  SpinnerContainer,
+  ThreeRowGrid,
+} from '../common'
+import { getModalContainer } from '../../utils'
+import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
+import {
   Container,
   TableContainer,
   TableRow,
@@ -23,14 +29,12 @@ import {
 } from './helpers'
 
 const NoData = styled.span`
+  align-items: center;
   display: flex;
   flex: 1;
-  justify-content: center;
-  align-items: center;
   font-size: 16px;
+  justify-content: center;
 `
-
-const VoteDetailContainer = styled.div``
 
 type Props = {
   poll: any
@@ -211,9 +215,9 @@ function PollDetails(props: Props) {
   }
 
   return (
-    <VoteDetailContainer>
-      <WrappedContainer>
-        <Card type="table" style={{ padding: 0 }}>
+    <>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
+        <Card type="table" style={{ padding: 0, height: '340px' }}>
           <Container>
             <TableTitle>Details</TableTitle>
           </Container>
@@ -226,40 +230,42 @@ function PollDetails(props: Props) {
             ))}
           </TableContainer>
         </Card>
-        <Card style={{ height: 300 }}>
+        <Card style={{ height: '340px' }}>
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>No data to display.</NoData>
           )}
         </Card>
-        <Card style={{ height: 300 }}>
+        <Card style={{ height: '340px' }}>
           <TimeLeft content="Time left" component="timeLeft" />
         </Card>
-        <Card style={{ height: 300 }}>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
+        <Card style={{ height: '340px' }}>
           <VotersDistribution content="Voters distribution between options" component="votersDistribution" />
         </Card>
-        <Card style={{ height: 300 }}>
+        <Card style={{ height: '340px' }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
           )}
         </Card>
-        <Card style={{ height: 300 }}>
+        <Card style={{ height: '340px' }}>
           {mkrDistributionData.length === 0 ? (
             <Loading />
           ) : (
             <MakerDistribution content="MKR distribution between options" component="makerDistribution" />
           )}
         </Card>
-      </WrappedContainer>
+      </ThreeRowGrid>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
           {getModalContainer(voteMap[modalData.type][modalData.component].component)}
         </Modal>
       )}
-    </VoteDetailContainer>
+    </>
   )
 }
 

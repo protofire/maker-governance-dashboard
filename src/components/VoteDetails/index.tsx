@@ -1,44 +1,50 @@
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
-import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox } from '../common'
+import { Card, DescriptionBox, DescriptionWrapper, Modal, TableTitle } from '../common'
 import { getModalContainer } from '../../utils'
 import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
-
 import {
-  WrappedContainer,
   Container,
   TableContainer,
   TableRow,
-  getVoteTableData,
   defaultFilters,
+  getApprovalsByAddress,
   getComponentData,
-  getVotersVsMkrData,
   getTopSupporters,
   getTopSupportersTableData,
-  getApprovalsByAddress,
+  getVoteTableData,
+  getVotersVsMkrData,
 } from './helpers'
 
 const NoData = styled.span`
+  align-items: center;
   display: flex;
   flex: 1;
-  justify-content: center;
-  align-items: center;
   font-size: 16px;
+  justify-content: center;
 `
 
 const VoteDetailContainer = styled.div`
-  ${DescriptionBox} {
-    max-width: none;
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    margin-bottom: ${props => props.theme.separation.gridSeparation};
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
-`
-const DescriptionCard = styled(Card)`
-  flex: 0 0 61.7% !important;
-  @media (max-width: 768px) {
-    flex: 0 0 40% !important;
-  }
-  @media (max-width: 480px) {
-    flex: unset !important;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    column-gap: ${props => props.theme.separation.gridSeparation};
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: ${props => props.theme.separation.gridSeparation};
+    grid-template-areas:
+      'col1 col2 col2'
+      'col4 col5 col6';
   }
 `
 
@@ -119,7 +125,8 @@ function VoteDetails(props: Props) {
       isModalOpen: expanded,
     }
   }
-  //Voters vs mkr data
+
+  // Voters vs mkr data
   const VotersVsMkr = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentVoters = vote.totalVotes ? vote.totalVotes : '-'
@@ -134,7 +141,7 @@ function VoteDetails(props: Props) {
     )
   }
 
-  //Approvals by address
+  // Approvals by address
   const ApprovalsByAddress = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     const currentVoters = Object.keys(topSupporters).length
@@ -147,7 +154,7 @@ function VoteDetails(props: Props) {
     )
   }
 
-  //Description Data
+  // Description Data
   const Description = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
 
@@ -163,9 +170,9 @@ function VoteDetails(props: Props) {
   }
 
   return (
-    <VoteDetailContainer>
-      <WrappedContainer>
-        <Card type="table" style={{ padding: 0 }}>
+    <>
+      <VoteDetailContainer>
+        <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col1' }}>
           <Container>
             <TableTitle>Details</TableTitle>
           </Container>
@@ -178,20 +185,20 @@ function VoteDetails(props: Props) {
             ))}
           </TableContainer>
         </Card>
-        <DescriptionCard style={{ height: 300 }}>
+        <Card style={{ height: '340px', gridArea: 'col2' }}>
           {vote.about ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>No data to display.</NoData>
           )}
-        </DescriptionCard>
-        <Card style={{ height: 300 }}>
+        </Card>
+        <Card style={{ height: '340px', gridArea: 'col4' }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </Card>
-        <Card style={{ height: 300 }}>
+        <Card style={{ height: '340px', gridArea: 'col5' }}>
           <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
         </Card>
-        <Card type="table" style={{ padding: 0 }}>
+        <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col6' }}>
           <Container>
             <TableTitle>Top Supporters</TableTitle>
           </Container>
@@ -206,13 +213,13 @@ function VoteDetails(props: Props) {
               ))}
           </TableContainer>
         </Card>
-      </WrappedContainer>
+      </VoteDetailContainer>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
           {getModalContainer(voteMap[modalData.type][modalData.component].component)}
         </Modal>
       )}
-    </VoteDetailContainer>
+    </>
   )
 }
 

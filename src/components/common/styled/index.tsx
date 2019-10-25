@@ -1,36 +1,26 @@
 import styled, { css } from 'styled-components'
 
 export const Card = styled.div`
+  background-color: ${props => props.theme.cards.backgroundColor};
+  border-radius: ${props => props.theme.cards.borderRadius};
+  border: ${props => props.theme.cards.border};
+  box-shadow: ${props => props.theme.cards.boxShadow};
   display: flex;
-  margin-top: 12px;
   flex-direction: column;
-  text-align: left;
-  padding: 20px 24px;
-  border-radius: 4px;
-  display: flex;
-  position: relative;
-  background-color: rgb(255, 255, 255);
   font-size: 16px;
   font-weight: 400;
-  text-align: left;
   overflow: hidden;
-  border: 1px solid rgb(212, 217, 225);
+  padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal};
+  position: relative;
+
   ${props =>
     props.type &&
     css`
-      width: 32.5% !important;
       flex: unset !important;
     `}
-  @media (max-width: 768px) {
-    ${props =>
-      props.type &&
-      css`
-        width: 46.5% !important;
-      `}
-  }
 `
 export const Versus = styled.span`
-  color: #bbbbbb;
+  color: #bbb;
 `
 export const Separator = styled(Versus)`
   margin-right: 0;
@@ -40,6 +30,7 @@ export const Select = styled.select`
   background: transparent;
   border: none;
   margin-right: 1rem;
+
   &:focus {
     outline: 0;
   }
@@ -47,20 +38,24 @@ export const Select = styled.select`
 export const ChartSelect = styled(Select)`
   color: #00ba9c;
 `
-export const PageTitle = styled.p`
+export const PageTitle = styled.h1`
+  color: ${props => props.theme.colors.textCommon};
   font-size: 20px;
-  color: #444444;
-  margin-top: 22px;
+  font-weight: normal;
+  line-height: 1.35;
+  margin: 0 0 16px;
+  padding: 0;
+  text-align: left;
 `
 export const Link = styled.a`
+  color: #000;
   font-size: 13px;
-  color: #000000;
 `
 
 const ChartTitle = styled.p`
-  margin-top: 0;
+  color: ${props => props.theme.colors.textCommon};
   font-size: 14px;
-  color: #444444;
+  margin-top: 0;
 `
 export const TableTitle = styled(ChartTitle)`
   font-size: 13px;
@@ -68,23 +63,22 @@ export const TableTitle = styled(ChartTitle)`
 `
 export const ChartTitleContainer = styled.div`
   display: flex;
-  font-size: 14px;
   flex-direction: row;
   flex: 1;
+  font-size: 14px;
   span {
     margin-right: 5px;
   }
 `
 
 export const TitleContainer = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 16px;
   align-items: center;
   display: flex;
-  flex: 1;
   flex-direction: row;
+  flex: 1;
   justify-content: space-between;
+  padding: 16px;
+
   @media (max-width: 768px) {
     ${props =>
       props.type &&
@@ -106,24 +100,25 @@ export const TitleContainer = styled.div`
 `
 
 export const IconContainer = styled.div`
-  display: flex;
   cursor: pointer;
+  display: flex;
 `
 
 export const TableContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+
   table {
     border-collapse: separate;
     border-spacing: 10px 5px;
     th {
+      color: #999;
       font-size: 12px;
-      color: #999999;
     }
     tbody {
+      color: #000;
       font-size: 13px;
-      color: #000000;
       tr {
         &:nth-child(odd) {
           background-color: #fafafa;
@@ -135,21 +130,53 @@ export const TableContainer = styled.div`
 `
 
 export const ViewAll = styled.span`
-  font-size: 12px;
   color: #00ba9c;
+  font-size: 12px;
 `
+
 export const DescriptionBox = styled.div`
-  max-width: ${props => (!props.expanded ? '300px' : 'none')};
-  width: 100%;
-  color: #777777;
-  margin: 0 auto;
+  color: #777;
   font-size: 13px;
+  margin: 0 auto;
+  max-width: ${props => (!props.expanded ? '300px' : 'none')};
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
+
   ${props =>
     props.expanded &&
     css`
       max-height: 800px;
       overflow: scroll;
     `}
+`
+
+export const ThreeRowGrid = styled.div`
+  column-gap: ${props => props.theme.separation.gridSeparation};
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+`
+
+export const TwoRowGridLeftNarrow = styled.div`
+  column-gap: ${props => props.theme.separation.gridSeparation};
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
+    grid-template-columns: 1fr 2fr;
+  }
+`
+
+export const TwoRowGridRightNarrow = styled.div`
+  column-gap: ${props => props.theme.separation.gridSeparation};
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
+    grid-template-columns: 1fr 2fr;
+  }
 `

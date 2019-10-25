@@ -9,13 +9,10 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
-import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
-
+import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer, ThreeRowGrid } from '../common'
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
-
 import { getModalContainer } from '../../utils'
 import {
-  WrappedContainer,
   getVotersVsMkrData,
   getVotesVsPollsData,
   getGiniData,
@@ -166,7 +163,7 @@ function HomeDetail(props: Props) {
     return {
       modalStyles: expanded ? { width: '99%', aspect: 3 } : undefined,
       width: 100,
-      height: 400,
+      minHeight: '400px',
       data,
     }
   }
@@ -277,36 +274,38 @@ function HomeDetail(props: Props) {
 
   return (
     <>
-      <Card style={{ height: 340 }}>
+      <Card style={{ height: '340px', marginBottom: '20px' }}>
         <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
       </Card>
-      <WrappedContainer>
-        <Card type="table" style={{ padding: 0 }}>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
+        <Card type="table" style={{ padding: 0, minHeight: '340px' }}>
           <HomeTable content="Executive votes" component="executives" />
         </Card>
-        <Card style={{ height: 340 }}>
+        <Card style={{ minHeight: '340px' }}>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
         </Card>
-        <Card style={{ height: 340 }}>
+        <Card style={{ minHeight: '340px' }}>
           <MkrDistributionPerExecutive
             content="MKR Distribution Per Executive"
             component="mkrDistributionPerExecutive"
           />
         </Card>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
         <Card type="table" style={{ padding: 0 }}>
           {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
         </Card>
-        <Card style={{ height: 340 }}>
+        <Card style={{ minHeight: '340px' }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
           )}
         </Card>
-        <Card style={{ height: 340 }}>
+        <Card style={{ minHeight: '340px' }}>
           <Gini content="MKR Gini Coefficient" component="gini" />
         </Card>
-      </WrappedContainer>
+      </ThreeRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
           {getModalContainer(homeMap[modalData.type][modalData.component].component)}

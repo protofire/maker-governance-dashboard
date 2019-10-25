@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import styled from 'styled-components'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 
 import HomeDetail from '../../components/Home/HomeDetail'
@@ -10,8 +9,6 @@ import { Spinner, SpinnerContainer, PageTitle } from '../../components/common'
 
 //Queries
 import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
-
-const HomeContainer = styled.div``
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -47,10 +44,10 @@ function MakerGovernanceInfo() {
   if (homeData.error || gResult.error) return <Error />
 
   return (
-    <HomeContainer>
+    <>
       <PageTitle>Dashboard</PageTitle>
       <HomeDetail gData={gData} data={homeData.data} />
-    </HomeContainer>
+    </>
   )
 }
 
