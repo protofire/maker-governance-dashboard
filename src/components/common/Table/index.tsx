@@ -76,7 +76,7 @@ const TableWrapper = styled.div`
   background-color: white;
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
-  ${FilterContainer} {
+  ${FilterContainer},${FilterIconContainer} {
     ${props =>
       !props.expanded &&
       css`

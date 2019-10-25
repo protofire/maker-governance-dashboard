@@ -6,6 +6,7 @@ import matchSorter from 'match-sorter'
 
 const FilterWrapper = styled.div`
   position: absolute;
+  z-index: 1;
   @media (min-width: 480px) {
     min-width: ${props => (props.selector ? 'auto' : '300px')};
   }
