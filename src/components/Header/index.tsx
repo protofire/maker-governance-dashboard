@@ -5,67 +5,73 @@ import styled, { css } from 'styled-components'
 import HamburgerMenu from 'react-hamburger-menu'
 
 const Overlay = styled.div`
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
   z-index: 2;
 `
+
 const Nav = styled.div`
-  border: solid 1px #d9d9d9;
-  background-color: #ffffff;
+  background-color: #fff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.0975);
-  height: 60px;
+  border: solid 1px #d9d9d9;
   display: flex;
+  height: 60px;
+
   ${props =>
     props.overlay &&
     css`
-      z-index: 999;
       position: absolute;
       width: 100%;
+      z-index: 999;
     `}
 `
 const NavHeader = styled.div`
-  font-size: 14px;
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   flex-direction: row;
   flex: 1;
+  font-size: 14px;
+  justify-content: center;
 `
 const NavLeft = styled.div`
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
   max-width: 1140px;
   padding: 2rem 2.5rem;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
+
   a {
+    align-items: center;
+    display: flex;
     font-weight: 500;
     margin-left: 2rem;
-    display:flex
-    align-items:center
   }
+
   @media (max-width: 480px) {
-    padding-right: 0;
-    padding-left: 0;
     margin-left: 10px;
+    padding-left: 0;
+    padding-right: 0;
   }
 `
 const NavRightTitle = styled.span``
 
 const NavRight = styled.div`
-  max-width: 1140px;
-  margin: 0 auto;
   display: flex;
   flex-direction: row-reverse;
+  margin: 0 auto;
+  max-width: 1140px;
+
   @media (max-width: 480px) {
     flex-direction: row;
     font-size: 12px;
     justify-content: center;
+
     ${NavRightTitle} {
       margin-left: 1rem;
     }
@@ -76,8 +82,9 @@ const NavRight = styled.div`
 `
 
 const RightMenu = styled(NavRight)`
-  position: relative;
   margin-right: 10px;
+  position: relative;
+
   @media (min-width: 480px) {
     display: none;
   }
@@ -88,53 +95,58 @@ const RightMenu = styled(NavRight)`
 
 const Breadcrumb = styled.div`
   display: flex;
+
   @media (max-width: 480px) {
     display: none;
   }
 `
 const HamburgerContainer = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
   position: absolute;
   top: 62px;
   transition: all 0.5s ease-in-out;
+  width: 100%;
 `
 const Menu = styled.div`
   position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
-  background: white;
+  background: #fff;
   border: solid 1px #d9d9d9;
+  z-index: 999;
+
   &:first-child {
     border-top: none;
   }
-  z-index: 999;
 `
 const Item = styled.div`
-  color:#666666
+  color: #666;
   display: flex;
   flex: 1;
   padding: 1rem;
+
   div {
     margin: 0 auto;
   }
-  &:hover,&:focus{
-    color:white;
-    font-weight:600;
-    background:#00ba9c;
+  &:hover,
+  &:focus {
+    background: #00ba9c;
+    color: #fff;
+    font-weight: 600;
   }
 `
 const StyledLink = styled(NavLink)`
+  color: #666;
   text-decoration: none;
-  color: #666666;
+
   &:hover {
-    color: #000000 !important;
+    color: #000 !important;
   }
   &:visited,
   &:active {
-    color: #666666;
+    color: #666;
   }
 `
 
@@ -177,7 +189,7 @@ function Header(props: Props) {
             <img alt="logo" src="/maker.png" />
             <Breadcrumb>
               {items.map(({ to, label }) => (
-                <StyledLink exact activeStyle={{ color: '#000000' }} key={to} to={to}>
+                <StyledLink exact activeStyle={{ color: '#000' }} key={to} to={to}>
                   {label}
                 </StyledLink>
               ))}
@@ -190,15 +202,15 @@ function Header(props: Props) {
           </NavRight>
           <RightMenu>
             <HamburgerMenu
+              animationDuration={0.5}
+              borderRadius={0}
+              color="#000"
+              height={17}
               isOpen={isOpenMenu}
               menuClicked={() => setOpenMenu(!isOpenMenu)}
-              width={25}
-              height={17}
-              strokeWidth={1}
               rotate={0}
-              color="black"
-              borderRadius={0}
-              animationDuration={0.5}
+              strokeWidth={1}
+              width={25}
             />
           </RightMenu>
         </NavHeader>

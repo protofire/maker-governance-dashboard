@@ -2,7 +2,6 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
-
 import GlobalStyle from '../../theme/globalStyle'
 
 // Pages
@@ -25,28 +24,30 @@ const items = [
 ]
 
 const AppWrapper = styled.div`
-  min-height: 400px;
-  max-width:1100px
+  flex: 1;
   margin: 0 auto;
-  flex:1;
+  max-width: 1100px;
+  min-height: 400px;
   padding: 0px 16px;
 `
 const Footer = styled.div`
-  margin-top: 5rem;
-  margin-bottom: 2rem;
-  display: flex;
   align-items: center;
+  display: flex;
   flex-direction: column;
+  margin-bottom: 2rem;
+  margin-top: 5rem;
+
   span {
+    color: #303b3e;
     display: flex;
     flex-direction: row;
     font-size: 10px;
     font-weight: 600;
-    color: #303b3e;
+
     img {
-      position: relative;
       bottom: 2px;
       left: 8px;
+      position: relative;
     }
   }
 `
