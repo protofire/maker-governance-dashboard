@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'react-table'
 
 import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
-import { NextIcon, PreviousIcon, ArrowIcon } from '../Icon/index'
+import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
 interface SortBy {
@@ -24,16 +24,23 @@ type TableProps = {
 const FilterContainer = styled.div`
   margin-top: 10px;
 `
-
+const FilterIconContainer = styled.span`
+  position: relative;
+  width: 30px;
+  left: 9px;
+  cursor: pointer;
+`
 const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
-  ${props =>
-    props.width &&
-    css`
-      flex: none !important;
-      width: ${props.width}px !important;
-    `}
+  @media (min-width: 480px) {
+    ${props =>
+      props.width &&
+      css`
+        flex: none !important;
+        width: ${props.width}px !important;
+      `}
+
 `
 const HeaderRow = styled.span`
   font-size: 12px;
@@ -41,21 +48,25 @@ const HeaderRow = styled.span`
   div:first-child {
     display: flex;
     flex: 1;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
   }
-  ${props =>
-    props.width &&
-    css`
-      flex: none !important;
-      width: ${props.width}px !important;
-    `}
+  @media (min-width: 480px) {
+    ${props =>
+      props.width &&
+      css`
+        flex: none !important;
+        width: ${props.width}px !important;
+      `}
+  }
 `
 
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
   padding: 1rem;
+  @media (max-width: 480px) {
+    min-width: 480px;
+  }
 `
 
 const TableWrapper = styled.div`
@@ -65,7 +76,7 @@ const TableWrapper = styled.div`
   background-color: white;
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
-  ${FilterContainer} {
+  ${FilterContainer},${FilterIconContainer} {
     ${props =>
       !props.expanded &&
       css`
@@ -113,6 +124,9 @@ const TableWrapper = styled.div`
       max-height: 400px;
       overflow: hidden;
     `}
+  @media (max-width: 480px) {
+    overflow-x: scroll;
+  }
 `
 
 const RowsSection = styled.div`
@@ -141,6 +155,9 @@ const RowsSection = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       `}
+  }
+  @media (max-width: 480px) {
+    overflow: initial;
   }
 `
 
@@ -173,12 +190,24 @@ const PageSelect = styled(Select)``
 const Pager = styled.span`
   margin-right: 1rem;
 `
+const setInitialFilters = columns => {
+  return columns.reduce((accum, column) => {
+    if (!column.disableFilters) {
+      return {
+        ...accum,
+        [column.Header]: false,
+      }
+    } else return { ...accum }
+  }, {})
+}
 
 // Let the table remove the filter if the string is empty
 // @ts-ignore
 fuzzyTextFilterFn.autoRemove = val => !val
 
 function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
+  const [filters, setFilters] = useState(setInitialFilters(columns))
+
   const handleFn = handleRow ? handleRow : () => {}
   const pageData = {
     ...(limitPerPage && { limitPerPage }),
@@ -212,6 +241,13 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   )
 
   const tableState = useTableState(pageData)
+  const filterNode = useRef()
+  const itemsRef = useRef([])
+  // you can access the elements with itemsRef.current[n]
+
+  useEffect(() => {
+    itemsRef.current = itemsRef.current.slice(0, filters.length)
+  }, [filters])
 
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -226,7 +262,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     nextPage,
     previousPage,
     setPageSize,
-    state: [{ pageIndex, pageSize }],
+    state: [{ pageIndex, pageSize, ...otherState }],
   } = useTable(
     {
       columns,
@@ -241,6 +277,36 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     usePagination,
   )
 
+  useEffect(() => {
+    const handleClick = e => {
+      if (!filterNode.current) return
+      // @ts-ignore
+      const tapIcon = itemsRef.current.find(el => el && el.contains(e.target))
+      // @ts-ignore
+      if (!filterNode.current.contains(e.target) && !tapIcon) setFilters(setInitialFilters(columns))
+    }
+    // add when mounted
+    document.addEventListener('mousedown', handleClick)
+    // return function to be called when unmounted
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+    }
+  }, [columns])
+
+  useEffect(() => {
+    if (Object.keys(otherState.filters)) setFilters(setInitialFilters(columns))
+    else {
+      const cleanFilters = Object.keys(otherState.filters).reduce(
+        (accum, filterKey) => ({
+          ...accum,
+          [filterKey]: false,
+        }),
+        {},
+      )
+      setFilters(current => ({ ...current, ...cleanFilters }))
+    }
+  }, [columns, otherState.filters])
+
   // Render the UI for your table
   return (
     <>
@@ -248,15 +314,27 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
         <div>
           {headerGroups.map(headerGroup => (
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
+              {headerGroup.headers.map((column, i) => (
                 <HeaderRow key={column.id} width={column.width}>
-                  <div {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    <span>
+                  <div>
+                    <span {...column.getHeaderProps(column.getSortByToggleProps())}>
                       {column.render('Header')}
                       {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
                     </span>
+                    {column.canFilter && (
+                      <FilterIconContainer
+                        ref={(el: never) => (itemsRef.current[i] = el)}
+                        onClick={() =>
+                          setFilters(current => ({ ...current, [column.Header]: !current[column.Header] }))
+                        }
+                      >
+                        <FilterIcon />
+                      </FilterIconContainer>
+                    )}
                   </div>
-                  <FilterContainer>{column.canFilter ? column.render('Filter') : null}</FilterContainer>
+                  {filters[column.Header] && (
+                    <FilterContainer ref={filterNode}>{column.render('Filter')}</FilterContainer>
+                  )}
                 </HeaderRow>
               ))}
             </TableSection>
