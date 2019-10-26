@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 
 export const Card = styled.div`
+  align-items: flex-start;
   background-color: ${props => props.theme.cards.backgroundColor};
   border-radius: ${props => props.theme.cards.borderRadius};
   border: ${props => props.theme.cards.border};
@@ -13,11 +14,9 @@ export const Card = styled.div`
   padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal};
   position: relative;
 
-  ${props =>
-    props.type &&
-    css`
-      flex: unset !important;
-    `}
+  > div {
+    width: 100%;
+  }
 `
 export const Versus = styled.span`
   color: #bbb;
@@ -36,7 +35,7 @@ export const Select = styled.select`
   }
 `
 export const ChartSelect = styled(Select)`
-  color: #00ba9c;
+  color: ${props => props.theme.colors.primary};
 `
 export const PageTitle = styled.h1`
   color: ${props => props.theme.colors.textCommon};
@@ -57,42 +56,45 @@ const ChartTitle = styled.p`
   font-size: 14px;
   margin-top: 0;
 `
+
 export const TableTitle = styled(ChartTitle)`
   font-size: 13px;
   margin-bottom: 0;
 `
+
 export const ChartTitleContainer = styled.div`
   display: flex;
   flex-direction: row;
-  flex: 1;
+  flex-grow: 0;
+  flex-shrink: 0;
   font-size: 14px;
+  min-height: 0;
+
   span {
     margin-right: 5px;
   }
 `
 
 export const TitleContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: row;
-  flex: 1;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 14px;
+  min-height: 0;
   justify-content: space-between;
-  padding: 16px;
+  margin: 0 0 15px;
+  padding: 0;
 
   @media (max-width: 768px) {
-    ${props =>
-      props.type &&
-      css`
-        padding-right: 0;
-        padding-left: 0;
-      `}
-
     ${Separator} {
       display: none;
     }
+
     ${ChartTitleContainer} {
       flex-wrap: wrap;
     }
+
     select {
       width: 85px;
     }
@@ -107,18 +109,27 @@ export const IconContainer = styled.div`
 export const TableContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin-left: -${props => props.theme.cards.paddingHorizontal};
+  margin-right: -${props => props.theme.cards.paddingHorizontal};
+  max-height: none;
+  min-height: fit-content;
+  width: calc(100% + 40px) !important;
 
   table {
     border-collapse: separate;
     border-spacing: 10px 5px;
+
     th {
       color: #999;
       font-size: 12px;
     }
+
     tbody {
       color: #000;
       font-size: 13px;
+
       tr {
         &:nth-child(odd) {
           background-color: #fafafa;
@@ -130,7 +141,7 @@ export const TableContainer = styled.div`
 `
 
 export const ViewAll = styled.span`
-  color: #00ba9c;
+  color: ${props => props.theme.colors.primary};
   font-size: 12px;
 `
 
@@ -155,28 +166,9 @@ export const ThreeRowGrid = styled.div`
   column-gap: ${props => props.theme.separation.gridSeparation};
   display: grid;
   grid-template-columns: 1fr;
+  row-gap: ${props => props.theme.separation.gridSeparation};
 
-  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
     grid-template-columns: 1fr 1fr 1fr;
-  }
-`
-
-export const TwoRowGridLeftNarrow = styled.div`
-  column-gap: ${props => props.theme.separation.gridSeparation};
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
-    grid-template-columns: 1fr 2fr;
-  }
-`
-
-export const TwoRowGridRightNarrow = styled.div`
-  column-gap: ${props => props.theme.separation.gridSeparation};
-  display: grid;
-  grid-template-columns: 1fr;
-
-  @media (min-width: ${props => props.theme.themeBreakPoints.md}) {
-    grid-template-columns: 1fr 2fr;
   }
 `

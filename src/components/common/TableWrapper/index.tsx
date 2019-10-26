@@ -1,10 +1,11 @@
 import React from 'react'
 import { TableContainer, TableTitle, TitleContainer, ViewAll } from '../../common'
 import { getIconContainer } from '../../../utils'
+
 type Props = {
-  handleModal: () => void
-  content: string
   children: React.ReactNode
+  content: string
+  handleModal: () => void
   isModalOpen: boolean
 }
 
@@ -12,7 +13,7 @@ function TableWrapper(props: Props) {
   const { handleModal, children, content, isModalOpen } = props
 
   return (
-    <TableContainer>
+    <>
       <TitleContainer>
         <TableTitle>{content}</TableTitle>
         {getIconContainer(
@@ -23,8 +24,8 @@ function TableWrapper(props: Props) {
           isModalOpen,
         )}
       </TitleContainer>
-      {children}
-    </TableContainer>
+      <TableContainer>{children}</TableContainer>
+    </>
   )
 }
 

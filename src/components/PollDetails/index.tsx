@@ -217,7 +217,7 @@ function PollDetails(props: Props) {
   return (
     <>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card type="table" style={{ padding: 0, height: '340px' }}>
+        <Card type="table" style={{ height: '340px' }}>
           <Container>
             <TableTitle>Details</TableTitle>
           </Container>

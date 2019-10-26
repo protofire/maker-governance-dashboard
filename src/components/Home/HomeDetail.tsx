@@ -177,10 +177,10 @@ function HomeDetail(props: Props) {
     const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
     return (
       <VotersVsMkrChart
-        currentVoters={currentVoters}
         currentMkr={currentMkr}
-        wrapperProps={getWrapperProps(data)}
+        currentVoters={currentVoters}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -245,9 +245,10 @@ function HomeDetail(props: Props) {
     )
   }
 
-  //Table Data
+  // Table Data
   const HomeTable = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
+
     return (
       <TableWrapper {...getWrapperProps(data)}>
         <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
@@ -274,17 +275,17 @@ function HomeDetail(props: Props) {
 
   return (
     <>
-      <Card style={{ height: '340px', marginBottom: '20px' }}>
+      <Card style={{ height: '340px', marginBottom: '20px', minHeight: 'fit-content' }}>
         <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
       </Card>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card type="table" style={{ padding: 0, minHeight: '340px' }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           <HomeTable content="Executive votes" component="executives" />
         </Card>
-        <Card style={{ minHeight: '340px' }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
         </Card>
-        <Card style={{ minHeight: '340px' }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           <MkrDistributionPerExecutive
             content="MKR Distribution Per Executive"
             component="mkrDistributionPerExecutive"
@@ -292,17 +293,17 @@ function HomeDetail(props: Props) {
         </Card>
       </ThreeRowGrid>
       <ThreeRowGrid>
-        <Card type="table" style={{ padding: 0 }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
         </Card>
-        <Card style={{ minHeight: '340px' }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
           )}
         </Card>
-        <Card style={{ minHeight: '340px' }}>
+        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           <Gini content="MKR Gini Coefficient" component="gini" />
         </Card>
       </ThreeRowGrid>

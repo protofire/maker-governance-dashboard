@@ -48,7 +48,7 @@ export const Item = styled.div`
   }
   &:hover,
   &:focus {
-    background: #00ba9c;
+    background: ${props => props.theme.colors.primary};
     color: #fff;
     font-weight: 600;
   }

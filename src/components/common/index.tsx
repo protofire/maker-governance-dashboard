@@ -22,8 +22,6 @@ import {
   TableTitle,
   ThreeRowGrid,
   TitleContainer,
-  TwoRowGridLeftNarrow,
-  TwoRowGridRightNarrow,
   Versus,
   ViewAll,
 } from './styled'
@@ -56,8 +54,6 @@ export {
   TableWrapper,
   ThreeRowGrid,
   TitleContainer,
-  TwoRowGridLeftNarrow,
-  TwoRowGridRightNarrow,
   Versus,
   ViewAll,
 }
