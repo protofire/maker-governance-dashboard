@@ -225,7 +225,7 @@ function PollDetails(props: Props) {
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
-            <NoData>No data to display.</NoData>
+            <NoData>Cannot fetch poll description.</NoData>
           )}
         </Card>
         <Card style={{ height: 300 }}>

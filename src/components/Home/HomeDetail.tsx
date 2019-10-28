@@ -70,7 +70,9 @@ function HomeDetail(props: Props) {
         data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
-        component: props => <HomeTable handleRow={getPoll} expanded content="Top polls" component="polls" {...props} />,
+        component: props => (
+          <HomeTable handleRow={getPoll} expanded content="Most Recent Polls" component="polls" {...props} />
+        ),
       },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
@@ -262,7 +264,7 @@ function HomeDetail(props: Props) {
       </Card>
       <WrappedContainer>
         <Card type="table" style={{ padding: 0 }}>
-          <HomeTable content="Executive votes" component="executives" />
+          <HomeTable handleRow={getVote} content="Executive votes" component="executives" />
         </Card>
         <Card style={{ height: 340 }}>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
@@ -274,7 +276,11 @@ function HomeDetail(props: Props) {
           />
         </Card>
         <Card type="table" style={{ padding: 0 }}>
-          {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
+          {polls.length === 0 ? (
+            <Loading />
+          ) : (
+            <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
+          )}
         </Card>
         <Card style={{ height: 340 }}>
           {polls.length === 0 ? (

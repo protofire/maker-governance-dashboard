@@ -176,7 +176,7 @@ function VoteDetails(props: Props) {
           {vote.about ? (
             <Description content="Description" component="description" />
           ) : (
-            <NoData>No data to display.</NoData>
+            <NoData>Cannot fetch executive description.</NoData>
           )}
         </DescriptionCard>
         <Card style={{ height: 300 }}>
