@@ -52,7 +52,7 @@ const StyledLink = styled(NavLink)`
   }
 `
 
-const HamburgerContent = props => {
+const MobileMenu = props => {
   const { items, handleMenu } = props
   return (
     <Overlay onClick={handleMenu}>
@@ -67,4 +67,4 @@ const HamburgerContent = props => {
   )
 }
 
-export default HamburgerContent
+export default MobileMenu

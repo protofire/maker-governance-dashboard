@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import HamburgerContent from '../HamburgerContent'
+import MobileMenu from '../MobileMenu'
 import HamburgerMenu from 'react-hamburger-menu'
 import Logo from '../Logo'
+import HeaderInfo from '../HeaderInfo'
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 import { toNiceDate } from '../../../utils'
@@ -38,17 +39,6 @@ const NavLeft = styled.div`
   align-items: center;
   display: flex;
 `
-const NavRightTitle = styled.span``
-
-const NavRight = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  margin: 0 0 0 auto;
-
-  span {
-    margin-right: 1rem;
-  }
-`
 
 const RightMenu = styled.div`
   display: block;
@@ -60,6 +50,9 @@ const RightMenu = styled.div`
   }
 `
 
+const HeaderInfoStyled = styled(HeaderInfo)`
+  margin: 0 0 0 auto;
+`
 const MainMenu = styled.div`
   display: none;
   margin-left: 40px;
@@ -113,11 +106,7 @@ function Header(props: Props) {
               ))}
             </MainMenu>
           </NavLeft>
-          <NavRight>
-            <NavRightTitle>
-              Mainnet | Last sync: <strong>{lastSynced && toNiceDate(lastSynced)}</strong>
-            </NavRightTitle>
-          </NavRight>
+          <HeaderInfoStyled network={'Mainnet'} lastSynced={lastSynced && toNiceDate(lastSynced)} />
           <RightMenu>
             <HamburgerMenu
               animationDuration={0.5}
@@ -133,7 +122,7 @@ function Header(props: Props) {
           </RightMenu>
         </HeaderInner>
       </HeaderWrapper>
-      {isOpenMenu && <HamburgerContent handleMenu={() => setOpenMenu(false)} items={items} />}
+      {isOpenMenu && <MobileMenu handleMenu={() => setOpenMenu(false)} items={items} />}
     </>
   )
 }
