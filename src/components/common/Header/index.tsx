@@ -1,22 +1,10 @@
 import React, { useState } from 'react'
+import HamburgerContent from '../HamburgerContent'
+import HamburgerMenu from 'react-hamburger-menu'
+import Logo from '../Logo'
+import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 import { toNiceDate } from '../../../utils'
-import styled from 'styled-components'
-import HamburgerContent from '../HamburgerContent'
-import Logo from '../Logo'
-import HamburgerMenu from 'react-hamburger-menu'
-
-const Overlay = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 100%;
-  z-index: 4;
-`
 
 const HeaderWrapper = styled.div`
   background: ${props => props.theme.header.backgroundColor};
@@ -139,13 +127,12 @@ function Header(props: Props) {
               isOpen={isOpenMenu}
               menuClicked={() => setOpenMenu(!isOpenMenu)}
               rotate={0}
-              strokeWidth={1}
+              strokeWidth={2}
               width={25}
             />
           </RightMenu>
         </HeaderInner>
       </HeaderWrapper>
-      {isOpenMenu && <Overlay />}
       {isOpenMenu && <HamburgerContent handleMenu={() => setOpenMenu(false)} items={items} />}
     </>
   )

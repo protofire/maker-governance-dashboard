@@ -34,6 +34,10 @@ export const theme = {
     active: '#000',
     color: '#666',
   },
+  table: {
+    tdColor: '#000',
+    thColor: '#999',
+  },
   cards: {
     backgroundColor: '#fff',
     border: 'solid 1px #f3f3f3',

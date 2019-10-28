@@ -122,12 +122,12 @@ export const TableContainer = styled.div`
     border-spacing: 10px 5px;
 
     th {
-      color: #999;
+      color: ${props => props.theme.table.thColor};
       font-size: 12px;
     }
 
     tbody {
-      color: #000;
+      color: ${props => props.theme.table.tdColor};
       font-size: 13px;
 
       tr {

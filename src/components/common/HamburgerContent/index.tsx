@@ -2,72 +2,68 @@ import React from 'react'
 import styled from 'styled-components'
 import { NavLink } from 'react-router-dom'
 
-const HamburgerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 62px;
-  transition: all 0.5s ease-in-out;
+export const Overlay = styled.div`
+  background-color: rgba(0, 0, 0, 0.35);
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
   width: 100%;
+  z-index: 4;
 `
-const Menu = styled.div`
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  background: #fff;
-  border: solid 1px #d9d9d9;
-  z-index: 999;
 
-  &:first-child {
-    border-top: none;
-  }
+const Menu = styled.div`
+  background-color: #fff;
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: absolute;
+  position: relative;
+  top: ${props => props.theme.header.height};
+  width: 100%;
+  z-index: 999;
 `
 
 const StyledLink = styled(NavLink)`
-  color: #666;
+  align-items: center;
+  border-bottom: 1px solid ${props => props.theme.borders.borderColor};
+  color: ${props => props.theme.mainMenu.color};
+  display: flex;
+  height: 45px;
+  justify-content: center;
+  padding: 0 15px;
   text-decoration: none;
 
+  &:last-child {
+    border-bottom: none;
+  }
+
   &:hover {
-    color: #000 !important;
+    color: ${props => props.theme.mainMenu.color};
   }
-  &:visited,
+
+  &.active,
   &:active {
-    color: #666;
-  }
-`
-
-export const Item = styled.div`
-  color: #666;
-  display: flex;
-  flex: 1;
-  padding: 1rem;
-
-  div {
-    margin: 0 auto;
-  }
-  &:hover,
-  &:focus {
-    background: ${props => props.theme.colors.primary};
+    background-color: ${props => props.theme.colors.primary};
     color: #fff;
-    font-weight: 600;
   }
 `
 
 const HamburgerContent = props => {
   const { items, handleMenu } = props
   return (
-    <HamburgerContainer>
-      {items.map(({ to, label }) => (
-        <Menu>
-          <StyledLink key={to} to={to}>
-            <Item onClick={handleMenu}>
-              <div>{label}</div>
-            </Item>
+    <Overlay onClick={handleMenu}>
+      <Menu>
+        {items.map(({ to, label }) => (
+          <StyledLink exact activeClass="active" key={to} to={to}>
+            {label}
           </StyledLink>
-        </Menu>
-      ))}
-    </HamburgerContainer>
+        ))}
+      </Menu>
+    </Overlay>
   )
 }
 
