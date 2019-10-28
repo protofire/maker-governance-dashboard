@@ -23,7 +23,7 @@ const VotersVsMkrChart = props => {
         <Line
           dot={false}
           isAnimationActive={modalProps.data ? false : true}
-          name={'Total MKR stacked'}
+          name={'Total MKR staked'}
           stroke="#27a02c"
           strokeWidth={2}
           type="monotone"
