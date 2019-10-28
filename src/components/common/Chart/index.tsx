@@ -55,13 +55,14 @@ const ChartContainer = styled(ResponsiveContainer)`
   }
 `
 const ChartComponent = React.memo(function Chart(props: any) {
-  const { data, width, height, children, modalStyles, xLabel, showXaxis, legend } = props
+  const { data, width, height, children, modalStyles, xLabel, showXaxis, legend, scale } = props
   return (
     <>
       <ChartContainer {...modalStyles}>
         <ComposedChart width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
+            scale={scale || 'auto'}
             interval={showXaxis ? showXaxis : 'preserveEnd'}
             tick={{ fill: '#cccccc', fontSize: 10 }}
             dataKey={xLabel || 'label'}
