@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { format, fromUnixTime, differenceInDays } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
-import { Card, TitleContainer, Link } from '../common/styled'
+import { Card, Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE } from '../../constants'
@@ -122,11 +122,6 @@ export const defaultFilters = {
 }
 
 export const WrappedContainer = styled.div`
-  ${TitleContainer} {
-    span {
-      font-size: 12px !important;
-    }
-  }
   display: flex;
   flex-direction: row;
   justify-content: space-between;

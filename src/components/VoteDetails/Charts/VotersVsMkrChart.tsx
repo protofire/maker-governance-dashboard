@@ -6,6 +6,7 @@ const customStyles = {
   padding: 0,
   position: 'relative',
   bottom: '6px',
+  paddingBottom: '5px',
 }
 const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps } = props
