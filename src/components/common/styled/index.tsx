@@ -58,7 +58,7 @@ const ChartTitle = styled.p`
 `
 
 export const TableTitle = styled(ChartTitle)`
-  font-size: 13px;
+  font-size: 14px;
   margin-bottom: 0;
 `
 
@@ -71,7 +71,7 @@ export const ChartTitleContainer = styled.div`
   min-height: 0;
 
   span {
-    margin-right: 5px;
+    margin-right: 3px;
   }
 `
 

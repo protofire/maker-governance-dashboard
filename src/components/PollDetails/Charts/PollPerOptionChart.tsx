@@ -3,7 +3,7 @@ import { Bar, XAxis, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const PollPerOptionChart = props => {
-  const { wrapperProps, modalProps, currentVoters, currentMkr } = props
+  const { wrapperProps, modalProps } = props
   return (
     <ChartWrapper hideFilters {...wrapperProps}>
       <Chart {...modalProps}>
@@ -12,7 +12,7 @@ const PollPerOptionChart = props => {
         <XAxis dataKey="label" />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
-          name={`Voters - Current ${currentVoters}`}
+          name={'Voters'}
           yAxisId="0"
           dataKey="voter"
           stackId="a"
@@ -20,7 +20,7 @@ const PollPerOptionChart = props => {
         />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
-          name={`MKR Staked Per Option - Current ${currentMkr}`}
+          name={'MKR Staked Per Option'}
           yAxisId="1"
           dataKey="mkr"
           stackId="a"

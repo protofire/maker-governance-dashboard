@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { withRouter } from 'react-router-dom'
-import { fromUnixTime, differenceInDays } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -68,7 +67,9 @@ function HomeDetail(props: Props) {
         data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
-        component: props => <HomeTable handleRow={getPoll} expanded content="Top polls" component="polls" {...props} />,
+        component: props => (
+          <HomeTable handleRow={getPoll} expanded content="Most Recent Polls" component="polls" {...props} />
+        ),
       },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
@@ -171,16 +172,11 @@ function HomeDetail(props: Props) {
   // VotersVsMkr graph data
   const VotersVsMkr = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVoters = governanceInfo
-      ? Number(governanceInfo.countProxies) + Number(governanceInfo.countAddresses)
-      : '-'
-    const currentMkr = governanceInfo ? Number(governanceInfo.locked).toFixed(2) : '-'
+
     return (
       <VotersVsMkrChart
-        currentMkr={currentMkr}
-        currentVoters={currentVoters}
-        modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
     )
   }
@@ -189,12 +185,8 @@ function HomeDetail(props: Props) {
   const VotesVsPolls = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
 
-    const currentVotes = governanceInfo ? Number(governanceInfo.countSpells) : '-'
-    const currentPolls = polls.length
     return (
       <VotesVsPollsChart
-        currentVotes={currentVotes}
-        currentPolls={currentPolls}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -204,12 +196,8 @@ function HomeDetail(props: Props) {
   // MkrDistributionPerExecutive graph data
   const MkrDistributionPerExecutive = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const hat = governanceInfo ? governanceInfo.hat : null
-    const currentMKR = executives.find(vote => vote.id === hat)
-
     return (
       <MkrDistributionPerExecutiveChart
-        currentMkr={currentMKR ? Number(currentMKR.approvals).toFixed(2) : 0}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -219,10 +207,8 @@ function HomeDetail(props: Props) {
   // Gini graph data
   const Gini = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentGini = giniData[giniData.length - 1].gini
     return (
       <GiniChart
-        currentGini={currentGini}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -232,15 +218,11 @@ function HomeDetail(props: Props) {
   // Time taken graph data
   const TimeTakenForExecutives = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVotes = executives.filter(
-      vote => vote.casted && differenceInDays(fromUnixTime(vote.casted), fromUnixTime(vote.timestamp)) <= 30,
-    ).length
 
     return (
       <TimeTakenChart
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
-        currentVotes={currentVotes}
       />
     )
   }
@@ -280,7 +262,7 @@ function HomeDetail(props: Props) {
       </Card>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <Card style={{ height: '340px', minHeight: 'fit-content' }}>
-          <HomeTable content="Executive votes" component="executives" />
+          <HomeTable handleRow={getVote} content="Executive votes" component="executives" />
         </Card>
         <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
@@ -294,7 +276,11 @@ function HomeDetail(props: Props) {
       </ThreeRowGrid>
       <ThreeRowGrid>
         <Card style={{ height: '340px', minHeight: 'fit-content' }}>
-          {polls.length === 0 ? <Loading /> : <HomeTable content="Top polls" component="polls" />}
+          {polls.length === 0 ? (
+            <Loading />
+          ) : (
+            <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
+          )}
         </Card>
         <Card style={{ height: '340px', minHeight: 'fit-content' }}>
           {polls.length === 0 ? (

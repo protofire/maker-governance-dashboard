@@ -8,7 +8,7 @@ const MakerDistributionChart = props => {
   const chartColors = [...defaultColors, ...colors]
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
-      <Chart {...modalProps}>
+      <Chart scale="point" {...modalProps}>
         <YAxis type="number" domain={[0, 'dataMax + 1000']} />
         {options.map((option, i) => (
           <Line

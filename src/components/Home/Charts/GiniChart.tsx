@@ -3,7 +3,7 @@ import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const GiniChart = props => {
-  const { wrapperProps, modalProps, currentGini } = props
+  const { wrapperProps, modalProps } = props
   return (
     <ChartWrapper {...wrapperProps}>
       <Chart {...modalProps}>
@@ -11,7 +11,7 @@ const GiniChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={`Gini Coefficient - Current ${currentGini}`}
+          name={'Gini Coefficient'}
           stroke="#ffc353"
           strokeWidth={2}
           type="monotone"

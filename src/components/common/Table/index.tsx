@@ -3,7 +3,7 @@ import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'r
 
 import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
-import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon/index'
+import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon'
 import { IconContainer, Select } from '../styled'
 
 interface SortBy {
@@ -23,6 +23,7 @@ type TableProps = {
 
 const FilterContainer = styled.div`
   margin-top: 10px;
+  position: absolute;
 `
 const FilterIconContainer = styled.span`
   cursor: pointer;
@@ -144,10 +145,10 @@ const RowsSection = styled.div`
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
     &:hover {
+      cursor: pointer;
       ${props =>
         props.expanded &&
         css`
-          cursor: pointer;
           background-color: #fafafa;
         `}
     }
@@ -314,6 +315,11 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
       setFilters(current => ({ ...current, ...cleanFilters }))
     }
   }, [columns, otherState.filters])
+
+  const isFiltered = filter =>
+    Object.keys(otherState.filters)
+      .map(e => e.toLowerCase())
+      .includes(filter.toLowerCase())
 
   // Render the UI for your table
   return (
