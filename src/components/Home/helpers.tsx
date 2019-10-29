@@ -165,6 +165,7 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     {
       Header: 'Name',
       accessor: 'title',
+      filter: 'fuzzyText',
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
@@ -177,6 +178,7 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     {
       Header: 'Start date',
       id: 'startDate',
+      disableFilters: true,
       accessor: row => fromUnixTime(row.startDate),
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
@@ -185,11 +187,13 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     {
       Header: 'End Date',
       accessor: 'endDate',
+      disableFilters: true,
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
       show: isModalOpen,
     },
     {
       Header: 'Time Left',
+      disableFilters: true,
       accessor: row => timeLeft(row.endDate),
     },
   ]
@@ -200,6 +204,7 @@ export const Executivecolumns = (isModalOpen: boolean) => {
     {
       Header: 'Source',
       accessor: 'id',
+      filter: 'fuzzyText',
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
@@ -210,23 +215,27 @@ export const Executivecolumns = (isModalOpen: boolean) => {
     {
       Header: 'MKR in Support',
       id: 'approvals',
+      disableFilters: true,
       accessor: row => Number(row.approvals).toFixed(2),
     },
     {
       Header: 'Casted date',
       accessor: 'casted',
+      disableFilters: true,
       Cell: ({ row }) => (row.original.casted ? format(fromUnixTime(row.original.casted), 'dd MMM yy') : '-'),
       show: isModalOpen,
     },
     {
       Header: 'MKR when lifted',
       accessor: 'liftedWith',
+      disableFilters: true,
       Cell: ({ row }) => Number(row.original.liftedWith).toFixed(2),
       show: isModalOpen,
     },
     {
       Header: 'Lift date',
       accessor: 'lifted',
+      disableFilters: true,
       Cell: ({ row }) => (row.original.lifted ? format(fromUnixTime(row.original.lifted), 'dd MMM yy') : '-'),
       show: isModalOpen,
     },

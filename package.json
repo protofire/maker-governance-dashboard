@@ -26,6 +26,7 @@
     "gray-matter": "^4.0.2",
     "install": "^0.13.0",
     "ipfs-only-hash": "^1.0.2",
+    "match-sorter": "^4.0.2",
     "npm": "^6.11.3",
     "randomcolor": "^0.5.4",
     "react": "^16.9.0",
