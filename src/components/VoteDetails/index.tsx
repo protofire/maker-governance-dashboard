@@ -122,12 +122,8 @@ function VoteDetails(props: Props) {
   //Voters vs mkr data
   const VotersVsMkr = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVoters = vote.totalVotes ? vote.totalVotes : '-'
-    const currentMkr = vote.approvals ? Number(vote.approvals).toFixed(2) : '-'
     return (
       <VotersVsMkrChart
-        currentVoters={currentVoters}
-        currentMkr={currentMkr}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -137,10 +133,8 @@ function VoteDetails(props: Props) {
   //Approvals by address
   const ApprovalsByAddress = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    const currentVoters = Object.keys(topSupporters).length
     return (
       <ApprovalsByAddressChart
-        currentVoters={currentVoters}
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -182,7 +176,7 @@ function VoteDetails(props: Props) {
           {vote.about ? (
             <Description content="Description" component="description" />
           ) : (
-            <NoData>No data to display.</NoData>
+            <NoData>Cannot fetch executive description.</NoData>
           )}
         </DescriptionCard>
         <Card style={{ height: 300 }}>

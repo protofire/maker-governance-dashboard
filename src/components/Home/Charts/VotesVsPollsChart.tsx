@@ -3,7 +3,7 @@ import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const VotesVsPollsChart = props => {
-  const { wrapperProps, modalProps, currentVotes, currentPolls } = props
+  const { wrapperProps, modalProps } = props
   return (
     <ChartWrapper {...wrapperProps}>
       <Chart {...modalProps}>
@@ -12,7 +12,7 @@ const VotesVsPollsChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={`Executive Votes - Current ${currentVotes}`}
+          name={'Executive Votes'}
           stroke="#9227a0"
           strokeWidth={2}
           type="monotone"
@@ -21,7 +21,7 @@ const VotesVsPollsChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={`Polls - Current ${currentPolls}`}
+          name={'Polls'}
           stroke="#a06d27"
           strokeWidth={2}
           type="monotone"

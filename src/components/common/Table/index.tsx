@@ -137,10 +137,10 @@ const RowsSection = styled.div`
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
     &:hover {
+      cursor: pointer;
       ${props =>
         props.expanded &&
         css`
-          cursor: pointer;
           background-color: #fafafa;
         `}
     }

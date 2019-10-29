@@ -6,9 +6,10 @@ const customStyles = {
   padding: 0,
   position: 'relative',
   bottom: '6px',
+  paddingBottom: '5px',
 }
 const VotersVsMkrChart = props => {
-  const { wrapperProps, modalProps, currentVoters, currentMkr } = props
+  const { wrapperProps, modalProps } = props
   return (
     <ChartWrapper hideFilters styles={customStyles} {...wrapperProps}>
       <Chart {...modalProps}>
@@ -17,7 +18,7 @@ const VotersVsMkrChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={`Number of voters - Current ${currentVoters}`}
+          name={'Number of voters'}
           stroke="#2730a0"
           strokeWidth={2}
           type="monotone"
@@ -27,7 +28,7 @@ const VotersVsMkrChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={`Total MKR stacked - Current ${currentMkr}`}
+          name={'Total MKR staked'}
           stroke="#27a02c"
           strokeWidth={2}
           type="monotone"
