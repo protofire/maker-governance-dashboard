@@ -5,85 +5,108 @@ import styled, { css } from 'styled-components'
 import matchSorter from 'match-sorter'
 
 const FilterWrapper = styled.div`
+  background-color: #fff;
+  border-radius: 3px;
+  border: solid 1px #f3f3f3;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.08);
   position: absolute;
   z-index: 1;
+
   @media (min-width: 480px) {
     min-width: ${props => (props.selector ? 'auto' : '300px')};
   }
-  min-height: ${props => (props.selector ? 'auto' : '115px')};
-  border-radius: 3px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.08);
-  border: solid 1px #f3f3f3;
-  background-color: #ffffff;
+
   &:before {
+    border-right-color: white;
+    border: solid 6px transparent;
     content: '';
+    left: ${props => (props.selector ? '55%' : '12%')};
     position: absolute;
     top: -12px;
-    left: ${props => (props.selector ? '55%' : '12%')};
     transform: rotate(90deg);
     z-index: 1;
-    border: solid 6px transparent;
-    border-right-color: white;
   }
 `
-const InputContainer = styled.div`
-  padding: 15px;
+const InputContainer = styled(FilterWrapper)`
+  display: flex;
   flex-direction: column !important;
-  input {
-    border-radius: 2px;
-    box-sizing: border-box;
-    padding-left: 12px;
-    border: solid 1px #d9d9d9;
-    height: 38px;
-    width: 100%;
-  }
-`
-const ButtonsContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: space-between;
-  div {
-    display: flex;
-    flex: 1;
-    height: 30px;
-    border-radius: 3px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #ffffff;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-  }
-  div:first-child {
-    background-color: rgba(83, 105, 121, 0.8);
-    margin-right: 10px;
-  }
-  div:nth-child(2) {
-    background-color: #00ba9c;
-  }
-`
-const List = styled.ul`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding-left: 0;
-  margin: 0;
-  list-style-type: none;
-`
-const ListItem = styled.li`
-  cursor: pointer;
+  min-height: 115px;
   padding: 15px;
-  color: #444444;
+`
+
+const SearchField = styled.input`
+  border-radius: 2px;
+  border: solid 1px ${props => props.theme.borders.borderColor};
+  box-sizing: border-box;
+  color: ${props => props.theme.colors.textCommon};
+  font-size: 13px;
+  font-weight: normal;
+  height: 38px;
+  outline: none;
+  padding: 0 12px;
+  width: 100%;
+
+  &::placeholder {
+    color: ${props => props.theme.colors.textLight};
+  }
+`
+
+const ButtonsContainer = styled.div`
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px 0 0 0;
+`
+
+const Button = styled.div`
+  align-items: center;
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-size: 15px;
+  font-weight: 600;
+  height: 30px;
+  justify-content: center;
+  text-transform: uppercase;
+`
+
+const ButtonCancel = styled(Button)`
+  background-color: rgba(83, 105, 121, 0.8);
+`
+
+const ButtonSearch = styled(Button)`
+  background-color: ${props => props.theme.colors.primary};
+`
+
+const List = styled(FilterWrapper)`
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  width: 200px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
+const ListItem = styled.li`
+  color: ${props => props.theme.colors.textCommon};
+  cursor: pointer;
+  height: 38px;
+  line-height: 38px;
+  padding: 0 15px;
+  text-transform: capitalize;
+
   &:hover {
-    background: #00ba9c;
+    background: ${props => props.theme.colors.primary};
     color: #fff;
   }
+
   ${props =>
     props.selected &&
     css`
-      background: #00ba9c;
+      background: ${props => props.theme.colors.primary};
       color: #fff;
     `}
 `
@@ -93,23 +116,17 @@ export const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   const [value, setValue] = useState(filterValue || '')
 
   return (
-    <FilterWrapper>
-      <InputContainer>
-        <input
-          defaultValue={value}
-          onChange={e => setValue(e.target.value || undefined)}
-          placeholder={` Search by name...`}
-        />
-        <ButtonsContainer>
-          <div onClick={() => setFilter(undefined)}>
-            <span>Clear</span>
-          </div>
-          <div onClick={() => setFilter(value)}>
-            <span>Search</span>
-          </div>
-        </ButtonsContainer>
-      </InputContainer>
-    </FilterWrapper>
+    <InputContainer>
+      <SearchField
+        defaultValue={value}
+        onChange={e => setValue(e.target.value || undefined)}
+        placeholder={` Search by name...`}
+      />
+      <ButtonsContainer>
+        <ButtonCancel onClick={() => setFilter(undefined)}>Clear</ButtonCancel>
+        <ButtonSearch onClick={() => setFilter(value)}>Search</ButtonSearch>
+      </ButtonsContainer>
+    </InputContainer>
   )
 }
 
@@ -128,18 +145,16 @@ export const SelectColumnFilter = ({ column: { filterValue, setFilter, preFilter
 
   // Render a multi-select box
   return (
-    <FilterWrapper selector>
-      <List>
-        <ListItem selected={!filterValue} onClick={() => setFilter(undefined)}>
-          All
+    <List selector as="ul">
+      <ListItem selected={!filterValue} onClick={() => setFilter(undefined)}>
+        All
+      </ListItem>
+      {options.map((option: any) => (
+        <ListItem selected={filterValue === option} key={option} onClick={() => setFilter(option)} value={option}>
+          {option}
         </ListItem>
-        {options.map((option: any) => (
-          <ListItem selected={filterValue === option} key={option} onClick={() => setFilter(option)} value={option}>
-            {option}
-          </ListItem>
-        ))}
-      </List>
-    </FilterWrapper>
+      ))}
+    </List>
   )
 }
 

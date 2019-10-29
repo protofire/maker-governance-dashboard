@@ -7,32 +7,33 @@ import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon/index'
 import { IconContainer, Select } from '../styled'
 
 interface SortBy {
-  id: string
   desc: Boolean
+  id: string
 }
 
 type TableProps = {
   columns?: Array<any>
   data?: Array<any>
   expanded?: boolean
-  limitPerPage?: number
-  sortBy?: SortBy[]
   handleRow?: (row: any) => void
+  limitPerPage?: number
   scrollable?: boolean
+  sortBy?: SortBy[]
 }
 
 const FilterContainer = styled.div`
   margin-top: 10px;
 `
 const FilterIconContainer = styled.span`
+  cursor: pointer;
+  left: 9px;
   position: relative;
   width: 30px;
-  left: 9px;
-  cursor: pointer;
 `
 const TableRow = styled.span`
   font-size: 13px;
-  color: #000000;
+  color: #000;
+
   @media (min-width: 480px) {
     ${props =>
       props.width &&
@@ -40,16 +41,19 @@ const TableRow = styled.span`
         flex: none !important;
         width: ${props.width}px !important;
       `}
-
+  }
 `
+
 const HeaderRow = styled.span`
+  color: #999;
   font-size: 12px;
-  color: #999999;
+
   div:first-child {
     display: flex;
-    flex: 1;
     flex-direction: row;
+    flex: 1;
   }
+
   @media (min-width: 480px) {
     ${props =>
       props.width &&
@@ -64,18 +68,20 @@ const TableSection = styled.div`
   display: flex;
   flex-direction: row;
   padding: 1rem;
+
   @media (max-width: 480px) {
     min-width: 480px;
   }
 `
 
 const TableWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  background-color: white;
+  background-color: #fff;
   border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   margin-top: ${props => (props.expanded ? '1rem' : '0')};
+
   ${FilterContainer},${FilterIconContainer} {
     ${props =>
       !props.expanded &&
@@ -83,6 +89,7 @@ const TableWrapper = styled.div`
         display: none;
       `}
   }
+
   ${TableSection} {
     ${props => {
       if (!props.expanded) {
@@ -93,8 +100,8 @@ const TableWrapper = styled.div`
         return css`
           ${TableRow}, ${HeaderRow} {
             flex: 1;
-            text-align: left;
             margin-right: 20px;
+            text-align: left;
           }
         `
       }
@@ -111,9 +118,9 @@ const TableWrapper = styled.div`
         ${props =>
           !props.expanded &&
           css`
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
           `}
       }
     }
@@ -146,6 +153,7 @@ const RowsSection = styled.div`
     }
   }
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
+
   ${TableRow} {
     ${props =>
       props.expanded &&
@@ -162,8 +170,8 @@ const RowsSection = styled.div`
 `
 
 const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
-  position: relative;
   left: 5px;
+  position: relative;
   top: 1px;
   transform: ${props => (props.up ? 'rotate(180deg)' : 'rotate(0deg)')};
 `
@@ -171,15 +179,15 @@ const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
 const Pagination = styled.div`
   * {
     font-size: 12px;
-    color: #666666;
+    color: #666;
   }
-  padding: 1rem;
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  margin-top: 10px;
   align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
   justify-content: flex-end;
+  margin-top: 10px;
+  padding: 1rem;
 `
 const PageIconContainer = styled(IconContainer)`
   margin-left: 1rem;
@@ -311,35 +319,31 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   return (
     <>
       <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
-        <div>
-          {headerGroups.map(headerGroup => (
-            <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, i) => (
-                <HeaderRow key={column.id} width={column.width}>
-                  <div>
-                    <span {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
-                    </span>
-                    {column.canFilter && (
-                      <FilterIconContainer
-                        ref={(el: never) => (itemsRef.current[i] = el)}
-                        onClick={() =>
-                          setFilters(current => ({ ...current, [column.Header]: !current[column.Header] }))
-                        }
-                      >
-                        <FilterIcon />
-                      </FilterIconContainer>
-                    )}
-                  </div>
-                  {filters[column.Header] && (
-                    <FilterContainer ref={filterNode}>{column.render('Filter')}</FilterContainer>
+        {headerGroups.map(headerGroup => (
+          <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column, i) => (
+              <HeaderRow key={column.id} width={column.width}>
+                <div>
+                  <span {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
+                  </span>
+                  {column.canFilter && (
+                    <FilterIconContainer
+                      ref={(el: never) => (itemsRef.current[i] = el)}
+                      onClick={() => setFilters(current => ({ ...current, [column.Header]: !current[column.Header] }))}
+                    >
+                      <FilterIcon />
+                    </FilterIconContainer>
                   )}
-                </HeaderRow>
-              ))}
-            </TableSection>
-          ))}
-        </div>
+                </div>
+                {filters[column.Header] && (
+                  <FilterContainer ref={filterNode}>{column.render('Filter')}</FilterContainer>
+                )}
+              </HeaderRow>
+            ))}
+          </TableSection>
+        ))}
         <RowsSection scrollable={scrollable} expanded={expanded}>
           {page.map(
             row =>
