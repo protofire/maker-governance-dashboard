@@ -8,6 +8,7 @@ import {
   startOfDay,
   endOfDay,
   differenceInDays,
+  isAfter,
 } from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
 
@@ -122,11 +123,14 @@ export const getComponentData = (
 
 const getPollPeriods = poll => {
   const start = fromUnixTime(poll.startDate)
-  const end = fromUnixTime(poll.endDate)
+
+  const endPoll = fromUnixTime(poll.endDate)
+  const now = new Date()
+  const end = isAfter(endPoll, now) ? now : endPoll
 
   const long = differenceInDays(endOfDay(end), startOfDay(start))
 
-  return Array.from({ length: long + 1 }, (v, i) => {
+  const periods = Array.from({ length: long + 1 }, (v, i) => {
     let from = startOfDay(addDays(start, i))
     let to = endOfDay(addDays(start, i))
 
@@ -137,6 +141,10 @@ const getPollPeriods = poll => {
       endDate: getUnixTime(to),
     }
   })
+
+  periods[periods.length - 1].endDate = poll.endDate
+
+  return periods
 }
 
 export const getPollVotersHistogramData = poll => {
