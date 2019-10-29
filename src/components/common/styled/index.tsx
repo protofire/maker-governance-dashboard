@@ -63,16 +63,18 @@ const ChartTitle = styled.p`
   color: #444444;
 `
 export const TableTitle = styled(ChartTitle)`
-  font-size: 13px;
+  font-size: 14px;
   margin-bottom: 0;
 `
 export const ChartTitleContainer = styled.div`
   display: flex;
   font-size: 14px;
+  color: #444444;
+  font-weigth: 600;
   flex-direction: row;
   flex: 1;
   span {
-    margin-right: 5px;
+    margin-right: 3px;
   }
 `
 

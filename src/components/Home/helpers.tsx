@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { format, fromUnixTime, differenceInDays } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
-import { Card, TitleContainer, Link } from '../common/styled'
+import { Card, Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE } from '../../constants'
@@ -97,13 +97,14 @@ export const getGiniData = (totalMkr: Array<any>, time: string): Array<any> => {
   }, {})
 
   return Object.keys(res).reduce((acc: any[], k) => {
+    const giniData = Object.keys(res[k])
+      .map(a => res[k][a].toNumber())
+      .filter(a => a >= 0)
     return [
       ...acc,
       {
         label: k,
-        gini: Object.keys(res[k]).length
-          ? gini.unordered(Object.keys(res[k]).map(a => res[k][a].toNumber())).toFixed(2)
-          : 0,
+        gini: Object.keys(res[k]).length ? gini.unordered(giniData).toFixed(2) : 0,
       },
     ]
   }, [])
@@ -121,11 +122,6 @@ export const defaultFilters = {
 }
 
 export const WrappedContainer = styled.div`
-  ${TitleContainer} {
-    span {
-      font-size: 12px !important;
-    }
-  }
   display: flex;
   flex-direction: row;
   justify-content: space-between;

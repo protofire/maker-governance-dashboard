@@ -3,7 +3,7 @@ import { Bar, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const TimeTakenChart = props => {
-  const { wrapperProps, modalProps, currentVotes } = props
+  const { wrapperProps, modalProps } = props
 
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
@@ -11,7 +11,7 @@ const TimeTakenChart = props => {
         <YAxis />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
-          name={`Executive Vote Count ${currentVotes}`}
+          name={'Executive Vote Count'}
           dataKey="count"
           fill="#61b6b0"
         />

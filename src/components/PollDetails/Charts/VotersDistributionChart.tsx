@@ -9,7 +9,7 @@ const VotersDistributionChart = props => {
 
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
-      <Chart {...modalProps}>
+      <Chart scale="point" {...modalProps}>
         <YAxis />
         {options.map((option, i) => (
           <Line

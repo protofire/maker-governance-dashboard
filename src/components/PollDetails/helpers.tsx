@@ -45,11 +45,6 @@ export const TableRow = styled.div`
 `
 
 export const WrappedContainer = styled.div`
-  ${TitleContainer} {
-    span {
-      font-size: 12px !important;
-    }
-  }
   display: flex;
   flex-direction: row;
   justify-content: space-between;
