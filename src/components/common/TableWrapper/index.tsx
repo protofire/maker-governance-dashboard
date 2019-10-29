@@ -5,8 +5,8 @@ import { getIconContainer } from '../../../utils'
 type Props = {
   children: React.ReactNode
   content: string
-  handleModal: () => void
-  isModalOpen: boolean
+  handleModal?: () => void
+  isModalOpen?: boolean
 }
 
 function TableWrapper(props: Props) {
@@ -16,13 +16,7 @@ function TableWrapper(props: Props) {
     <>
       <TitleContainer>
         <TableTitle>{content}</TableTitle>
-        {getIconContainer(
-          () => (
-            <ViewAll>View All</ViewAll>
-          ),
-          handleModal,
-          isModalOpen,
-        )}
+        {handleModal ? getIconContainer(() => <ViewAll>View All</ViewAll>, handleModal, isModalOpen) : null}
       </TitleContainer>
       <TableContainer>{children}</TableContainer>
     </>

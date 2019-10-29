@@ -5,19 +5,17 @@ import styled from 'styled-components'
 import { BigNumber } from 'bignumber.js'
 import {
   Card,
-  Modal,
-  TableTitle,
-  DescriptionWrapper,
   DescriptionBox,
+  DescriptionWrapper,
+  Modal,
   Spinner,
   SpinnerContainer,
+  TableWrapper,
   ThreeRowGrid,
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 import {
-  Container,
-  TableContainer,
   TableRow,
   getPollTableData,
   defaultFilters,
@@ -34,6 +32,11 @@ const NoData = styled.span`
   flex: 1;
   font-size: 16px;
   justify-content: center;
+`
+
+const TableCell = styled.span`
+  color: #000;
+  font-size: 13px;
 `
 
 type Props = {
@@ -218,17 +221,14 @@ function PollDetails(props: Props) {
     <>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <Card type="table" style={{ height: '340px' }}>
-          <Container>
-            <TableTitle>Details</TableTitle>
-          </Container>
-          <TableContainer>
+          <TableWrapper content="Details">
             {getPollTableData(poll).map(el => (
               <TableRow key={el.label}>
-                <span>{el.label}</span>
-                <span>{el.value}</span>
+                <TableCell>{el.label}</TableCell>
+                <TableCell>{el.value}</TableCell>
               </TableRow>
             ))}
-          </TableContainer>
+          </TableWrapper>
         </Card>
         <Card style={{ height: '340px' }}>
           {poll.content ? (

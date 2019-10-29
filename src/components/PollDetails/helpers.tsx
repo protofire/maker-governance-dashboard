@@ -20,8 +20,8 @@ import { getUnixTime } from 'date-fns/esm'
 
 export const TableContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
+  flex: 1;
   font-size: 12px;
 `
 
@@ -38,6 +38,7 @@ export const TableRow = styled.div`
   padding: 0.25rem 1.5rem;
   align-items: center;
   justify-content: space-between;
+
   &:nth-child(odd) {
     background-color: #fafafa;
   }

@@ -20,7 +20,7 @@ function Modal(props: Props) {
         isOpen={isOpen}
         onRequestClose={closeModal}
         shouldCloseOnOverlayClick={false}
-        style={isChart ? theme.modalStyle : { content: { bottom: 'none' } }}
+        style={theme.modalStyle}
       >
         {children}
       </ReactModal>
