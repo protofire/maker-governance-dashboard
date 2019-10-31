@@ -12,13 +12,13 @@ type Props = {
 const DescriptionText = styled.span``
 
 const DescriptionContainer = styled.div`
-  font-size: 13px;
+  bottom: 6px;
   display: flex;
-  flex: 1;
   flex-direction: row;
+  flex: 1;
+  font-size: 13px;
   justify-content: space-between;
   position: relative;
-  bottom: 6px;
 `
 
 function DescriptionWrapper(props: Props) {
