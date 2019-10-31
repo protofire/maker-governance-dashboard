@@ -116,7 +116,7 @@ export const theme = {
       position: 'relative',
       right: 'auto',
       top: 'auto',
-      width: '900px',
+      width: '1280px',
     },
     overlay: {
       alignItems: 'center',
