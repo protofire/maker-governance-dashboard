@@ -13,3 +13,7 @@ export const VOTING_ACTION_ADD = 'AddAction'
 export const VOTING_ACTION_REMOVE = 'RemoveAction'
 
 export const DEFAULT_FETCH_ROWS = 300
+
+//Polls list
+
+export const DEFAULT_CACHE_TTL = 1 // in minutes
