@@ -5,9 +5,13 @@ import {
   formatDistance,
   formatDistanceToNow,
   addDays,
+  addHours,
   startOfDay,
+  startOfHour,
   endOfDay,
+  endOfHour,
   differenceInDays,
+  differenceInHours,
   isAfter,
 } from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
@@ -134,14 +138,15 @@ const getPollPeriods = poll => {
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
 
-  const long = differenceInDays(endOfDay(end), startOfDay(start))
+  const long = differenceInHours(end, start)
 
   const periods = Array.from({ length: long + 1 }, (v, i) => {
-    let from = startOfDay(addDays(start, i))
-    let to = endOfDay(addDays(start, i))
+    let period = addHours(start, i)
+    let from = startOfHour(period)
+    let to = endOfHour(period)
 
     return {
-      label: format(from, 'dd MMM'),
+      label: format(from, 'dd MMM Ho'),
       from,
       to,
       endDate: getUnixTime(to),
@@ -213,8 +218,6 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-  // console.log('voters', voters)
-
   const endPoll = fromUnixTime(poll.endDate)
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
@@ -231,7 +234,6 @@ export const getPollMakerHistogramData = async poll => {
   )
 
   const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
-  // console.log('allBalances', allBalances)
   const balancesLookup = allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []
@@ -248,8 +250,6 @@ export const getPollMakerHistogramData = async poll => {
       [account]: newBalances,
     }
   }, {})
-
-  // console.log('balancesLookup', balancesLookup)
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
