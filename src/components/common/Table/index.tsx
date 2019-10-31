@@ -316,11 +316,6 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     }
   }, [columns, otherState.filters])
 
-  const isFiltered = filter =>
-    Object.keys(otherState.filters)
-      .map(e => e.toLowerCase())
-      .includes(filter.toLowerCase())
-
   // Render the UI for your table
   return (
     <>

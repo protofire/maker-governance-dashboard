@@ -12,7 +12,7 @@ type Props = {
 }
 
 function Modal(props: Props) {
-  const { isOpen, closeModal, children, isChart } = props
+  const { isOpen, closeModal, children } = props
 
   return (
     <>
