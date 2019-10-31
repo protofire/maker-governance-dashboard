@@ -106,7 +106,7 @@ export const getPollData = async (poll, balancesLookup) => {
   const balances = votersHotCold.reduce((acc, addr) => {
     const snapshots = balancesLookup[addr]
     if (snapshots) {
-      const last = snapshots.find(snapshot => snapshots.timestamp <= poll.endDate)
+      const last = snapshots.find(snap => snap.timestamp <= poll.endDate)
       if (last) {
         return {
           ...acc,

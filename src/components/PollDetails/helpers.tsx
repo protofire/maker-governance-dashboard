@@ -4,10 +4,10 @@ import {
   format,
   formatDistance,
   formatDistanceToNow,
-  addDays,
-  startOfDay,
-  endOfDay,
-  differenceInDays,
+  addHours,
+  startOfHour,
+  endOfHour,
+  differenceInHours,
   isAfter,
 } from 'date-fns'
 import { Card, TitleContainer } from '../common/styled'
@@ -128,14 +128,15 @@ const getPollPeriods = poll => {
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
 
-  const long = differenceInDays(endOfDay(end), startOfDay(start))
+  const long = differenceInHours(end, start)
 
   const periods = Array.from({ length: long + 1 }, (v, i) => {
-    let from = startOfDay(addDays(start, i))
-    let to = endOfDay(addDays(start, i))
+    let period = addHours(start, i)
+    let from = startOfHour(period)
+    let to = endOfHour(period)
 
     return {
-      label: format(from, 'dd MMM'),
+      label: format(from, 'dd MMM Ho'),
       from,
       to,
       endDate: getUnixTime(to),

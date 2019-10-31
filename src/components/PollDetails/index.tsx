@@ -45,8 +45,8 @@ const Loading = () => (
 
 function PollDetails(props: Props) {
   const { poll } = props
-  const mkrDistributionCached = lscache.get('mkrDistribution') || []
-  const pollPerOptionCached = lscache.get('pollPerOption') || []
+  const mkrDistributionCached = lscache.get(`mkrDistribution-${poll.id}`) || []
+  const pollPerOptionCached = lscache.get(`pollPerOption-${poll.id}`) || []
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
@@ -62,9 +62,9 @@ function PollDetails(props: Props) {
   }, [poll, pollPerOptionCached.length, mkrDistributionCached.length])
 
   useEffect(() => {
-    lscache.set('mkrDistribution', mkrDistributionData, DEFAULT_CACHE_TTL)
-    lscache.set('pollPerOption', pollPerOptionData, DEFAULT_CACHE_TTL)
-  }, [mkrDistributionData, pollPerOptionData])
+    lscache.set(`mkrDistribution-${poll.id}`, mkrDistributionData, DEFAULT_CACHE_TTL)
+    lscache.set(`pollPerOption-${poll.id}`, pollPerOptionData, DEFAULT_CACHE_TTL)
+  }, [mkrDistributionData, pollPerOptionData, poll.id])
 
   const voteMap = {
     table: {
