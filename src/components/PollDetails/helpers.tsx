@@ -14,10 +14,16 @@ import { Card, TitleContainer } from '../common/styled'
 
 import { shortenAccount, timeLeft } from '../../utils'
 
-import { getPollData, getVoterAddresses } from './data'
+import { getPollData, getPollData2, getVoterAddresses } from './data'
 
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
+
+import { request } from 'graphql-request'
+
+const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
+
+const fetchQuery = (url, query, variables) => request(url, query, variables)
 
 export const TableContainer = styled.div`
   display: flex;
@@ -189,7 +195,7 @@ export const getPollVotersHistogramData = poll => {
   })
 }
 
-export const getPollMakerHistogramData = poll => {
+export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
   const pollOptions = ['Abstein', ...poll.options]
@@ -206,6 +212,44 @@ export const getPollMakerHistogramData = poll => {
       [voter]: 0,
     }
   }, {})
+
+  // console.log('voters', voters)
+
+  const endPoll = fromUnixTime(poll.endDate)
+  const now = new Date()
+  const end = isAfter(endPoll, now) ? now : endPoll
+  const allVoters = Array.from(
+    new Set(
+      poll.timeLine.reduce((voters, tl) => {
+        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
+          return [...voters, tl.sender]
+        }
+
+        return voters
+      }, []),
+    ),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
+  // console.log('allBalances', allBalances)
+  const balancesLookup = allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
+    }
+  }, {})
+
+  // console.log('balancesLookup', balancesLookup)
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
@@ -238,7 +282,8 @@ export const getPollMakerHistogramData = poll => {
         ),
         options: poll.options,
       }
-      const pollData = await getPollData(manualPoll)
+      const pollData = await getPollData2(manualPoll, balancesLookup)
+      // const pollData = await getPollData(manualPoll)
 
       return pollData.reduce(
         (acc, el) => {
@@ -251,4 +296,44 @@ export const getPollMakerHistogramData = poll => {
       )
     }),
   )
+}
+
+const getVoterBalances = async (address, endDate) => {
+  // Query
+  const query = `
+    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $skip: Int = 0 ) {
+      accountBalanceSnapshots(
+        first: 1000,
+        skip: $skip,
+        where:{
+          account: $voter,
+          timestamp_lte: $endDate
+        },
+        orderBy: timestamp, orderDirection: desc
+      ) {
+        account {
+          address
+        }
+        amount
+        timestamp
+      }
+    }
+  `
+
+  let skip = 0
+  let more = true
+  let result = []
+  while (more) {
+    const partial: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+      voter: address,
+      endDate,
+      skip,
+    })
+
+    result = result.concat(partial.accountBalanceSnapshots)
+    more = !(partial.accountBalanceSnapshots.length < 1000)
+    skip += 1000
+  }
+
+  return result
 }

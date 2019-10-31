@@ -53,8 +53,13 @@ function PollDetails(props: Props) {
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
   useEffect(() => {
+    const start = Date.now()
     getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
-    getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
+    getPollMakerHistogramData(poll).then(data => {
+      const end = Date.now()
+      console.log('TIME', (end - start) / 1000)
+      setMkrDistributionData(data)
+    })
   }, [poll])
 
   const voteMap = {
