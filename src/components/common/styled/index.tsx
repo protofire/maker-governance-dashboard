@@ -171,3 +171,12 @@ export const ThreeRowGrid = styled.div`
     grid-template-columns: 1fr 1fr 1fr;
   }
 `
+
+export const NoData = styled.div`
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  font-size: 16px;
+  justify-content: center;
+  line-height: 1.2;
+`

@@ -6,6 +6,7 @@ import {
   Card,
   DescriptionBox,
   DescriptionWrapper,
+  NoData,
   Modal,
   Spinner,
   SpinnerContainer,
@@ -24,14 +25,6 @@ import {
   getPollVotersHistogramData,
   getPollMakerHistogramData,
 } from './helpers'
-
-const NoData = styled.span`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: 16px;
-  justify-content: center;
-`
 
 const TableCell = styled.span`
   color: #000;

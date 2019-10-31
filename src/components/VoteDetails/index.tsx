@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
-import { Card, DescriptionBox, DescriptionWrapper, Modal, TableTitle } from '../common'
+import { Card, DescriptionBox, DescriptionWrapper, Modal, NoData, TableTitle } from '../common'
 import { getModalContainer } from '../../utils'
 import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
 import {
@@ -16,14 +16,6 @@ import {
   getVoteTableData,
   getVotersVsMkrData,
 } from './helpers'
-
-const NoData = styled.span`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: 16px;
-  justify-content: center;
-`
 
 const VoteDetailContainer = styled.div`
   display: flex;
