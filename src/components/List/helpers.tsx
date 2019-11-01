@@ -3,8 +3,6 @@ import ReactTooltip from 'react-tooltip'
 import { format, fromUnixTime, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 import { SelectColumnFilter } from '../common/Table/filters'
-
-//Common components
 import { Spinner, SpinnerContainer } from '../common'
 
 const Loading = () => (

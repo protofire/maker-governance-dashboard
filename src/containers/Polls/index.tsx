@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-
 import BigNumber from 'bignumber.js'
-import styled from 'styled-components'
-
 import List from '../../components/List'
 import { Pollcolumns } from '../../components/List/helpers'
 import { getPollData } from '../../components/PollDetails/data'
-
 import { DEFAULT_FETCH_ROWS } from '../../constants'
-
-//Common components
-import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
-
-// Queries
+import { FullLoading, PageTitle } from '../../components/common'
 import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
-
-// Utils
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 
 const getHomeVariables = data => {
@@ -26,15 +16,7 @@ const getHomeVariables = data => {
   }
 }
 
-const Loading = () => (
-  <SpinnerContainer>
-    <Spinner />
-  </SpinnerContainer>
-)
-
 const ErrorEl = () => <div>ERROR: There was an error trying to fetch the data. </div>
-
-const PollsContainer = styled.div``
 
 function PollsInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
@@ -93,14 +75,14 @@ function PollsInfo(props) {
     }
   }, [pollsData.data, mkrSupply])
 
-  if (pollsData.loading || gResult.loading || data.length === 0) return <Loading />
+  if (pollsData.loading || gResult.loading || data.length === 0) return <FullLoading />
   if (pollsData.error || gResult.error) return <ErrorEl />
 
   return (
-    <PollsContainer>
+    <>
       <PageTitle>Polls</PageTitle>
       <List handleRow={getPoll} data={data} columns={pollcolumns} sortBy={initialSort} />
-    </PollsContainer>
+    </>
   )
 }
 

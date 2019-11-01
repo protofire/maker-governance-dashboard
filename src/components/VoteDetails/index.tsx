@@ -43,6 +43,7 @@ type Props = {
   vote: any
   votingActions: Array<any>
 }
+
 function VoteDetails(props: Props) {
   const { vote, votingActions } = props
   const [isModalOpen, setModalOpen] = useState(false)

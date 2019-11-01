@@ -8,7 +8,7 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
-import { Card, Table, Modal, StrippedTableWrapper, Spinner, SpinnerContainer, ThreeRowGrid } from '../common'
+import { Card, Modal, Spinner, SpinnerContainer, StrippedTableWrapper, Table, ThreeRowGrid } from '../common'
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
 import { getModalContainer } from '../../utils'
 import {
@@ -25,7 +25,7 @@ import {
 
 const Loading = () => (
   <SpinnerContainer>
-    <Spinner />
+    <Spinner width="35px" height="35px" />
   </SpinnerContainer>
 )
 

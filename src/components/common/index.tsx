@@ -1,12 +1,13 @@
 import Chart from './Chart'
-import { Spinner, SpinnerContainer } from './Spinner'
-import Table from './Table'
-import Modal from './Modal'
-import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
-import { ChartSelect } from './Chart'
 import ChartWrapper from './ChartWrapper'
-import StrippedTableWrapper from './StrippedTableWrapper'
 import DescriptionWrapper from './DescriptionWrapper'
+import FullLoading from './FullLoading'
+import Modal from './Modal'
+import Spinner, { SpinnerContainer } from './Spinner'
+import StrippedTableWrapper from './StrippedTableWrapper'
+import Table from './Table'
+import { ChartSelect } from './Chart'
+import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
 
 import {
   Card,
@@ -30,15 +31,16 @@ import {
 export {
   ArrowIcon,
   Card,
-  Chart,
-  ChartSelect,
   CardTitle,
   CardTitleContainer,
+  Chart,
+  ChartSelect,
   ChartWrapper,
   CloseIcon,
   DescriptionBox,
   DescriptionWrapper,
   ExpandIcon,
+  FullLoading,
   IconContainer,
   Link,
   Modal,
@@ -50,11 +52,11 @@ export {
   Separator,
   Spinner,
   SpinnerContainer,
-  Table,
   StrippedRowsContainer,
-  StrippedTableWrapper,
   StrippedTableCell,
   StrippedTableRow,
+  StrippedTableWrapper,
+  Table,
   ThreeRowGrid,
   Versus,
   ViewAll,

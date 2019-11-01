@@ -1,50 +1,43 @@
 import React from 'react'
-import styled from 'styled-components'
-type Props = {
-  table?: boolean
-}
-export const Spinner = ({ table }: Props) => (
-  <StyledSpinner table={table} viewBox="0 0 50 50">
-    <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="2" />
-  </StyledSpinner>
-)
+import styled, { keyframes } from 'styled-components'
+import SpinnerSVG from './img/SpinnerSVG'
 
-const StyledSpinner = styled.svg`
-  animation: rotate 1.5s linear infinite;
-  margin: ${props => (props.table ? '0' : '40px')};
-  width: ${props => (props.table ? '20px' : '50px')};
-  height: ${props => (props.table ? '20px' : '50px')};
-
-  & .path {
-    stroke: rgb(14, 16, 41);
-    stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite;
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
   }
-
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 150;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -35;
-    }
-    100% {
-      stroke-dasharray: 90, 150;
-      stroke-dashoffset: -124;
-    }
+  to {
+    transform: rotate(360deg);
   }
 `
+
+const RotatingSpinner = styled.div<{ height: string; width: string; color: string }>`
+  animation: ${rotate} 4s linear infinite;
+  height: ${props => props.height};
+  width: ${props => props.width};
+
+  > svg {
+    display: block;
+  }
+`
+
 export const SpinnerContainer = styled.div`
-  margin: 0 auto;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
   align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  justify-content: center;
 `
+
+const Spinner = props => {
+  const { width = '20px', height = '20px', color = '#333', ...restProps } = props
+
+  return (
+    <RotatingSpinner width={width} height={height} color={color} {...restProps}>
+      <SpinnerSVG width={width} height={height} color={color} />
+    </RotatingSpinner>
+  )
+}
+
+export default Spinner

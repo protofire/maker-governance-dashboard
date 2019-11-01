@@ -32,7 +32,7 @@ type Props = {
 
 const Loading = () => (
   <SpinnerContainer>
-    <Spinner />
+    <Spinner width="35px" height="35px" />
   </SpinnerContainer>
 )
 
