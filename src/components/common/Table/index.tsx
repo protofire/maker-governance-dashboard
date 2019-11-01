@@ -69,19 +69,14 @@ const TableSection = styled.div`
   display: flex;
   flex-direction: row;
   padding: 1rem;
-
-  @media (max-width: 480px) {
-    min-width: 480px;
-  }
+  width: 100%;
 `
 
 const TableWrapper = styled.div`
   background-color: #fff;
-  border: ${props => (props.expanded ? '1px solid #f3f3f3' : 'none')};
   display: flex;
   flex-direction: column;
   flex: 1;
-  margin-top: ${props => (props.expanded ? '1rem' : '0')};
 
   ${FilterContainer},${FilterIconContainer} {
     ${props =>
@@ -113,7 +108,7 @@ const TableWrapper = styled.div`
         !props.expanded &&
         css`
           display: flex;
-          width: 200px;
+          max-width: 50%;
         `}
       a {
         ${props =>

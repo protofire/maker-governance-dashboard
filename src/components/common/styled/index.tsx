@@ -1,3 +1,4 @@
+import React from 'react'
 import styled, { css } from 'styled-components'
 
 export const Card = styled.div`
@@ -18,25 +19,7 @@ export const Card = styled.div`
     width: 100%;
   }
 `
-export const Versus = styled.span`
-  color: #bbb;
-`
-export const Separator = styled(Versus)`
-  margin-right: 0;
-`
 
-export const Select = styled.select`
-  background: transparent;
-  border: none;
-  margin-right: 1rem;
-
-  &:focus {
-    outline: 0;
-  }
-`
-export const ChartSelect = styled(Select)`
-  color: ${props => props.theme.colors.primary};
-`
 export const PageTitle = styled.h1`
   color: ${props => props.theme.colors.textCommon};
   font-size: 20px;
@@ -46,98 +29,106 @@ export const PageTitle = styled.h1`
   padding: 0;
   text-align: left;
 `
+
 export const Link = styled.a`
   color: #000;
   font-size: 13px;
 `
 
-const ChartTitle = styled.p`
+const CommonCardTitleCSS = css`
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+`
+
+const CardTitleText = styled.h3`
+  ${CommonCardTitleCSS}
   color: ${props => props.theme.colors.textCommon};
-  font-size: 14px;
-  margin-top: 0;
+  margin: 0;
 `
 
-export const TableTitle = styled(ChartTitle)`
-  font-size: 14px;
-  margin-bottom: 0;
+export const CardTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin-bottom: 15px;
 `
 
-export const ChartTitleContainer = styled.div`
+export const CardTitleLeftContents = styled.div`
   display: flex;
   flex-direction: row;
   flex-grow: 0;
   flex-shrink: 0;
-  font-size: 14px;
-  min-height: 0;
+`
 
-  span {
-    margin-right: 3px;
+export const Versus = styled.span`
+  ${CommonCardTitleCSS}
+  color: #bbb;
+  margin: 0 5px;
+`
+
+export const VersusText = styled.span`
+  ${CommonCardTitleCSS}
+`
+
+export const Separator = styled(Versus)`
+  ${CommonCardTitleCSS}
+  color: #bbb;
+  font-weight: 700;
+  margin: 0 0 0 5px;
+
+  &:last-child {
+    display: none;
   }
 `
 
-export const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-grow: 0;
-  flex-shrink: 0;
-  font-size: 14px;
-  min-height: 0;
-  justify-content: space-between;
-  margin: 0 0 15px;
-  padding: 0;
+export const Select = styled.select`
+  background: transparent;
+  border: none;
+  font-size: 13px;
 
-  @media (max-width: 768px) {
-    ${Separator} {
-      display: none;
-    }
-
-    ${ChartTitleContainer} {
-      flex-wrap: wrap;
-    }
-
-    select {
-      width: 85px;
-    }
+  &:focus {
+    outline: 0;
   }
 `
+
+export const ChartSelect = styled(Select)`
+  color: ${props => props.theme.colors.primary};
+`
+
+export const CardTitle = props => {
+  const { content, versus, children } = props
+
+  return (
+    <CardTitleContainer>
+      {content || versus ? (
+        <CardTitleLeftContents>
+          <CardTitleText>{content}</CardTitleText>
+          {versus && (
+            <>
+              <Versus>vs</Versus> <VersusText>{versus}</VersusText>
+            </>
+          )}
+          <Separator>&middot;</Separator>
+        </CardTitleLeftContents>
+      ) : null}
+      {children ? children : null}
+    </CardTitleContainer>
+  )
+}
 
 export const IconContainer = styled.div`
   cursor: pointer;
   display: flex;
 `
 
-export const TableContainer = styled.div`
+export const StrippedRowsContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  flex-grow: 1;
-  flex-shrink: 0;
-  margin-left: -${props => props.theme.cards.paddingHorizontal};
-  margin-right: -${props => props.theme.cards.paddingHorizontal};
-  max-height: none;
-  min-height: fit-content;
-  width: calc(100% + 40px) !important;
-
-  table {
-    border-collapse: separate;
-    border-spacing: 10px 5px;
-
-    th {
-      color: ${props => props.theme.table.thColor};
-      font-size: 12px;
-    }
-
-    tbody {
-      color: ${props => props.theme.table.tdColor};
-      font-size: 13px;
-
-      tr {
-        &:nth-child(odd) {
-          background-color: #fafafa;
-        }
-        height: 36px;
-      }
-    }
-  }
+  font-size: 12px;
 `
 
 export const ViewAll = styled.span`

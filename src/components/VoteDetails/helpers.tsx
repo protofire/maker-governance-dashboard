@@ -2,10 +2,8 @@ import styled from 'styled-components'
 import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
-
 import { shortenAccount, getHourlyFromTo } from '../../utils'
-
-import { Card, TitleContainer } from '../common/styled'
+import { Card } from '../common/styled'
 import {
   LAST_YEAR,
   VOTING_ACTION_FREE,
@@ -40,19 +38,6 @@ export const getTopSupportersTableData = (supporters, vote) => {
 
   return data.sort((a: any, b: any) => b.supports - a.supports)
 }
-export const TableContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  font-size: 12px;
-`
-
-export const Container = styled(TitleContainer)`
-  flex: 0;
-  padding-left: 1.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.5rem;
-`
 
 export const TableRow = styled.div`
   display: flex;

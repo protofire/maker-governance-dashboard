@@ -1,6 +1,11 @@
 import React from 'react'
-import { TableContainer, TableTitle, TitleContainer, ViewAll } from '../../common'
+import { StrippedRowsContainer, CardTitle, ViewAll } from '../../common'
 import { getIconContainer } from '../../../utils'
+import styled from 'styled-components'
+
+const Right = styled.div`
+  margin-left: auto;
+`
 
 type Props = {
   children: React.ReactNode
@@ -14,11 +19,12 @@ function TableWrapper(props: Props) {
 
   return (
     <>
-      <TitleContainer>
-        <TableTitle>{content}</TableTitle>
-        {handleModal ? getIconContainer(() => <ViewAll>View All</ViewAll>, handleModal, isModalOpen) : null}
-      </TitleContainer>
-      <TableContainer>{children}</TableContainer>
+      <CardTitle content={content}>
+        <Right>
+          {handleModal ? getIconContainer(() => <ViewAll>View All</ViewAll>, handleModal, isModalOpen) : null}
+        </Right>
+      </CardTitle>
+      <StrippedRowsContainer>{children}</StrippedRowsContainer>
     </>
   )
 }

@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
-import { Card, DescriptionBox, DescriptionWrapper, Modal, NoData, TableTitle } from '../common'
+import {
+  Card,
+  DescriptionBox,
+  DescriptionWrapper,
+  Modal,
+  NoData,
+  StrippedRowsContainer,
+  CardTitle,
+  // TitleContainer,
+} from '../common'
 import { getModalContainer } from '../../utils'
 import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
 import {
-  Container,
-  TableContainer,
   TableRow,
   defaultFilters,
   getApprovalsByAddress,
@@ -17,17 +24,14 @@ import {
   getVotersVsMkrData,
 } from './helpers'
 
+// const TitleContainerStyled = styled(TitleContainer)`
+//   padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal} 0
+//     ${props => props.theme.cards.paddingHorizontal};
+// `
+
 const VoteDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
-
-  > div {
-    margin-bottom: ${props => props.theme.separation.gridSeparation};
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
 
   @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
     column-gap: ${props => props.theme.separation.gridSeparation};
@@ -123,8 +127,8 @@ function VoteDetails(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     return (
       <VotersVsMkrChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -134,8 +138,8 @@ function VoteDetails(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     return (
       <ApprovalsByAddressChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -159,17 +163,17 @@ function VoteDetails(props: Props) {
     <>
       <VoteDetailContainer>
         <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col1' }}>
-          <Container>
-            <TableTitle>Details</TableTitle>
-          </Container>
-          <TableContainer>
+          {/* <TitleContainerStyled> */}
+          <CardTitle content="Details" />
+          {/* </TitleContainerStyled> */}
+          <StrippedRowsContainer>
             {getVoteTableData(vote).map(el => (
               <TableRow key={el.label}>
                 <span>{el.label}</span>
                 <span>{el.value}</span>
               </TableRow>
             ))}
-          </TableContainer>
+          </StrippedRowsContainer>
         </Card>
         <Card style={{ height: '340px', gridArea: 'col2' }}>
           {vote.about ? (
@@ -185,10 +189,10 @@ function VoteDetails(props: Props) {
           <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
         </Card>
         <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col6' }}>
-          <Container>
-            <TableTitle>Top Supporters</TableTitle>
-          </Container>
-          <TableContainer>
+          {/* <TitleContainerStyled> */}
+          <CardTitle content="Top Supporters" />
+          {/* </TitleContainerStyled> */}
+          <StrippedRowsContainer>
             {getTopSupportersTableData(topSupporters, vote)
               .slice(0, 8)
               .map(el => (
@@ -197,7 +201,7 @@ function VoteDetails(props: Props) {
                   <span>{el.sender}</span>
                 </TableRow>
               ))}
-          </TableContainer>
+          </StrippedRowsContainer>
         </Card>
       </VoteDetailContainer>
       {isModalOpen && (

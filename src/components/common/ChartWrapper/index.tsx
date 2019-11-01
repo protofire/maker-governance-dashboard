@@ -1,7 +1,11 @@
 import React from 'react'
-import { ChartTitle, ExpandIcon, ChartSelect } from '../../common'
-import { TitleContainer } from '../styled/index'
+import { CardTitle, ExpandIcon, ChartSelect } from '../../common'
 import { filters, getIconContainer } from '../../../utils'
+import styled from 'styled-components'
+
+const Right = styled.div`
+  margin-left: auto;
+`
 
 type Props = {
   children: React.ReactNode
@@ -17,15 +21,13 @@ type Props = {
 }
 
 function ChartWrapper(props: Props) {
-  const { value, onChange, handleModal, children, content, versus, isModalOpen, styles, hideFilters, hideIcon } = props
+  const { value, onChange, handleModal, children, content, versus, isModalOpen, hideFilters, hideIcon } = props
   return (
     <>
-      <TitleContainer style={styles} type="chart">
-        <ChartTitle content={content} versus={versus}>
-          {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
-        </ChartTitle>
-        {!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}
-      </TitleContainer>
+      <CardTitle content={content} versus={versus}>
+        {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
+        <Right>{!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}</Right>
+      </CardTitle>
       {children}
     </>
   )

@@ -10,28 +10,11 @@ import {
   differenceInDays,
   isAfter,
 } from 'date-fns'
-import { Card, TitleContainer } from '../common/styled'
-
+import { Card } from '../common/styled'
 import { shortenAccount, timeLeft } from '../../utils'
-
 import { getPollData, getVoterAddresses } from './data'
-
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
-
-export const TableContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  font-size: 12px;
-`
-
-export const Container = styled(TitleContainer)`
-  flex: 0;
-  padding-left: 1.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.5rem;
-`
 
 export const TableRow = styled.div`
   display: flex;
@@ -67,6 +50,7 @@ export const WrappedContainer = styled.div`
     }
   }
 `
+
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
 }

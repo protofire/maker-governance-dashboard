@@ -1,8 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Table } from '../common/'
+import { Card, Table } from '../common/'
 
-const ListContainer = styled.div``
+const CardStyled = styled(Card)`
+  padding: 0;
+`
 
 interface SortBy {
   id: string
@@ -19,9 +21,9 @@ type Props = {
 function List(props: Props) {
   const { data, columns, handleRow, sortBy } = props
   return (
-    <ListContainer>
+    <CardStyled>
       <Table handleRow={handleRow} expanded data={data} columns={columns} sortBy={sortBy} />
-    </ListContainer>
+    </CardStyled>
   )
 }
 

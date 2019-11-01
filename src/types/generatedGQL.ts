@@ -47,7 +47,7 @@ export interface GetExecutivesVotesData_spells {
    */
   id: string
   /**
-   *  Timestamp when the spell voted by the first time
+   *  Timestamp when the spell was voted by the first time
    */
   timestamp: any
   /**
@@ -161,7 +161,7 @@ export interface getHomeData_executives {
    */
   id: string
   /**
-   *  Timestamp when the spell voted by the first time
+   *  Timestamp when the spell was voted by the first time
    */
   timestamp: any
   /**
@@ -493,7 +493,7 @@ export interface GetSpell_spell {
    */
   id: string
   /**
-   *  Timestamp when the spell voted by the first time
+   *  Timestamp when the spell was voted by the first time
    */
   timestamp: any
   /**
@@ -674,7 +674,7 @@ export interface executivesDetailPage {
    */
   id: string
   /**
-   *  Timestamp when the spell voted by the first time
+   *  Timestamp when the spell was voted by the first time
    */
   timestamp: any
   /**
@@ -763,7 +763,7 @@ export interface executivesDetail {
    */
   id: string
   /**
-   *  Timestamp when the spell voted by the first time
+   *  Timestamp when the spell was voted by the first time
    */
   timestamp: any
   /**

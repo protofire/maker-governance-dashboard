@@ -8,24 +8,23 @@ const VotesVsPollsChart = props => {
     <ChartWrapper {...wrapperProps}>
       <Chart {...modalProps}>
         <YAxis datakey="countPolls" />
-
         <Line
-          isAnimationActive={modalProps.data ? false : true}
+          dataKey="countVotes"
           dot={false}
+          isAnimationActive={modalProps.data ? false : true}
           name={'Executive Votes'}
           stroke="#9227a0"
           strokeWidth={2}
           type="monotone"
-          dataKey="countVotes"
         />
         <Line
-          isAnimationActive={modalProps.data ? false : true}
+          dataKey="countPolls"
           dot={false}
+          isAnimationActive={modalProps.data ? false : true}
           name={'Polls'}
           stroke="#a06d27"
           strokeWidth={2}
           type="monotone"
-          dataKey="countPolls"
         />
       </Chart>
     </ChartWrapper>

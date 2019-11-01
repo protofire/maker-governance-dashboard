@@ -221,8 +221,8 @@ function HomeDetail(props: Props) {
 
     return (
       <TimeTakenChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -261,7 +261,7 @@ function HomeDetail(props: Props) {
         <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
       </Card>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        <Card style={{ padding: 0, height: '340px', minHeight: 'fit-content' }}>
           <HomeTable handleRow={getVote} content="Executive votes" component="executives" />
         </Card>
         <Card style={{ height: '340px', minHeight: 'fit-content' }}>
@@ -275,7 +275,7 @@ function HomeDetail(props: Props) {
         </Card>
       </ThreeRowGrid>
       <ThreeRowGrid>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        <Card style={{ padding: 0, height: '340px', minHeight: 'fit-content' }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (

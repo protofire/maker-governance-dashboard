@@ -1,6 +1,5 @@
 import Chart from './Chart'
 import { Spinner, SpinnerContainer } from './Spinner'
-import { ChartTitle } from './Chart'
 import Table from './Table'
 import Modal from './Modal'
 import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
@@ -11,7 +10,8 @@ import DescriptionWrapper from './DescriptionWrapper'
 
 import {
   Card,
-  ChartTitleContainer,
+  CardTitle,
+  CardTitleContainer,
   DescriptionBox,
   IconContainer,
   Link,
@@ -19,10 +19,8 @@ import {
   PageTitle,
   Select,
   Separator,
-  TableContainer,
-  TableTitle,
+  StrippedRowsContainer,
   ThreeRowGrid,
-  TitleContainer,
   Versus,
   ViewAll,
 } from './styled'
@@ -32,8 +30,8 @@ export {
   Card,
   Chart,
   ChartSelect,
-  ChartTitle,
-  ChartTitleContainer,
+  CardTitle,
+  CardTitleContainer,
   ChartWrapper,
   CloseIcon,
   DescriptionBox,
@@ -51,11 +49,9 @@ export {
   Spinner,
   SpinnerContainer,
   Table,
-  TableContainer,
-  TableTitle,
+  StrippedRowsContainer,
   TableWrapper,
   ThreeRowGrid,
-  TitleContainer,
   Versus,
   ViewAll,
 }

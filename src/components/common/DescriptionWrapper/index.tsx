@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ViewAll } from '../../common'
+import { ViewAll, CardTitle } from '../../common'
 import { getIconContainer } from '../../../utils'
 type Props = {
   handleModal: () => void
@@ -9,10 +9,11 @@ type Props = {
   isModalOpen: boolean
 }
 
-const DescriptionText = styled.span``
+const Right = styled.div`
+  margin-left: auto;
+`
 
 const DescriptionContainer = styled.div`
-  bottom: 6px;
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -27,14 +28,17 @@ function DescriptionWrapper(props: Props) {
   return (
     <>
       <DescriptionContainer isModalOpen={isModalOpen}>
-        <DescriptionText>{content}</DescriptionText>
-        {getIconContainer(
-          () => (
-            <ViewAll>View More</ViewAll>
-          ),
-          handleModal,
-          isModalOpen,
-        )}
+        <CardTitle content={content}>
+          <Right>
+            {getIconContainer(
+              () => (
+                <ViewAll>View More</ViewAll>
+              ),
+              handleModal,
+              isModalOpen,
+            )}
+          </Right>
+        </CardTitle>
       </DescriptionContainer>
       {children}
     </>
