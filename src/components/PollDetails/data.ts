@@ -1,7 +1,7 @@
 import { request } from 'graphql-request'
 import { BigNumber } from 'bignumber.js'
 
-const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
+const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
@@ -37,7 +37,7 @@ const getVoterRegistries = async (addresses, endDate) => {
       }
     }
   `
-  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+  const result: any = await fetchQuery(MKR_API_URI, query, {
     voters: addresses,
     endDate,
   })
@@ -84,7 +84,7 @@ const getStakedByAddress = async (addresses, endDate) => {
       }
     }
   `
-  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+  const result: any = await fetchQuery(MKR_API_URI, query, {
     voters: addresses,
     endDate,
   })
@@ -257,7 +257,7 @@ const getAccountBalances = async (addresses, endDate) => {
 
   const result: any = await Promise.all(
     addresses.map(address =>
-      fetchQuery(GOVERNANCE_API_URI, query, {
+      fetchQuery(MKR_API_URI, query, {
         voter: address,
         endDate,
       }),

@@ -27,7 +27,7 @@ import {
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
 
-const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
+const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
@@ -192,7 +192,7 @@ export const getVoterBalances = async (address, endDate) => {
   let more = true
   let result = []
   while (more) {
-    const partial: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+    const partial: any = await fetchQuery(MKR_API_URI, query, {
       voter: address,
       endDate,
       skip,
