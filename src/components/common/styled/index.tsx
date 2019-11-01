@@ -171,3 +171,20 @@ export const NoData = styled.div`
   justify-content: center;
   line-height: 1.2;
 `
+
+export const StrippedTableRow = styled.div`
+  display: flex;
+  flex: 1;
+  padding: 0.25rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+
+  &:nth-child(odd) {
+    background-color: #fafafa;
+  }
+`
+
+export const StrippedTableCell = styled.span`
+  color: #000;
+  font-size: 13px;
+`

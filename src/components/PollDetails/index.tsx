@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import randomColor from 'randomcolor'
-import styled from 'styled-components'
 import {
   Card,
   DescriptionBox,
@@ -10,13 +9,14 @@ import {
   Modal,
   Spinner,
   SpinnerContainer,
-  TableWrapper,
+  StrippedTableWrapper,
+  StrippedTableRow,
+  StrippedTableCell,
   ThreeRowGrid,
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 import {
-  TableRow,
   getPollTableData,
   defaultFilters,
   getComponentData,
@@ -25,11 +25,6 @@ import {
   getPollVotersHistogramData,
   getPollMakerHistogramData,
 } from './helpers'
-
-const TableCell = styled.span`
-  color: #000;
-  font-size: 13px;
-`
 
 type Props = {
   poll: any
@@ -156,10 +151,10 @@ function PollDetails(props: Props) {
 
     return (
       <VotersDistributionChart
-        options={poll.options}
         colors={colors}
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        options={poll.options}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -170,10 +165,10 @@ function PollDetails(props: Props) {
 
     return (
       <MakerDistributionChart
-        options={poll.options}
         colors={colors}
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        options={poll.options}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -184,8 +179,8 @@ function PollDetails(props: Props) {
 
     return (
       <PollPerOptionChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -208,15 +203,15 @@ function PollDetails(props: Props) {
   return (
     <>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card type="table" style={{ height: '340px' }}>
-          <TableWrapper content="Details">
+        <Card type="table" style={{ padding: 0, height: '340px' }}>
+          <StrippedTableWrapper content="Details">
             {getPollTableData(poll).map(el => (
-              <TableRow key={el.label}>
-                <TableCell>{el.label}</TableCell>
-                <TableCell>{el.value}</TableCell>
-              </TableRow>
+              <StrippedTableRow key={el.label}>
+                <StrippedTableCell>{el.label}</StrippedTableCell>
+                <StrippedTableCell>{el.value}</StrippedTableCell>
+              </StrippedTableRow>
             ))}
-          </TableWrapper>
+          </StrippedTableWrapper>
         </Card>
         <Card style={{ height: '340px' }}>
           {poll.content ? (

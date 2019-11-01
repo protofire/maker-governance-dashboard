@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import {
   fromUnixTime,
   format,
@@ -10,46 +9,10 @@ import {
   differenceInDays,
   isAfter,
 } from 'date-fns'
-import { Card } from '../common/styled'
 import { shortenAccount, timeLeft } from '../../utils'
 import { getPollData, getVoterAddresses } from './data'
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
-
-export const TableRow = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 0.25rem 1.5rem;
-  align-items: center;
-  justify-content: space-between;
-
-  &:nth-child(odd) {
-    background-color: #fafafa;
-  }
-`
-
-export const WrappedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ${Card} {
-    flex: 0 0 28%;
-    width: 25%;
-  }
-  @media (max-width: 768px) {
-    ${Card} {
-      width: 40%;
-      flex: unset;
-    }
-  }
-  @media (max-width: 580px) {
-    ${Card} {
-      width: 100% !important;
-      flex: unset;
-    }
-  }
-`
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,

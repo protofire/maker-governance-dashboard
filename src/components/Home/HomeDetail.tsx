@@ -8,7 +8,7 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
-import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer, ThreeRowGrid } from '../common'
+import { Card, Table, Modal, StrippedTableWrapper, Spinner, SpinnerContainer, ThreeRowGrid } from '../common'
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
 import { getModalContainer } from '../../utils'
 import {
@@ -232,9 +232,9 @@ function HomeDetail(props: Props) {
     const data = getComponentData('table', props.component, props.content, props.expanded)
 
     return (
-      <TableWrapper {...getWrapperProps(data)}>
+      <StrippedTableWrapper {...getWrapperProps(data)}>
         <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
-      </TableWrapper>
+      </StrippedTableWrapper>
     )
   }
 

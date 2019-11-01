@@ -8,13 +8,13 @@ import {
   Modal,
   NoData,
   StrippedRowsContainer,
-  CardTitle,
-  // TitleContainer,
+  StrippedTableWrapper,
+  StrippedTableCell,
+  StrippedTableRow,
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
 import {
-  TableRow,
   defaultFilters,
   getApprovalsByAddress,
   getComponentData,
@@ -23,11 +23,6 @@ import {
   getVoteTableData,
   getVotersVsMkrData,
 } from './helpers'
-
-// const TitleContainerStyled = styled(TitleContainer)`
-//   padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal} 0
-//     ${props => props.theme.cards.paddingHorizontal};
-// `
 
 const VoteDetailContainer = styled.div`
   display: flex;
@@ -163,17 +158,14 @@ function VoteDetails(props: Props) {
     <>
       <VoteDetailContainer>
         <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col1' }}>
-          {/* <TitleContainerStyled> */}
-          <CardTitle content="Details" />
-          {/* </TitleContainerStyled> */}
-          <StrippedRowsContainer>
+          <StrippedTableWrapper content="Details">
             {getVoteTableData(vote).map(el => (
-              <TableRow key={el.label}>
-                <span>{el.label}</span>
-                <span>{el.value}</span>
-              </TableRow>
+              <StrippedTableRow key={el.label}>
+                <StrippedTableCell>{el.label}</StrippedTableCell>
+                <StrippedTableCell>{el.value}</StrippedTableCell>
+              </StrippedTableRow>
             ))}
-          </StrippedRowsContainer>
+          </StrippedTableWrapper>
         </Card>
         <Card style={{ height: '340px', gridArea: 'col2' }}>
           {vote.about ? (
@@ -189,19 +181,18 @@ function VoteDetails(props: Props) {
           <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
         </Card>
         <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col6' }}>
-          {/* <TitleContainerStyled> */}
-          <CardTitle content="Top Supporters" />
-          {/* </TitleContainerStyled> */}
-          <StrippedRowsContainer>
-            {getTopSupportersTableData(topSupporters, vote)
-              .slice(0, 8)
-              .map(el => (
-                <TableRow key={el.sender}>
-                  <span>{el.supports}%</span>
-                  <span>{el.sender}</span>
-                </TableRow>
-              ))}
-          </StrippedRowsContainer>
+          <StrippedTableWrapper content="Top Supporters">
+            <StrippedRowsContainer>
+              {getTopSupportersTableData(topSupporters, vote)
+                .slice(0, 8)
+                .map(el => (
+                  <StrippedTableRow key={el.sender}>
+                    <StrippedTableCell>{el.supports}%</StrippedTableCell>
+                    <StrippedTableCell>{el.sender}</StrippedTableCell>
+                  </StrippedTableRow>
+                ))}
+            </StrippedRowsContainer>
+          </StrippedTableWrapper>
         </Card>
       </VoteDetailContainer>
       {isModalOpen && (

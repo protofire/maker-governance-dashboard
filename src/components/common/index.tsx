@@ -5,7 +5,7 @@ import Modal from './Modal'
 import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
 import { ChartSelect } from './Chart'
 import ChartWrapper from './ChartWrapper'
-import TableWrapper from './TableWrapper'
+import StrippedTableWrapper from './StrippedTableWrapper'
 import DescriptionWrapper from './DescriptionWrapper'
 
 import {
@@ -20,6 +20,8 @@ import {
   Select,
   Separator,
   StrippedRowsContainer,
+  StrippedTableCell,
+  StrippedTableRow,
   ThreeRowGrid,
   Versus,
   ViewAll,
@@ -50,7 +52,9 @@ export {
   SpinnerContainer,
   Table,
   StrippedRowsContainer,
-  TableWrapper,
+  StrippedTableWrapper,
+  StrippedTableCell,
+  StrippedTableRow,
   ThreeRowGrid,
   Versus,
   ViewAll,

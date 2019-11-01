@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'react-table'
-
 import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
 import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon'
@@ -68,7 +67,7 @@ const HeaderRow = styled.span`
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 1rem;
+  padding: 16px 20px;
   width: 100%;
 `
 
@@ -121,12 +120,14 @@ const TableWrapper = styled.div`
       }
     }
   }
+
   ${props =>
     props.scrollable &&
     css`
       max-height: 400px;
       overflow: hidden;
     `}
+
   @media (max-width: 480px) {
     overflow-x: scroll;
   }
