@@ -1,107 +1,99 @@
 import React from 'react'
 import styled from 'styled-components'
+import { CardTitle } from '../../common'
+import ProgressCircle from '../../common/ProgressCircle'
 
-import { Pie, PieChart, Cell } from 'recharts'
-import { ChartWrapper } from '../../common'
+const Value = styled.p`
+  color: #000;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.18;
+  margin: 0;
+  text-align: center;
+`
 
-const customStyles = {
-  padding: 0,
-  position: 'relative',
-  bottom: '6px',
-}
-const COLORS = ['#61b6b0', '#ededed']
+const Title = styled.h4`
+  color: #999;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.18;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+`
 
-const DaysContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+const ValueTitleWrapper = styled.div``
+
+const OuterWrapper = styled.div`
   align-items: center;
+  display: flex;
+  flex-grow: 1;
   justify-content: center;
-  position: relative;
-  right: 10px;
+  margin-top: auto;
 `
 
-const MinutesHoursContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
+const ValuesWrapper = styled.div`
   align-items: center;
-  justify-content: space-between;
-  div {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    flex-direction: column;
-    margin-right: 1rem;
-    justify-content: space-between;
-  }
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+  z-index: 10;
 `
 
-const ValueContainer = styled.div`
-  position: absolute;
-  top: ${props => (props.ended ? '50%' : '40%')};
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  left: ${props => (props.ended ? '9.3rem' : '7.6rem')};
-  span:first-child {
-    color: #000000;
-    font-size: 26px;
-    font-weight: 600;
-  }
-  span:nth-child(2) {
-    color: #999999;
-    font-size: 12px;
-  }
+const MainTitle = styled.h2`
+  color: #000;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
 `
 
 const TimeLeftChart = props => {
-  const { wrapperProps, data } = props
+  const { data } = props
+
+  console.log(data[0])
+  console.log('xxxxx')
+  console.log(+data.value)
+
   return (
-    <ChartWrapper hideIcon hideFilters styles={customStyles} {...wrapperProps}>
-      <ValueContainer ended={data[0].text === 'Ended'}>
-        {data[0].text === 'Ended' ? (
-          <span style={{ fontSize: 16 }}>{data[0].text}</span>
-        ) : (
-          <>
-            <DaysContainer>
-              {data[0].time.days >= 0 && (
-                <>
-                  <span>{data[0].time.days}</span>
-                  <span>{data[0].time.days === 1 ? 'DAY' : 'DAYS'}</span>
-                </>
-              )}
-            </DaysContainer>
-            <MinutesHoursContainer>
-              <div>
+    <>
+      <span>
+        <CardTitle content="Time Left" />
+      </span>
+      <OuterWrapper>
+        <ProgressCircle borderWidth={40} dimensions={250} progress={+data.value}>
+          <ValuesWrapper>
+            {data[0].text === 'Ended' ? (
+              <MainTitle>{data[0].text}</MainTitle>
+            ) : (
+              <>
+                {data[0].time.days >= 0 && (
+                  <ValueTitleWrapper>
+                    <Value>{data[0].time.days}</Value>
+                    <Title>{data[0].time.days === 1 ? 'DAY' : 'DAYS'}</Title>
+                  </ValueTitleWrapper>
+                )}
                 {data[0].time.hours >= 0 && (
-                  <>
-                    <span>{data[0].time.hours}</span>
-                    <span>{data[0].time.hours === 1 ? 'HOUR' : 'HOURS'}</span>
-                  </>
+                  <ValueTitleWrapper>
+                    <Value>{data[0].time.hours}</Value>
+                    <Title>{data[0].time.hours === 1 ? 'HOUR' : 'HOURS'}</Title>
+                  </ValueTitleWrapper>
                 )}
-              </div>
-              <div>
                 {data[0].time.minutes >= 0 && (
-                  <>
-                    <span>{data[0].time.minutes}</span>
-                    <span>{data[0].time.minutes === 1 ? 'MINUTE' : 'MINUTES'}</span>
-                  </>
+                  <ValueTitleWrapper>
+                    <Value>{data[0].time.minutes}</Value>
+                    <Title>{data[0].time.minutes === 1 ? 'MINUTE' : 'MINUTES'}</Title>
+                  </ValueTitleWrapper>
                 )}
-              </div>
-            </MinutesHoursContainer>
-          </>
-        )}
-      </ValueContainer>
-      <PieChart width={300} height={300}>
-        <Pie isAnimationActive={data ? false : true} data={data} innerRadius={100} dataKey="value">
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-      </PieChart>
-    </ChartWrapper>
+              </>
+            )}
+          </ValuesWrapper>
+        </ProgressCircle>
+      </OuterWrapper>
+    </>
   )
 }
 

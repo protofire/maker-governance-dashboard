@@ -100,7 +100,7 @@ function Header(props: Props) {
             <Logo />
             <MainMenu>
               {items.map(({ to, label }) => (
-                <StyledLink exact activeClass="active" key={to} to={to}>
+                <StyledLink exact activeClassName="active" key={to} to={to}>
                   {label}
                 </StyledLink>
               ))}

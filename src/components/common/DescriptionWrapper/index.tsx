@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { ViewAll, CardTitle } from '../../common'
 import { getIconContainer } from '../../../utils'
+
 type Props = {
   handleModal: () => void
   content: string
