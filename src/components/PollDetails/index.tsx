@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import randomColor from 'randomcolor'
+import lscache from 'lscache'
 import styled from 'styled-components'
 import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
 import { getModalContainer } from '../../utils'
+import { DEFAULT_CACHE_TTL } from '../../constants'
 
 import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 
@@ -43,19 +45,26 @@ const Loading = () => (
 
 function PollDetails(props: Props) {
   const { poll } = props
+  const mkrDistributionCached = lscache.get(`mkrDistribution-${poll.id}`) || []
+  const pollPerOptionCached = lscache.get(`pollPerOption-${poll.id}`) || []
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const [pollPerOptionData, setPollPerOptionData] = useState<any>([])
-  const [mkrDistributionData, setMkrDistributionData] = useState<any>([])
+  const [pollPerOptionData, setPollPerOptionData] = useState<any>(pollPerOptionCached)
+  const [mkrDistributionData, setMkrDistributionData] = useState<any>(mkrDistributionCached)
 
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
+  useEffect(() => {
+    if (pollPerOptionCached.length === 0) getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
+
+    if (mkrDistributionCached.length === 0) getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
+  }, [poll, pollPerOptionCached.length, mkrDistributionCached.length])
 
   useEffect(() => {
-    getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
-    getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
-  }, [poll])
+    lscache.set(`mkrDistribution-${poll.id}`, mkrDistributionData, DEFAULT_CACHE_TTL)
+    lscache.set(`pollPerOption-${poll.id}`, pollPerOptionData, DEFAULT_CACHE_TTL)
+  }, [mkrDistributionData, pollPerOptionData, poll.id])
 
   const voteMap = {
     table: {

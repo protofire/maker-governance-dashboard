@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import { format, fromUnixTime, differenceInMonths } from 'date-fns'
+import { format, fromUnixTime, differenceInMonths, getUnixTime } from 'date-fns'
 import { timeLeft } from '../../utils'
+import { getVoterBalances } from '../../utils'
 import { SelectColumnFilter } from '../common/Table/filters'
 
 //Common components
@@ -155,4 +156,29 @@ export const Executivecolumns = () => {
       width: 100,
     },
   ]
+}
+
+export const getPollsBalances = async polls => {
+  const now = new Date()
+  const allVoters = Array.from(
+    new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(now))))
+  return allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
+    }
+  }, {})
 }
