@@ -208,7 +208,6 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-  // console.log('voters', voters)
 
   const endPoll = fromUnixTime(poll.endDate)
   const now = new Date()
@@ -243,7 +242,6 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-  // console.log('balancesLookup', balancesLookup)
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
