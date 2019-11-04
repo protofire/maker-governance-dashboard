@@ -48,7 +48,6 @@ const TableRow = styled.span`
 const HeaderRow = styled.span`
   color: ${props => props.theme.colors.textLight};
   font-size: 12px;
-  white-space: nowrap;
 
   div:first-child {
     display: flex;
@@ -74,7 +73,7 @@ const TableSection = styled.div`
 `
 
 const ResponsiveWrapper = styled.div`
-  overflow-x: scroll;
+  overflow-x: auto;
   width: 100%;
 `
 
@@ -83,6 +82,7 @@ const TableWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 100%;
   width: fit-content !important;
 
   ${FilterContainer},${FilterIconContainer} {
@@ -115,7 +115,7 @@ const TableWrapper = styled.div`
         !props.expanded &&
         css`
           display: flex;
-          max-width: 50%;
+          max-width: 250px;
         `}
       a {
         ${props =>

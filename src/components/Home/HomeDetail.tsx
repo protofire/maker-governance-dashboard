@@ -26,6 +26,7 @@ import styled from 'styled-components'
 
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
+  min-height: fit-content;
 `
 
 const Loading = () => (

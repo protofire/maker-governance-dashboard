@@ -11,7 +11,6 @@ export const Card = styled.div`
   flex-direction: column;
   font-size: 16px;
   font-weight: 400;
-  overflow: hidden;
   padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal};
   position: relative;
 
@@ -126,9 +125,10 @@ export const IconContainer = styled.div`
 
 export const StrippedRowsContainer = styled.div`
   display: flex;
-  flex: 1;
+  flex-grow: 1;
   flex-direction: column;
   font-size: 12px;
+  padding-top: 15px;
 `
 
 export const ViewAll = styled.span`

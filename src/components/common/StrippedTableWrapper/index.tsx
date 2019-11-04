@@ -4,11 +4,14 @@ import { getIconContainer } from '../../../utils'
 import styled from 'styled-components'
 
 const TitleWrapper = styled.div`
-  flex-grow: 0;
-  flex-shrink: 1;
-  min-height: 0;
+  flex-shrink: 0;
+  margin-bottom: -15px;
   padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal} 0
     ${props => props.theme.cards.paddingHorizontal};
+
+  .ReactModal__Content & {
+    padding: 0;
+  }
 `
 
 const Right = styled.div`

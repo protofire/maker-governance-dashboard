@@ -40,7 +40,7 @@ const VoteDetailContainer = styled.div`
 `
 
 const CardStyled = styled(Card)`
-  height: ${props => props.theme.defaultCardHeight};
+  height: 400px;
   margin-bottom: ${props => props.theme.separation.gridSeparation};
 
   &:last-child {

@@ -38,7 +38,7 @@ export const theme = {
     tdColor: '#000',
     thColor: '#999',
   },
-  defaultCardHeight: '340px',
+  defaultCardHeight: '354px',
   cards: {
     backgroundColor: '#fff',
     border: 'solid 1px #f3f3f3',
