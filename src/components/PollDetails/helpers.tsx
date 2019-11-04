@@ -79,7 +79,7 @@ const getPollPeriods = poll => {
   const start = fromUnixTime(poll.startDate)
 
   const endPoll = fromUnixTime(poll.endDate)
-  const now = new Date()
+  const now = fromUnixTime(Date.now())
   const end = isAfter(endPoll, now) ? now : endPoll
 
   const long = differenceInHours(end, start)
