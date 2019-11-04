@@ -81,23 +81,13 @@ function PollDetails(props: Props) {
       votersDistribution: {
         data: getPollVotersHistogramData(poll),
         component: props => (
-          <VotersDistribution
-            expanded
-            content="Voters distribution between options"
-            component="votersDistribution"
-            {...props}
-          />
+          <VotersDistribution expanded content="Vote Count By Option" component="votersDistribution" {...props} />
         ),
       },
       makerDistribution: {
         data: mkrDistributionData,
         component: props => (
-          <MakerDistribution
-            expanded
-            content="MKR distribution between options"
-            component="makerDistribution"
-            {...props}
-          />
+          <MakerDistribution expanded content="MKR Count By Option" component="makerDistribution" {...props} />
         ),
       },
       pollPerOption: {
@@ -241,7 +231,7 @@ function PollDetails(props: Props) {
           <TimeLeft content="Time left" component="timeLeft" />
         </Card>
         <Card style={{ height: 300 }}>
-          <VotersDistribution content="Voters distribution between options" component="votersDistribution" />
+          <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
         </Card>
         <Card style={{ height: 300 }}>
           {pollPerOptionData.length === 0 ? (
@@ -254,7 +244,7 @@ function PollDetails(props: Props) {
           {mkrDistributionData.length === 0 ? (
             <Loading />
           ) : (
-            <MakerDistribution content="MKR distribution between options" component="makerDistribution" />
+            <MakerDistribution content="MKR Count By Option" component="makerDistribution" />
           )}
         </Card>
       </WrappedContainer>

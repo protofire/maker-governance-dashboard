@@ -17,7 +17,7 @@ const ApprovalsByAddressChart = props => {
         <YAxis />
         <Bar
           isAnimationActive={modalProps.data ? false : true}
-          name={'Approvals by address'}
+          name={'Approvals by Address Size'}
           fill="#a04827"
           dataKey="count"
         />
