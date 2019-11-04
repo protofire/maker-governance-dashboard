@@ -40,6 +40,7 @@
     "react-scripts": "3.2.0",
     "react-table": "7.0.0-alpha.34",
     "react-tooltip": "^3.11.1",
+    "react-truncate-html": "^0.1.7",
     "recharts": "^1.7.1",
     "styled-components": "^4.3.2",
     "subscriptions-transport-ws": "^0.9.16",

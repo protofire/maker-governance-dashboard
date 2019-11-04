@@ -144,7 +144,6 @@ function VoteDetails(props: Props) {
   //Description Data
   const Description = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
-
     return (
       <>
         <DescriptionWrapper {...getWrapperProps(data)}>
