@@ -1,4 +1,5 @@
 import React from 'react'
+import { request } from 'graphql-request'
 import { IconContainer, CloseIcon } from '../components/common'
 
 import {
@@ -25,6 +26,10 @@ import {
   addHours,
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
+
+const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
+
+const fetchQuery = (url, query, variables) => request(url, query, variables)
 
 export const shortenAccount = (account: string): string =>
   account.slice(0, 6) + '...' + account.slice(account.length - 4)
@@ -160,3 +165,43 @@ export const filters = [
 export const getIconContainer = (Component, cb, isModalOpen = false) => (
   <IconContainer onClick={cb}>{isModalOpen ? <CloseIcon /> : <Component />}</IconContainer>
 )
+
+export const getVoterBalances = async (address, endDate) => {
+  // Query
+  const query = `
+    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $skip: Int = 0 ) {
+      accountBalanceSnapshots(
+        first: 1000,
+        skip: $skip,
+        where:{
+          account: $voter,
+          timestamp_lte: $endDate
+        },
+        orderBy: timestamp, orderDirection: desc
+      ) {
+        account {
+          address
+        }
+        amount
+        timestamp
+      }
+    }
+  `
+
+  let skip = 0
+  let more = true
+  let result = []
+  while (more) {
+    const partial: any = await fetchQuery(MKR_API_URI, query, {
+      voter: address,
+      endDate,
+      skip,
+    })
+
+    result = result.concat(partial.accountBalanceSnapshots)
+    more = !(partial.accountBalanceSnapshots.length < 1000)
+    skip += 1000
+  }
+
+  return result
+}

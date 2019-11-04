@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import lscache from 'lscache'
+
 import BigNumber from 'bignumber.js'
 import List from '../../components/List'
-import { Pollcolumns } from '../../components/List/helpers'
+import { Pollcolumns, getPollsBalances } from '../../components/List/helpers'
 import { getPollData } from '../../components/PollDetails/data'
-import { DEFAULT_FETCH_ROWS } from '../../constants'
+import { DEFAULT_FETCH_ROWS, DEFAULT_CACHE_TTL } from '../../constants'
 import { FullLoading, PageTitle } from '../../components/common'
+
+// Queries
 import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 
@@ -20,7 +24,10 @@ const ErrorEl = () => <div>ERROR: There was an error trying to fetch the data. <
 
 function PollsInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
-  const [data, setData] = useState<any[]>([])
+  const cachedData = lscache.get('polls') || []
+  const [data, setData] = useState<any[]>(cachedData)
+  const [pollsBalances, setBalances] = useState<any>({})
+
   const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
   const pollcolumns = React.useMemo(() => Pollcolumns(), [])
   const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
@@ -49,22 +56,29 @@ function PollsInfo(props) {
   }
 
   useEffect(() => {
-    getMKRSupply().then(supply => setMkrSupply(supply))
-  }, [])
+    if (cachedData.length === 0) getPollsBalances(data).then(balances => setBalances(balances))
+  }, [data, cachedData.length])
+
+  useEffect(() => {
+    if (cachedData.length === 0) getMKRSupply().then(supply => setMkrSupply(supply))
+  }, [cachedData.length])
+
+  useEffect(() => {
+    lscache.set('polls', data, DEFAULT_CACHE_TTL)
+  }, [data])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
 
   useEffect(() => {
-    if (pollsData.data && pollsData.data.polls && mkrSupply) {
+    if (pollsData.data && pollsData.data.polls && mkrSupply && cachedData.length === 0) {
       getPollsData(pollsData.data.polls).then(result => {
         const polls = result.filter(Boolean)
         setData([...polls])
-
         Promise.all(
           polls.map(poll => {
-            return getPollData(poll).then(data => {
+            return getPollData(poll, pollsBalances).then(data => {
               return { ...poll, plurality: setPlurality(data), participation: getParticipation(data, mkrSupply) }
             })
           }),
@@ -73,8 +87,7 @@ function PollsInfo(props) {
         })
       })
     }
-  }, [pollsData.data, mkrSupply])
-
+  }, [pollsData.data, mkrSupply, pollsBalances, cachedData.length])
   if (pollsData.loading || gResult.loading || data.length === 0) return <FullLoading />
   if (pollsData.error || gResult.error) return <ErrorEl />
 

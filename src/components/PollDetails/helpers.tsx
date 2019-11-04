@@ -3,14 +3,14 @@ import {
   format,
   formatDistance,
   formatDistanceToNow,
-  addDays,
-  startOfDay,
-  endOfDay,
-  differenceInDays,
+  addHours,
+  startOfHour,
+  endOfHour,
+  differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft } from '../../utils'
-import { getPollData, getVoterAddresses } from './data'
+import { shortenAccount, timeLeft, getVoterBalances } from '../../utils'
+import { getPollData, getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
 
@@ -57,7 +57,7 @@ export const getTimeLeftData = (start, end): Array<any> => {
   return [{ time: { days, hours, minutes }, value: value }, { value: seconds }]
 }
 
-export const getPollPerOptionData = poll => getPollData(poll)
+export const getPollPerOptionData = poll => getPollDataWithoutBalances(poll)
 
 export const getComponentData = (
   type: string,
@@ -82,14 +82,15 @@ const getPollPeriods = poll => {
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
 
-  const long = differenceInDays(endOfDay(end), startOfDay(start))
+  const long = differenceInHours(end, start)
 
   const periods = Array.from({ length: long + 1 }, (v, i) => {
-    let from = startOfDay(addDays(start, i))
-    let to = endOfDay(addDays(start, i))
+    let period = addHours(start, i)
+    let from = startOfHour(period)
+    let to = endOfHour(period)
 
     return {
-      label: format(from, 'dd MMM'),
+      label: format(from, 'dd MMM Ho'),
       from,
       to,
       endDate: getUnixTime(to),
@@ -143,7 +144,7 @@ export const getPollVotersHistogramData = poll => {
   })
 }
 
-export const getPollMakerHistogramData = poll => {
+export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
   const pollOptions = ['Abstein', ...poll.options]
@@ -158,6 +159,39 @@ export const getPollMakerHistogramData = poll => {
     return {
       ...acc,
       [voter]: 0,
+    }
+  }, {})
+
+  const endPoll = fromUnixTime(poll.endDate)
+  const now = new Date()
+  const end = isAfter(endPoll, now) ? now : endPoll
+  const allVoters = Array.from(
+    new Set(
+      poll.timeLine.reduce((voters, tl) => {
+        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
+          return [...voters, tl.sender]
+        }
+
+        return voters
+      }, []),
+    ),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
+  const balancesLookup = allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
     }
   }, {})
 
@@ -192,7 +226,7 @@ export const getPollMakerHistogramData = poll => {
         ),
         options: poll.options,
       }
-      const pollData = await getPollData(manualPoll)
+      const pollData = await getPollData(manualPoll, balancesLookup)
 
       return pollData.reduce(
         (acc, el) => {

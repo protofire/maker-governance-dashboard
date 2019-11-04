@@ -2,6 +2,7 @@ import { request } from 'graphql-request'
 import { BigNumber } from 'bignumber.js'
 
 const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
+const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
@@ -69,7 +70,6 @@ const stakedByAddress = data => {
 
 const getStakedByAddress = async (addresses, endDate) => {
   //Queries
-
   const query = `
     query getStakedByAddress($voters: [Bytes!]!, $endDate: BigInt!  ) {
       lock: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_lte: $endDate}) {
@@ -92,7 +92,85 @@ const getStakedByAddress = async (addresses, endDate) => {
   return result
 }
 
-export const getPollData = async poll => {
+export const getPollData = async (poll, balancesLookup) => {
+  const votersAddresses = getVoterAddresses(poll)
+  const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
+  const voteProxies = getVoteProxies(voteRegistries)
+
+  const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
+  const stakedVoters = stakedByAddress(await getStakedByAddress(votersAddresses, poll.endDate))
+
+  const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
+  const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
+
+  const balances = votersHotCold.reduce((acc, addr) => {
+    const snapshots = balancesLookup[addr]
+    if (snapshots) {
+      const last = snapshots.find(snap => snap.timestamp <= poll.endDate)
+      if (last) {
+        return {
+          ...acc,
+          [addr]: last.amount,
+        }
+      }
+    }
+
+    return acc
+  }, {})
+
+  const stakedVotersAndBalances = votersHotCold.reduce((acc, key) => {
+    const staked = stakedVoters[key] || ZERO
+    const balance = balances[key] ? new BigNumber(balances[key]) : ZERO
+    const amount = staked.plus(balance).toString()
+
+    return {
+      ...acc,
+      [key]: amount,
+    }
+  }, {})
+
+  const lookup = getLookup(votersAddresses, voteRegistries)
+  const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
+
+  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
+    (acc, key) => {
+      const st = stakedTotal[key] || new BigNumber('0')
+      const vt = stakedVotersAndBalances[key] ? new BigNumber(stakedVotersAndBalances[key]) : new BigNumber('0')
+      const amount = st.plus(vt)
+
+      return {
+        ...acc,
+        [key]: amount,
+      }
+    },
+    {},
+  )
+
+  const votersPerOption = getPollVotersPerOption(poll)
+  const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
+    const voters = votersPerOption[op]
+    const total = voters.reduce((acc, v) => {
+      return acc.plus(mkrVoter[v])
+    }, new BigNumber('0'))
+
+    return {
+      ...acc,
+      [op]: total.toNumber().toFixed(2),
+    }
+  }, {})
+
+  const ret = poll.options.map((key, i) => {
+    return {
+      label: key,
+      mkr: mkrOptions[i + 1] || 0,
+      voter: votersPerOption[i + 1] ? votersPerOption[i + 1].length : 0,
+    }
+  })
+
+  return ret
+}
+
+export const getPollDataWithoutBalances = async poll => {
   const votersAddresses = getVoterAddresses(poll)
   const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
   const voteProxies = getVoteProxies(voteRegistries)
@@ -156,9 +234,9 @@ export const getPollData = async poll => {
   return ret
 }
 
+// This is used to get final results for a given poll, so it's ok to get only the last snapshot
 const getAccountBalances = async (addresses, endDate) => {
   // Query
-  // FIXME - orderBy: timestamp, orderDirection: desc
   const query = `
     query getAccountBalances($voter: Bytes!, $endDate: BigInt!  ) {
       accountBalanceSnapshots(
@@ -180,7 +258,7 @@ const getAccountBalances = async (addresses, endDate) => {
 
   const result: any = await Promise.all(
     addresses.map(address =>
-      fetchQuery(GOVERNANCE_API_URI, query, {
+      fetchQuery(MKR_API_URI, query, {
         voter: address,
         endDate,
       }),
