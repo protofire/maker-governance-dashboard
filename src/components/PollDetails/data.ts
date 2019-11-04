@@ -1,6 +1,7 @@
 import { request } from 'graphql-request'
 import { BigNumber } from 'bignumber.js'
 
+const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
 const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
@@ -37,7 +38,7 @@ const getVoterRegistries = async (addresses, endDate) => {
       }
     }
   `
-  const result: any = await fetchQuery(MKR_API_URI, query, {
+  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
     voters: addresses,
     endDate,
   })
@@ -69,7 +70,6 @@ const stakedByAddress = data => {
 
 const getStakedByAddress = async (addresses, endDate) => {
   //Queries
-
   const query = `
     query getStakedByAddress($voters: [Bytes!]!, $endDate: BigInt!  ) {
       lock: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_lte: $endDate}) {
@@ -84,7 +84,7 @@ const getStakedByAddress = async (addresses, endDate) => {
       }
     }
   `
-  const result: any = await fetchQuery(MKR_API_URI, query, {
+  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
     voters: addresses,
     endDate,
   })
@@ -234,6 +234,7 @@ export const getPollDataWithoutBalances = async poll => {
   return ret
 }
 
+// This is used to get final results for a given poll, so it's ok to get only the last snapshot
 const getAccountBalances = async (addresses, endDate) => {
   // Query
   const query = `
