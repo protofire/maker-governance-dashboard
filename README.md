@@ -2,7 +2,7 @@
 
 # Maker governance dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and is configured with:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and is configured with :
 
 - [Typescript](https://www.typescriptlang.org/)
 - [Apollo-client](https://www.apollographql.com/docs/react/)
