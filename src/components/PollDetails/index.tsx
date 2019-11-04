@@ -27,6 +27,11 @@ import {
   getPollVotersHistogramData,
   getPollMakerHistogramData,
 } from './helpers'
+import styled from 'styled-components'
+
+const CardStyled = styled(Card)`
+  height: ${props => props.theme.defaultCardHeight};
+`
 
 type Props = {
   poll: any
@@ -205,7 +210,7 @@ function PollDetails(props: Props) {
   return (
     <>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card type="table" style={{ padding: 0, height: '340px' }}>
+        <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Details">
             {getPollTableData(poll).map(el => (
               <StrippedTableRow key={el.label}>
@@ -214,36 +219,36 @@ function PollDetails(props: Props) {
               </StrippedTableRow>
             ))}
           </StrippedTableWrapper>
-        </Card>
-        <Card style={{ height: '340px' }}>
+        </CardStyled>
+        <CardStyled>
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>Cannot fetch poll description.</NoData>
           )}
-        </Card>
-        <Card style={{ height: '340px' }}>
+        </CardStyled>
+        <CardStyled>
           <TimeLeft content="Time left" component="timeLeft" />
-        </Card>
+        </CardStyled>
       </ThreeRowGrid>
       <ThreeRowGrid>
-        <Card style={{ height: '340px' }}>
+        <CardStyled>
           <VotersDistribution content="Voters distribution between options" component="votersDistribution" />
-        </Card>
-        <Card style={{ height: '340px' }}>
+        </CardStyled>
+        <CardStyled>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
           )}
-        </Card>
-        <Card style={{ height: '340px' }}>
+        </CardStyled>
+        <CardStyled>
           {mkrDistributionData.length === 0 ? (
             <Loading />
           ) : (
             <MakerDistribution content="MKR distribution between options" component="makerDistribution" />
           )}
-        </Card>
+        </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>

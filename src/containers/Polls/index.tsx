@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import lscache from 'lscache'
-
 import BigNumber from 'bignumber.js'
 import List from '../../components/List'
 import { Pollcolumns, getPollsBalances } from '../../components/List/helpers'
 import { getPollData } from '../../components/PollDetails/data'
 import { DEFAULT_FETCH_ROWS, DEFAULT_CACHE_TTL } from '../../constants'
 import { FullLoading, PageTitle } from '../../components/common'
-
-// Queries
 import { GOVERNANCE_INFO_QUERY, POLLS_FIRST_QUERY } from './queries'
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 

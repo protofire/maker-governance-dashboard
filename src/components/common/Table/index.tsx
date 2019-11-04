@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
 import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon'
 import { IconContainer, Select } from '../styled'
+import { theme } from '../../../theme/globalStyle'
 
 interface SortBy {
   desc: Boolean
@@ -34,7 +35,7 @@ const TableRow = styled.span`
   font-size: 13px;
   color: #000;
 
-  @media (min-width: 480px) {
+  @media (min-width: ${props => theme.themeBreakPoints.sm}) {
     ${props =>
       props.width &&
       css`
@@ -45,8 +46,9 @@ const TableRow = styled.span`
 `
 
 const HeaderRow = styled.span`
-  color: #999;
+  color: ${props => props.theme.colors.textLight};
   font-size: 12px;
+  white-space: nowrap;
 
   div:first-child {
     display: flex;
@@ -71,11 +73,17 @@ const TableSection = styled.div`
   width: 100%;
 `
 
+const ResponsiveWrapper = styled.div`
+  overflow-x: scroll;
+  width: 100%;
+`
+
 const TableWrapper = styled.div`
   background-color: #fff;
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: fit-content !important;
 
   ${FilterContainer},${FilterIconContainer} {
     ${props =>
@@ -127,10 +135,6 @@ const TableWrapper = styled.div`
       max-height: 400px;
       overflow: hidden;
     `}
-
-  @media (max-width: 480px) {
-    overflow-x: scroll;
-  }
 `
 
 const RowsSection = styled.div`
@@ -161,7 +165,7 @@ const RowsSection = styled.div`
         text-overflow: ellipsis;
       `}
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${props => props.theme.themeBreakPoints.sm}) {
     overflow: initial;
   }
 `
@@ -314,7 +318,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
 
   // Render the UI for your table
   return (
-    <>
+    <ResponsiveWrapper>
       <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
         {headerGroups.map(headerGroup => (
           <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
@@ -383,7 +387,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
           </Pagination>
         )}
       </TableWrapper>
-    </>
+    </ResponsiveWrapper>
   )
 }
 

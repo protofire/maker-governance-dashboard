@@ -39,6 +39,19 @@ const VoteDetailContainer = styled.div`
   }
 `
 
+const CardStyled = styled(Card)`
+  height: ${props => props.theme.defaultCardHeight};
+  margin-bottom: ${props => props.theme.separation.gridSeparation};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    margin-bottom: 0;
+  }
+`
+
 type Props = {
   vote: any
   votingActions: Array<any>
@@ -158,7 +171,7 @@ function VoteDetails(props: Props) {
   return (
     <>
       <VoteDetailContainer>
-        <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col1' }}>
+        <CardStyled style={{ padding: 0, gridArea: 'col1' }}>
           <StrippedTableWrapper content="Details">
             {getVoteTableData(vote).map(el => (
               <StrippedTableRow key={el.label}>
@@ -167,21 +180,21 @@ function VoteDetails(props: Props) {
               </StrippedTableRow>
             ))}
           </StrippedTableWrapper>
-        </Card>
-        <Card style={{ height: '340px', gridArea: 'col2' }}>
+        </CardStyled>
+        <CardStyled style={{ gridArea: 'col2' }}>
           {vote.about ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>Cannot fetch executive description.</NoData>
           )}
-        </Card>
-        <Card style={{ height: '340px', gridArea: 'col4' }}>
+        </CardStyled>
+        <CardStyled style={{ gridArea: 'col4' }}>
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-        </Card>
-        <Card style={{ height: '340px', gridArea: 'col5' }}>
+        </CardStyled>
+        <CardStyled style={{ gridArea: 'col5' }}>
           <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
-        </Card>
-        <Card type="table" style={{ padding: 0, height: '340px', gridArea: 'col6' }}>
+        </CardStyled>
+        <CardStyled style={{ padding: 0, gridArea: 'col6' }}>
           <StrippedTableWrapper content="Top Supporters">
             <StrippedRowsContainer>
               {getTopSupportersTableData(topSupporters, vote)
@@ -194,7 +207,7 @@ function VoteDetails(props: Props) {
                 ))}
             </StrippedRowsContainer>
           </StrippedTableWrapper>
-        </Card>
+        </CardStyled>
       </VoteDetailContainer>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>

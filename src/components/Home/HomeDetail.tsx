@@ -22,6 +22,11 @@ import {
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
 } from './helpers'
+import styled from 'styled-components'
+
+const CardStyled = styled(Card)`
+  height: ${props => props.theme.defaultCardHeight};
+`
 
 const Loading = () => (
   <SpinnerContainer>
@@ -257,41 +262,41 @@ function HomeDetail(props: Props) {
 
   return (
     <>
-      <Card style={{ height: '340px', marginBottom: '20px', minHeight: 'fit-content' }}>
+      <CardStyled style={{ marginBottom: '20px' }}>
         <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-      </Card>
+      </CardStyled>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <Card style={{ padding: 0, height: '340px', minHeight: 'fit-content' }}>
+        <CardStyled style={{ padding: 0 }}>
           <HomeTable handleRow={getVote} content="Executive votes" component="executives" />
-        </Card>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        </CardStyled>
+        <CardStyled>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
-        </Card>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        </CardStyled>
+        <CardStyled>
           <MkrDistributionPerExecutive
             content="MKR Distribution Per Executive"
             component="mkrDistributionPerExecutive"
           />
-        </Card>
+        </CardStyled>
       </ThreeRowGrid>
       <ThreeRowGrid>
-        <Card style={{ padding: 0, height: '340px', minHeight: 'fit-content' }}>
+        <CardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
           )}
-        </Card>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        </CardStyled>
+        <CardStyled>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
           )}
-        </Card>
-        <Card style={{ height: '340px', minHeight: 'fit-content' }}>
+        </CardStyled>
+        <CardStyled>
           <Gini content="MKR Gini Coefficient" component="gini" />
-        </Card>
+        </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
