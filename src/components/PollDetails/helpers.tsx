@@ -42,13 +42,19 @@ export const getTimeLeftData = (start, end): Array<any> => {
   let minutes = Math.floor(seconds / 60)
   let hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
+  const totalTime = end - start
+  const now = today < start ? start : today // 'today' can be less than the starting date, so we correct that
+  const leftTime = end - now
+  const progress = (leftTime * 100) / totalTime
+  const correctedProgress = progress < 0 ? 100 : progress // if 'now' is after the ending date we'll get a negative number, so we should address that too
+  const value = 100 - correctedProgress
 
   hours = hours - days * 24
   minutes = minutes - days * 24 * 60 - hours * 60
 
-  if (isEnded) return [{ value: today, text: 'Ended' }, { value: 0 }]
+  if (isEnded) return [{ value: value, text: 'Ended' }, { value: 0 }]
 
-  return [{ time: { days, hours, minutes }, value: today / 1000 }, { value: seconds }]
+  return [{ time: { days, hours, minutes }, value: value }, { value: seconds }]
 }
 
 export const getPollPerOptionData = poll => getPollData(poll)

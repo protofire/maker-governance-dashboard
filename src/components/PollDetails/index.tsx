@@ -135,15 +135,7 @@ function PollDetails(props: Props) {
 
   //TimeLeft data
   const TimeLeft = props => {
-    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-
-    return (
-      <TimeLeftChart
-        data={voteMap.chart[props.component].data}
-        modalProps={getModalProps(data.type, data.component, data.expanded)}
-        wrapperProps={getWrapperProps(data)}
-      />
-    )
+    return <TimeLeftChart data={voteMap.chart[props.component].data} />
   }
 
   //Poll voters distribution per option data
