@@ -18,6 +18,7 @@ export const Pollcolumns = () => {
   return [
     {
       Header: 'Name',
+      separator: true,
       accessor: 'title',
       filter: 'fuzzyText',
       Cell: ({ row }) => (
@@ -54,6 +55,7 @@ export const Pollcolumns = () => {
     {
       Header: 'MKR Participation',
       accessor: 'participation',
+      separator: true,
       disableFilters: true,
       Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : <Loading />),
       width: 80,
@@ -61,6 +63,7 @@ export const Pollcolumns = () => {
     {
       Header: 'Category',
       Filter: SelectColumnFilter,
+      separator: true,
       filter: 'includes',
       accessor: row => 'uncategorized',
       width: 100,
@@ -78,6 +81,7 @@ export const Pollcolumns = () => {
       Header: 'End',
       accessor: row => fromUnixTime(row.endDate),
       disableFilters: true,
+      separator: true,
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
       width: 100,
@@ -98,6 +102,7 @@ export const Executivecolumns = () => {
       Header: 'Status',
       Filter: SelectColumnFilter,
       filter: 'includes',
+      separator: true,
       accessor: row =>
         row.casted ? 'Passed' : differenceInMonths(new Date(), fromUnixTime(row.timestamp)) < 12 ? 'Open' : 'Limbo',
       id: 'status',
@@ -113,6 +118,7 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'Name',
+      separator: true,
       accessor: row => row.title || row.id,
       Cell: ({ row }) => (
         <>
@@ -124,6 +130,7 @@ export const Executivecolumns = () => {
     },
     {
       Header: 'MKR in support',
+      separator: true,
       disableFilters: true,
       accessor: row => Number(row.approvals).toFixed(2),
       width: 100,
@@ -131,12 +138,14 @@ export const Executivecolumns = () => {
     {
       Header: 'Category',
       Filter: SelectColumnFilter,
+      separator: true,
       filter: 'includes',
       accessor: row => 'uncategorized',
       width: 100,
     },
     {
       Header: 'Started',
+      separator: true,
       id: 'date',
       disableFilters: true,
       accessor: row => (!row.timestamp ? new Date(row.date) : fromUnixTime(row.timestamp)),

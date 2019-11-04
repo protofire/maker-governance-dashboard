@@ -34,6 +34,7 @@ const FilterIconContainer = styled.span`
 const TableRow = styled.span`
   font-size: 13px;
   color: #000000;
+  border-right: ${props => (props.separator ? '1px solid #f3f3f3' : 'none')}
   @media (min-width: 480px) {
     ${props =>
       props.width &&
@@ -51,6 +52,7 @@ const HeaderRow = styled.span`
     flex: 1;
     flex-direction: row;
   }
+  border-right: ${props => (props.separator ? '1px solid #f3f3f3' : 'none')};
   @media (min-width: 480px) {
     ${props =>
       props.width &&
@@ -64,7 +66,6 @@ const HeaderRow = styled.span`
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 1rem;
   @media (max-width: 480px) {
     min-width: 480px;
   }
@@ -85,6 +86,9 @@ const TableWrapper = styled.div`
       `}
   }
   ${TableSection} {
+    ${TableRow},${HeaderRow}{
+      padding: 1rem;
+    }
     ${props => {
       if (!props.expanded) {
         return css`
@@ -95,7 +99,6 @@ const TableWrapper = styled.div`
           ${TableRow}, ${HeaderRow} {
             flex: 1;
             text-align: left;
-            margin-right: 20px;
           }
         `
       }
@@ -321,7 +324,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
           {headerGroups.map(headerGroup => (
             <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column, i) => (
-                <HeaderRow key={column.id} width={column.width}>
+                <HeaderRow key={column.id} width={column.width} separator={column.separator}>
                   <div>
                     <span {...column.getHeaderProps(column.getSortByToggleProps())}>
                       {column.render('Header')}
@@ -353,7 +356,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
                 <TableSection onClick={() => handleFn(row.original)} {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     return (
-                      <TableRow width={cell.column.width} {...cell.getCellProps()}>
+                      <TableRow separator={cell.column.separator} width={cell.column.width} {...cell.getCellProps()}>
                         {cell.render('Cell')}
                       </TableRow>
                     )
