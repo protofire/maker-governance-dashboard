@@ -125,7 +125,7 @@ const getPollPeriods = poll => {
   const start = fromUnixTime(poll.startDate)
 
   const endPoll = fromUnixTime(poll.endDate)
-  const now = new Date()
+  const now = fromUnixTime(Date.now())
   const end = isAfter(endPoll, now) ? now : endPoll
 
   const long = differenceInHours(end, start)
@@ -208,7 +208,6 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-
   const endPoll = fromUnixTime(poll.endDate)
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
@@ -241,7 +240,6 @@ export const getPollMakerHistogramData = async poll => {
       [account]: newBalances,
     }
   }, {})
-
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
