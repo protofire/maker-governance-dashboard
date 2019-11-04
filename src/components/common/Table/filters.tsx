@@ -6,24 +6,35 @@ import matchSorter from 'match-sorter'
 
 const FilterWrapper = styled.div`
   background-color: #fff;
-  border-radius: 3px;
+  border-radius: ${props => props.theme.borders.commonBorderRadius};
   border: solid 1px #f3f3f3;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.08);
-  position: absolute;
+  position: relative;
   z-index: 1;
 
-  @media (min-width: 480px) {
-    min-width: ${props => (props.selector ? 'auto' : '300px')};
+  &::before {
+    border-bottom: 6px solid #fff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    content: '';
+    height: 0;
+    left: calc(50% - 3px);
+    position: absolute;
+    top: -6px;
+    width: 0;
+    z-index: 5;
   }
 
-  &:before {
-    border-right-color: white;
-    border: solid 6px transparent;
+  &::after {
+    border-bottom: 8px solid rgba(0, 0, 0, 0.05);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
     content: '';
-    left: ${props => (props.selector ? '55%' : '12%')};
+    height: 0;
+    left: calc(50% - 5px);
     position: absolute;
-    top: -12px;
-    transform: rotate(90deg);
+    top: -7px;
+    width: 0;
     z-index: 1;
   }
 `
@@ -32,6 +43,7 @@ const InputContainer = styled(FilterWrapper)`
   flex-direction: column !important;
   min-height: 115px;
   padding: 15px;
+  width: 300px;
 `
 
 const SearchField = styled.input`
@@ -80,10 +92,11 @@ const ButtonSearch = styled(Button)`
 `
 
 const List = styled(FilterWrapper)`
+  list-style: none;
   margin: 0;
-  overflow: hidden;
+  max-width: 200px;
+  min-width: 100px;
   padding: 0;
-  width: 200px;
 
   &:last-child {
     border-bottom: none;
@@ -97,6 +110,16 @@ const ListItem = styled.li`
   line-height: 38px;
   padding: 0 15px;
   text-transform: capitalize;
+
+  &:first-child {
+    border-top-left-radius: ${props => props.theme.borders.commonBorderRadius};
+    border-top-right-radius: ${props => props.theme.borders.commonBorderRadius};
+  }
+
+  &:last-child {
+    border-bottom-left-radius: ${props => props.theme.borders.commonBorderRadius};
+    border-bottom-right-radius: ${props => props.theme.borders.commonBorderRadius};
+  }
 
   &:hover {
     background: ${props => props.theme.colors.primary};

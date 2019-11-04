@@ -69,7 +69,7 @@ export const theme = {
   },
   borders: {
     borderColor: '#d9d9d9',
-    commonBorderRadius: '5px',
+    commonBorderRadius: '3px',
   },
   separation: {
     blockBottomMargin: '25px',
