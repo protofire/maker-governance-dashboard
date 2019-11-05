@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import styled from 'styled-components'
-
 import { DEFAULT_FETCH_ROWS } from '../../constants'
-
-//Common components
-import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
-
-//Queries
+import { PageTitle, FullLoading } from '../../components/common'
 import { EXECUTIVE_INFO_QUERY, VOTING_ACTIONS_QUERY } from './queries'
-
-// Utils
 import { getMakerDaoData } from '../../utils/makerdao'
-
-//Vote detail
 import VoteDetails from '../../components/VoteDetails'
 
 type Props = {
@@ -27,15 +17,7 @@ const getExecutiveVariables = data => {
   }
 }
 
-const Loading = () => (
-  <SpinnerContainer>
-    <Spinner />
-  </SpinnerContainer>
-)
-
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
-
-const VoteContainer = styled.div``
 
 function VoteInfo(props: Props) {
   const { match } = props
@@ -69,13 +51,13 @@ function VoteInfo(props: Props) {
   }, [vData, voteId, makerData])
 
   if (!data || vResult.error || votingResult.error) return <Error />
-  if (Object.keys(data).length === 0 || vResult.loading || votingResult.loading) return <Loading />
+  if (Object.keys(data).length === 0 || vResult.loading || votingResult.loading) return <FullLoading />
 
   return (
-    <VoteContainer>
+    <>
       <PageTitle>{data.title}</PageTitle>
       <VoteDetails votingActions={votingData.spell ? votingData.spell.timeLine : []} vote={data} />
-    </VoteContainer>
+    </>
   )
 }
 

@@ -9,25 +9,23 @@ const VotersVsMkrChart = props => {
       <Chart {...modalProps}>
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />
-
         <Line
+          dataKey="count"
           dot={false}
           name={'Number of voters'}
           stroke="#2730a0"
           strokeWidth={2}
           type="monotone"
-          dataKey="count"
           yAxisId="0"
-          isAnimationActive={modalProps.data ? false : true}
         />
         <Line
+          dataKey="mkr"
           dot={false}
           isAnimationActive={modalProps.data ? false : true}
           name={'Total MKR staked'}
           stroke="#27a02c"
           strokeWidth={2}
           type="monotone"
-          dataKey="mkr"
           yAxisId="1"
         />
       </Chart>

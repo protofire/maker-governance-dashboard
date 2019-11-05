@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ViewAll } from '../../common'
+import { ViewAll, CardTitle } from '../../common'
 import { getIconContainer } from '../../../utils'
+
 type Props = {
   handleModal: () => void
   content: string
@@ -9,16 +10,17 @@ type Props = {
   isModalOpen: boolean
 }
 
-const DescriptionText = styled.span``
+const Right = styled.div`
+  margin-left: auto;
+`
 
 const DescriptionContainer = styled.div`
-  font-size: 13px;
   display: flex;
-  flex: 1;
   flex-direction: row;
+  flex: 1;
+  font-size: 13px;
   justify-content: space-between;
   position: relative;
-  bottom: 6px;
 `
 
 function DescriptionWrapper(props: Props) {
@@ -27,14 +29,17 @@ function DescriptionWrapper(props: Props) {
   return (
     <>
       <DescriptionContainer isModalOpen={isModalOpen}>
-        <DescriptionText>{content}</DescriptionText>
-        {getIconContainer(
-          () => (
-            <ViewAll>View More</ViewAll>
-          ),
-          handleModal,
-          isModalOpen,
-        )}
+        <CardTitle content={content}>
+          <Right>
+            {getIconContainer(
+              () => (
+                <ViewAll>View More</ViewAll>
+              ),
+              handleModal,
+              isModalOpen,
+            )}
+          </Right>
+        </CardTitle>
       </DescriptionContainer>
       {children}
     </>
