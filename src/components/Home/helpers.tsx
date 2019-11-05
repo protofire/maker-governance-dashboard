@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import styled from 'styled-components'
 import { format, fromUnixTime, differenceInDays } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
-import { Card, Link } from '../common/styled'
+import { Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE } from '../../constants'
@@ -120,29 +119,6 @@ export const defaultFilters = {
   votesVsPolls: LAST_YEAR,
   gini: LAST_YEAR,
 }
-
-export const WrappedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ${Card} {
-    flex: 0 0 28%;
-    width: 25%;
-  }
-  @media (max-width: 768px) {
-    ${Card} {
-      width: 40%;
-      flex: unset;
-    }
-  }
-  @media (max-width: 580px) {
-    ${Card} {
-      width: 100% !important;
-      flex: unset;
-    }
-  }
-`
 
 export const getComponentData = (
   type: string,

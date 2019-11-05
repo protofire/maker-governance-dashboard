@@ -2,16 +2,11 @@ import React from 'react'
 import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
-const customStyles = {
-  padding: 0,
-  position: 'relative',
-  bottom: '6px',
-  paddingBottom: '5px',
-}
 const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps } = props
+
   return (
-    <ChartWrapper hideFilters styles={customStyles} {...wrapperProps}>
+    <ChartWrapper hideFilters {...wrapperProps}>
       <Chart {...modalProps}>
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />

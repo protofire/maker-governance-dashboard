@@ -4,8 +4,6 @@ import { format, fromUnixTime, differenceInMonths, getUnixTime } from 'date-fns'
 import { timeLeft } from '../../utils'
 import { getVoterBalances } from '../../utils'
 import { SelectColumnFilter } from '../common/Table/filters'
-
-//Common components
 import { Spinner, SpinnerContainer } from '../common'
 
 const Loading = () => (
