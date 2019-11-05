@@ -1,18 +1,6 @@
 import React from 'react'
 import * as ReactModal from 'react-modal'
-import './index.css'
-
-const customStyles = {
-  content: {
-    position: 'relative',
-    top: '50%',
-    left: '48%',
-    transform: 'translate(-50%, -50%)',
-    overflowY: 'hidden',
-    marginLeft: '2rem',
-    marginRight: '2rem',
-  },
-}
+import { theme } from '../../../theme/globalStyle'
 
 ReactModal.setAppElement('#root')
 
@@ -24,15 +12,15 @@ type Props = {
 }
 
 function Modal(props: Props) {
-  const { isOpen, closeModal, children, isChart } = props
+  const { isOpen, closeModal, children } = props
 
   return (
     <>
       <ReactModal
-        style={isChart ? customStyles : { content: { bottom: 'none' } }}
-        shouldCloseOnOverlayClick={false}
         isOpen={isOpen}
         onRequestClose={closeModal}
+        shouldCloseOnOverlayClick={false}
+        style={theme.modalStyle}
       >
         {children}
       </ReactModal>

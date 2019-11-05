@@ -1,36 +1,33 @@
 import React from 'react'
+import { CardTitle, ExpandIcon, ChartSelect } from '../../common'
+import { filters, getIconContainer } from '../../../utils'
 import styled from 'styled-components'
 
-import { ChartTitle, ExpandIcon, ChartSelect } from '../../common'
-import { TitleContainer } from '../styled/index'
-import { filters, getIconContainer } from '../../../utils'
-type Props = {
-  value: string
-  onChange: (e: any) => void
-  handleModal: () => void
-  content: string
-  versus?: string
-  children: React.ReactNode
-  isModalOpen: boolean
-  hideFilters: boolean
-  hideIcon: boolean
-  styles: any
-}
-
-const ChartTitleContainer = styled(TitleContainer)`
-  padding-top: 9px;
+const Right = styled.div`
+  margin-left: auto;
 `
 
+type Props = {
+  children: React.ReactNode
+  content: string
+  handleModal: () => void
+  hideFilters: boolean
+  hideIcon: boolean
+  isModalOpen: boolean
+  onChange: (e: any) => void
+  styles: any
+  value: string
+  versus?: string
+}
+
 function ChartWrapper(props: Props) {
-  const { value, onChange, handleModal, children, content, versus, isModalOpen, styles, hideFilters, hideIcon } = props
+  const { value, onChange, handleModal, children, content, versus, isModalOpen, hideFilters, hideIcon } = props
   return (
     <>
-      <ChartTitleContainer style={styles} type="chart">
-        <ChartTitle content={content} versus={versus}>
-          {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
-        </ChartTitle>
-        {!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}
-      </ChartTitleContainer>
+      <CardTitle content={content} versus={versus}>
+        {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
+        <Right>{!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}</Right>
+      </CardTitle>
       {children}
     </>
   )

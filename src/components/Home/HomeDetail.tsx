@@ -8,13 +8,10 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
-import { Card, Table, Modal, TableWrapper, Spinner, SpinnerContainer } from '../common'
-
+import { Card, Modal, Spinner, SpinnerContainer, StrippedTableWrapper, Table, ThreeRowGrid } from '../common'
 import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
-
 import { getModalContainer } from '../../utils'
 import {
-  WrappedContainer,
   getVotersVsMkrData,
   getVotesVsPollsData,
   getGiniData,
@@ -25,10 +22,16 @@ import {
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
 } from './helpers'
+import styled from 'styled-components'
+
+const CardStyled = styled(Card)`
+  height: ${props => props.theme.defaultCardHeight};
+  min-height: fit-content;
+`
 
 const Loading = () => (
   <SpinnerContainer>
-    <Spinner />
+    <Spinner width="35px" height="35px" />
   </SpinnerContainer>
 )
 
@@ -165,7 +168,7 @@ function HomeDetail(props: Props) {
     return {
       modalStyles: expanded ? { width: '99%', aspect: 3 } : undefined,
       width: 100,
-      height: 400,
+      minHeight: '400px',
       data,
     }
   }
@@ -222,19 +225,20 @@ function HomeDetail(props: Props) {
 
     return (
       <TimeTakenChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
 
-  //Table Data
+  // Table Data
   const HomeTable = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
+
     return (
-      <TableWrapper {...getWrapperProps(data)}>
+      <StrippedTableWrapper {...getWrapperProps(data)}>
         <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
-      </TableWrapper>
+      </StrippedTableWrapper>
     )
   }
 
@@ -257,36 +261,42 @@ function HomeDetail(props: Props) {
 
   return (
     <>
-      <Card style={{ height: 340 }}>
+      <CardStyled style={{ marginBottom: '20px' }}>
         <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-      </Card>
-      <WrappedContainer>
-        <Card type="table" style={{ padding: 0 }}>
+      </CardStyled>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled style={{ padding: 0 }}>
           <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
-        </Card>
-        <Card style={{ height: 340 }}>
+        </CardStyled>
+        <CardStyled>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
-        </Card>
-        <Card style={{ height: 340 }}>
+        </CardStyled>
+        <CardStyled>
           <MkrDistributionPerExecutive
             content="MKR Distribution By Executive"
             component="mkrDistributionPerExecutive"
           />
-        </Card>
-        <Card type="table" style={{ padding: 0 }}>
+        </CardStyled>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
+        <CardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
           )}
-        </Card>
-        <Card style={{ height: 340 }}>
-          {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
-        </Card>
-        <Card style={{ height: 340 }}>
+        </CardStyled>
+        <CardStyled>
+          {polls.length === 0 ? (
+            <Loading />
+          ) : (
+            <VotesVsPolls content="Total Votes" versus="Polls" component="votesVsPolls" />
+          )}
+        </CardStyled>
+        <CardStyled>
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
-        </Card>
-      </WrappedContainer>
+        </CardStyled>
+      </ThreeRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
           {getModalContainer(homeMap[modalData.type][modalData.component].component)}

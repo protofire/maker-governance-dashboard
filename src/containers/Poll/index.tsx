@@ -1,33 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-
-import styled from 'styled-components'
-
-// Utils
 import { getPollsData } from '../../utils/makerdao'
-
-//Queries
 import { POLL_QUERY_BY_ID } from './queries'
-
-//Common components
-import { PageTitle, Spinner, SpinnerContainer } from '../../components/common'
-
-//Poll details
+import { PageTitle, FullLoading } from '../../components/common'
 import PollDetails from '../../components/PollDetails'
 
 type Props = {
   match: any
 }
 
-const Loading = () => (
-  <SpinnerContainer>
-    <Spinner />
-  </SpinnerContainer>
-)
-
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
-
-const PollContainer = styled.div``
 
 function PollInfo(props: Props) {
   const { match } = props
@@ -41,14 +23,14 @@ function PollInfo(props: Props) {
       getPollsData([pollData.data.poll]).then(result => setData(result.filter(Boolean)[0]))
   }, [pollData.data, pollId])
 
-  if (pollData.loading || Object.keys(data).length === 0) return <Loading />
+  if (pollData.loading || Object.keys(data).length === 0) return <FullLoading />
   if (pollData.error) return <Error />
 
   return (
-    <PollContainer>
+    <>
       <PageTitle>{data.title}</PageTitle>
       <PollDetails poll={data} />
-    </PollContainer>
+    </>
   )
 }
 
