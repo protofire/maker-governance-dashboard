@@ -87,7 +87,7 @@ function VoteDetails(props: Props) {
       approvalsByAddress: {
         data: getApprovalsByAddress(votingActions),
         component: props => (
-          <ApprovalsByAddress expanded content="Approvals by address" component="approvalsByAddress" {...props} />
+          <ApprovalsByAddress expanded content="Approvals by Address Size" component="approvalsByAddress" {...props} />
         ),
       },
     },
@@ -192,7 +192,7 @@ function VoteDetails(props: Props) {
           <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </CardStyled>
         <CardStyled style={{ gridArea: 'col5' }}>
-          <ApprovalsByAddress content="Approvals by address" component="approvalsByAddress" />
+          <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
         </CardStyled>
         <CardStyled style={{ padding: 0, gridArea: 'col6' }}>
           <StrippedTableWrapper content="Top Supporters">
