@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="25" viewBox="0 0 16 25">
+    <defs>
+        <style>
+            .cls-1,.cls-2{fill:#333}.cls-1{font-size:6px;font-family:OpenSans-Semibold,Open Sans;font-weight:600}.cls-3{fill:#fff}
+        </style>
+    </defs>
+    <g id="hat" transform="translate(-154 -180)">
+        <text id="HAT-2" class="cls-1" data-name="HAT" transform="translate(156 203)">
+            <tspan x="0" y="0">HAT</tspan>
+        </text>
+        <circle id="Ellipse_6" cx="8" cy="8" r="8" class="cls-2" data-name="Ellipse 6" transform="translate(154 180)"/>
+        <g id="hat-3" data-name="hat" transform="translate(157 101.812)">
+            <path id="Path_25" d="M81.959 86.975c2.733 0 3.28-1.083 3.276-1.084-.4-4.543-2.8-1.985-3.276-1.985s-2.88-2.558-3.276 1.985c-.004.001.543 1.084 3.276 1.084z" class="cls-3" data-name="Path 25" transform="translate(-76.959)"/>
+            <path id="Path_26" d="M8.814 223.72a2.227 2.227 0 0 1-1.106.905 6.8 6.8 0 0 1-2.708.507 6.8 6.8 0 0 1-2.708-.506 2.227 2.227 0 0 1-1.106-.905c-.74.327-1.186.751-1.186 1.214 0 1.037 2.239 1.878 5 1.878s5-.841 5-1.878c0-.464-.446-.888-1.186-1.215z" class="cls-3" data-name="Path 26" transform="translate(0 -137.625)"/>
+        </g>
+    </g>
+</svg>

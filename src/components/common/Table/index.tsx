@@ -19,6 +19,7 @@ type TableProps = {
   limitPerPage?: number
   scrollable?: boolean
   sortBy?: SortBy[]
+  isExecutive?: boolean
 }
 
 const FilterContainer = styled.div`
@@ -70,6 +71,12 @@ const TableSection = styled.div`
   flex-direction: row;
   padding: 16px 20px;
   width: 100%;
+  ${props =>
+    props.isExecutive &&
+    props.header &&
+    css`
+      padding-left: 30px;
+    `}
 `
 
 const ResponsiveWrapper = styled.div`
@@ -152,6 +159,11 @@ const RowsSection = styled.div`
           background-color: #fafafa;
         `}
     }
+    ${props =>
+      props.isExecutive &&
+      css`
+        padding-left: 0;
+      `}
   }
   overflow-y: ${props => (props.scrollable ? 'scroll' : 'hidden')};
 
@@ -214,7 +226,7 @@ const setInitialFilters = columns => {
 // @ts-ignore
 fuzzyTextFilterFn.autoRemove = val => !val
 
-function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy }: TableProps) {
+function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, sortBy, isExecutive }: TableProps) {
   const [filters, setFilters] = useState(setInitialFilters(columns))
 
   const handleFn = handleRow ? handleRow : () => {}
@@ -321,7 +333,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     <ResponsiveWrapper>
       <TableWrapper scrollable={scrollable} expanded={expanded} {...getTableProps()}>
         {headerGroups.map(headerGroup => (
-          <TableSection expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
+          <TableSection header isExecutive={isExecutive} expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => (
               <HeaderRow key={column.id} width={column.width}>
                 <div>
@@ -345,7 +357,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
             ))}
           </TableSection>
         ))}
-        <RowsSection scrollable={scrollable} expanded={expanded}>
+        <RowsSection isExecutive={isExecutive} scrollable={scrollable} expanded={expanded}>
           {page.map(
             row =>
               prepareRow(row) || (

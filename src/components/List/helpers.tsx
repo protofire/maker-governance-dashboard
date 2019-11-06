@@ -1,16 +1,24 @@
 import React from 'react'
+import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
 import { format, fromUnixTime, differenceInMonths, getUnixTime } from 'date-fns'
 import { timeLeft } from '../../utils'
 import { getVoterBalances } from '../../utils'
 import { SelectColumnFilter } from '../common/Table/filters'
 import { Spinner, SpinnerContainer } from '../common'
+import { HatIcon } from '../common/Icon'
 
 const Loading = () => (
   <SpinnerContainer>
     <Spinner table />
   </SpinnerContainer>
 )
+
+const HatIconContainer = styled(HatIcon)`
+  position: relative;
+  top: 1px;
+  right: 3px;
+`
 
 export const Pollcolumns = () => {
   return [
@@ -90,20 +98,42 @@ export const Pollcolumns = () => {
   ]
 }
 
-export const Executivecolumns = () => {
+export const Executivecolumns = governance => {
+  const hat = governance ? governance.governanceInfo.hat : undefined
+  const active = governance ? governance.governanceInfo.active : undefined
   return [
     {
       Header: 'Status',
       Filter: SelectColumnFilter,
       filter: 'includes',
       accessor: row =>
-        row.casted ? 'Passed' : differenceInMonths(new Date(), fromUnixTime(row.timestamp)) < 12 ? 'Open' : 'Limbo',
+        row.id === hat && row.id === active
+          ? 'Hat+Active'
+          : row.id === hat
+          ? 'Hat'
+          : row.id === active
+          ? 'Active'
+          : row.casted
+          ? 'Passed'
+          : differenceInMonths(new Date(), fromUnixTime(row.timestamp)) < 12
+          ? 'Open'
+          : 'Limbo',
       id: 'status',
       Cell: ({ row }) =>
-        row.original.casted ? (
-          <span style={{ color: '#00ba9c' }}>Passed</span>
+        row.original.id === hat && row.original.id === active ? (
+          <span style={{ color: '#2730a0', marginLeft: '12px' }}>
+            <HatIconContainer /> <span>Active</span>
+          </span>
+        ) : row.original.id === hat ? (
+          <span style={{ color: '#000', marginLeft: '12px' }}>
+            <HatIconContainer /> <span>Hat</span>
+          </span>
+        ) : row.original.id === active ? (
+          <span style={{ color: '#2730a0', marginLeft: '30px' }}>Active</span>
+        ) : row.original.casted ? (
+          <span style={{ color: '#00ba9c', marginLeft: '30px' }}>Passed</span>
         ) : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12 ? (
-          <span style={{ color: '#fac202' }}>Open</span>
+          <span style={{ color: '#fac202', marginLeft: '30px' }}>Open</span>
         ) : (
           'Limbo'
         ),
