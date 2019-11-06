@@ -104,7 +104,7 @@ function HomeDetail(props: Props) {
         component: props => (
           <MkrDistributionPerExecutive
             expanded
-            content="MKR Distribution Per Executive"
+            content="MKR Distribution By Executive"
             component="mkrDistributionPerExecutive"
             {...props}
           />
@@ -112,13 +112,11 @@ function HomeDetail(props: Props) {
       },
       votesVsPolls: {
         data: getVotesVsPollsData(data.executives, polls, chartFilters.votesVsPolls),
-        component: props => (
-          <VotesVsPolls expanded content="Executive Votes" versus="Polls" component="votesVsPolls" {...props} />
-        ),
+        component: props => <VotesVsPolls expanded content="Total Votes" component="votesVsPolls" {...props} />,
       },
       gini: {
         data: giniData,
-        component: props => <Gini expanded content="MKR Gini Coefficient" component="gini" {...props} />,
+        component: props => <Gini expanded content="Voting MKR Gini Coefficient" component="gini" {...props} />,
       },
       timeTakenForExecutives: {
         data: getTimeTakenForExecutives(data.executives),
@@ -268,14 +266,14 @@ function HomeDetail(props: Props) {
       </CardStyled>
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Executive votes" component="executives" />
+          <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
         </CardStyled>
         <CardStyled>
           <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
         </CardStyled>
         <CardStyled>
           <MkrDistributionPerExecutive
-            content="MKR Distribution Per Executive"
+            content="MKR Distribution By Executive"
             component="mkrDistributionPerExecutive"
           />
         </CardStyled>
@@ -292,11 +290,11 @@ function HomeDetail(props: Props) {
           {polls.length === 0 ? (
             <Loading />
           ) : (
-            <VotesVsPolls content="Executive Votes" versus="Polls" component="votesVsPolls" />
+            <VotesVsPolls content="Total Votes" versus="Polls" component="votesVsPolls" />
           )}
         </CardStyled>
         <CardStyled>
-          <Gini content="MKR Gini Coefficient" component="gini" />
+          <Gini content="Voting MKR Gini Coefficient" component="gini" />
         </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (
