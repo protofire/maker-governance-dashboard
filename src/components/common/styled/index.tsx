@@ -1,157 +1,189 @@
+import React from 'react'
 import styled, { css } from 'styled-components'
 
 export const Card = styled.div`
+  align-items: flex-start;
+  background-color: ${props => props.theme.cards.backgroundColor};
+  border-radius: ${props => props.theme.cards.borderRadius};
+  border: ${props => props.theme.cards.border};
+  box-shadow: ${props => props.theme.cards.boxShadow};
   display: flex;
-  margin-top: 12px;
   flex-direction: column;
-  text-align: left;
-  padding: 20px 24px;
-  border-radius: 4px;
-  display: flex;
-  position: relative;
-  background-color: rgb(255, 255, 255);
   font-size: 16px;
   font-weight: 400;
-  text-align: left;
-  overflow: hidden;
-  border: 1px solid rgb(212, 217, 225);
-  ${props =>
-    props.type &&
-    css`
-      width: 32.5% !important;
-      flex: unset !important;
-    `}
-  @media (max-width: 768px) {
-    ${props =>
-      props.type &&
-      css`
-        width: 46.5% !important;
-      `}
+  padding: ${props => props.theme.cards.paddingVertical} ${props => props.theme.cards.paddingHorizontal};
+  position: relative;
+
+  > div {
+    width: 100%;
   }
 `
-export const Versus = styled.span`
-  color: #bbbbbb;
+
+export const PageTitle = styled.h1`
+  color: ${props => props.theme.colors.textCommon};
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.35;
+  margin: 0 0 16px;
+  padding: 0;
+  text-align: left;
 `
+
+export const Link = styled.a`
+  color: #000;
+  font-size: 13px;
+`
+
+const CommonCardTitleCSS = css`
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+`
+
+const CardTitleText = styled.h3`
+  ${CommonCardTitleCSS}
+  color: ${props => props.theme.colors.textCommon};
+  margin: 0;
+`
+
+export const CardTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin-bottom: 15px;
+`
+
+export const CardTitleLeftContents = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-grow: 0;
+  flex-shrink: 0;
+`
+
+export const Versus = styled.span`
+  ${CommonCardTitleCSS}
+  color: #bbb;
+  margin: 0 5px;
+`
+
+export const VersusText = styled.span`
+  ${CommonCardTitleCSS}
+`
+
 export const Separator = styled(Versus)`
-  margin-right: 0;
+  ${CommonCardTitleCSS}
+  color: #bbb;
+  font-weight: 700;
+  margin: 0 0 0 5px;
+
+  &:last-child {
+    display: none;
+  }
 `
 
 export const Select = styled.select`
   background: transparent;
   border: none;
-  margin-right: 1rem;
+  font-size: 13px;
+
   &:focus {
     outline: 0;
   }
 `
+
 export const ChartSelect = styled(Select)`
-  color: #00ba9c;
-`
-export const PageTitle = styled.p`
-  font-size: 20px;
-  color: #444444;
-  margin-top: 22px;
-`
-export const Link = styled.a`
-  font-size: 13px;
-  color: #000000;
+  color: ${props => props.theme.colors.primary};
 `
 
-const ChartTitle = styled.p`
-  margin-top: 0;
-  font-size: 14px;
-  color: #444444;
-`
-export const TableTitle = styled(ChartTitle)`
-  font-size: 14px;
-  margin-bottom: 0;
-`
-export const ChartTitleContainer = styled.div`
-  display: flex;
-  font-size: 14px;
-  color: #444444;
-  font-weigth: 600;
-  flex-direction: row;
-  flex: 1;
-  span {
-    margin-right: 3px;
-  }
-`
+export const CardTitle = props => {
+  const { content, versus, children } = props
 
-export const TitleContainer = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 16px;
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  @media (max-width: 768px) {
-    ${props =>
-      props.type &&
-      css`
-        padding-right: 0;
-        padding-left: 0;
-      `}
-
-    ${Separator} {
-      display: none;
-    }
-    ${ChartTitleContainer} {
-      flex-wrap: wrap;
-    }
-    select {
-      width: 85px;
-    }
-  }
-`
+  return (
+    <CardTitleContainer>
+      {content || versus ? (
+        <CardTitleLeftContents>
+          <CardTitleText>{content}</CardTitleText>
+          {versus && (
+            <>
+              <Versus>vs</Versus> <VersusText>{versus}</VersusText>
+            </>
+          )}
+          <Separator>&middot;</Separator>
+        </CardTitleLeftContents>
+      ) : null}
+      {children ? children : null}
+    </CardTitleContainer>
+  )
+}
 
 export const IconContainer = styled.div`
-  display: flex;
   cursor: pointer;
+  display: flex;
 `
 
-export const TableContainer = styled.div`
+export const StrippedRowsContainer = styled.div`
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
-  flex: 1;
-  table {
-    border-collapse: separate;
-    border-spacing: 10px 5px;
-    th {
-      font-size: 12px;
-      color: #999999;
-    }
-    tbody {
-      font-size: 13px;
-      color: #000000;
-      tr {
-        &:nth-child(odd) {
-          background-color: #fafafa;
-        }
-        height: 36px;
-      }
-    }
-  }
+  font-size: 12px;
+  padding-top: 15px;
 `
 
 export const ViewAll = styled.span`
+  color: ${props => props.theme.colors.primary};
   font-size: 12px;
-  color: #00ba9c;
 `
+
 export const DescriptionBox = styled.div`
-  max-width: ${props => (!props.expanded ? '300px' : 'none')};
-  width: 100%;
-  color: #777777;
-  margin: 0 auto;
+  color: #777;
   font-size: 13px;
-  overflow: hidden;
+  overflow: auto;
+  margin: 0 auto;
   text-overflow: ellipsis;
+  width: 100%;
+
   ${props =>
     props.expanded &&
     css`
       max-height: 800px;
-      overflow: scroll;
     `}
+`
+
+export const ThreeRowGrid = styled.div`
+  column-gap: ${props => props.theme.separation.gridSeparation};
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${props => props.theme.separation.gridSeparation};
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+`
+
+export const NoData = styled.div`
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  font-size: 16px;
+  justify-content: center;
+  line-height: 1.2;
+`
+
+export const StrippedTableRow = styled.div`
+  display: flex;
+  flex: 1;
+  padding: 0.25rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+
+  &:nth-child(odd) {
+    background-color: #fafafa;
+  }
+`
+
+export const StrippedTableCell = styled.span`
+  color: #000;
+  font-size: 13px;
 `

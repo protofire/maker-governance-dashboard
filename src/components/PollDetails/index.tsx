@@ -2,18 +2,23 @@ import React, { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import randomColor from 'randomcolor'
 import lscache from 'lscache'
-import styled from 'styled-components'
-import { Card, Modal, TableTitle, DescriptionWrapper, DescriptionBox, Spinner, SpinnerContainer } from '../common'
+import {
+  Card,
+  DescriptionBox,
+  DescriptionWrapper,
+  NoData,
+  Modal,
+  Spinner,
+  SpinnerContainer,
+  StrippedTableWrapper,
+  StrippedTableRow,
+  StrippedTableCell,
+  ThreeRowGrid,
+} from '../common'
 import { getModalContainer } from '../../utils'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-
 import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
-
 import {
-  WrappedContainer,
-  Container,
-  TableContainer,
-  TableRow,
   getPollTableData,
   defaultFilters,
   getComponentData,
@@ -22,16 +27,11 @@ import {
   getPollVotersHistogramData,
   getPollMakerHistogramData,
 } from './helpers'
+import styled from 'styled-components'
 
-const NoData = styled.span`
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
+const CardStyled = styled(Card)`
+  height: ${props => props.theme.defaultCardHeight};
 `
-
-const VoteDetailContainer = styled.div``
 
 type Props = {
   poll: any
@@ -39,7 +39,7 @@ type Props = {
 
 const Loading = () => (
   <SpinnerContainer>
-    <Spinner />
+    <Spinner width="35px" height="35px" />
   </SpinnerContainer>
 )
 
@@ -81,23 +81,13 @@ function PollDetails(props: Props) {
       votersDistribution: {
         data: getPollVotersHistogramData(poll),
         component: props => (
-          <VotersDistribution
-            expanded
-            content="Voters distribution between options"
-            component="votersDistribution"
-            {...props}
-          />
+          <VotersDistribution expanded content="Vote Count By Option" component="votersDistribution" {...props} />
         ),
       },
       makerDistribution: {
         data: mkrDistributionData,
         component: props => (
-          <MakerDistribution
-            expanded
-            content="MKR distribution between options"
-            component="makerDistribution"
-            {...props}
-          />
+          <MakerDistribution expanded content="MKR Count By Option" component="makerDistribution" {...props} />
         ),
       },
       pollPerOption: {
@@ -149,14 +139,7 @@ function PollDetails(props: Props) {
 
   //TimeLeft data
   const TimeLeft = props => {
-    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-    return (
-      <TimeLeftChart
-        data={voteMap.chart[props.component].data}
-        wrapperProps={getWrapperProps(data)}
-        modalProps={getModalProps(data.type, data.component, data.expanded)}
-      />
-    )
+    return <TimeLeftChart data={voteMap.chart[props.component].data} />
   }
 
   //Poll voters distribution per option data
@@ -165,10 +148,10 @@ function PollDetails(props: Props) {
 
     return (
       <VotersDistributionChart
-        options={poll.options}
         colors={colors}
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        options={poll.options}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -179,10 +162,10 @@ function PollDetails(props: Props) {
 
     return (
       <MakerDistributionChart
-        options={poll.options}
         colors={colors}
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        options={poll.options}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -193,8 +176,8 @@ function PollDetails(props: Props) {
 
     return (
       <PollPerOptionChart
-        wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
       />
     )
   }
@@ -215,55 +198,54 @@ function PollDetails(props: Props) {
   }
 
   return (
-    <VoteDetailContainer>
-      <WrappedContainer>
-        <Card type="table" style={{ padding: 0 }}>
-          <Container>
-            <TableTitle>Details</TableTitle>
-          </Container>
-          <TableContainer>
+    <>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled style={{ padding: 0 }}>
+          <StrippedTableWrapper content="Details">
             {getPollTableData(poll).map(el => (
-              <TableRow key={el.label}>
-                <span>{el.label}</span>
-                <span>{el.value}</span>
-              </TableRow>
+              <StrippedTableRow key={el.label}>
+                <StrippedTableCell>{el.label}</StrippedTableCell>
+                <StrippedTableCell>{el.value}</StrippedTableCell>
+              </StrippedTableRow>
             ))}
-          </TableContainer>
-        </Card>
-        <Card style={{ height: 300 }}>
+          </StrippedTableWrapper>
+        </CardStyled>
+        <CardStyled>
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>Cannot fetch poll description.</NoData>
           )}
-        </Card>
-        <Card style={{ height: 300 }}>
+        </CardStyled>
+        <CardStyled>
           <TimeLeft content="Time left" component="timeLeft" />
-        </Card>
-        <Card style={{ height: 300 }}>
-          <VotersDistribution content="Voters distribution between options" component="votersDistribution" />
-        </Card>
-        <Card style={{ height: 300 }}>
+        </CardStyled>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
+        <CardStyled>
+          <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
+        </CardStyled>
+        <CardStyled>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
           )}
-        </Card>
-        <Card style={{ height: 300 }}>
+        </CardStyled>
+        <CardStyled>
           {mkrDistributionData.length === 0 ? (
             <Loading />
           ) : (
-            <MakerDistribution content="MKR distribution between options" component="makerDistribution" />
+            <MakerDistribution content="MKR Count By Option" component="makerDistribution" />
           )}
-        </Card>
-      </WrappedContainer>
+        </CardStyled>
+      </ThreeRowGrid>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
           {getModalContainer(voteMap[modalData.type][modalData.component].component)}
         </Modal>
       )}
-    </VoteDetailContainer>
+    </>
   )
 }
 

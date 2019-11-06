@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import {
   fromUnixTime,
   format,
@@ -10,62 +9,11 @@ import {
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { Card, TitleContainer } from '../common/styled'
-
 import { shortenAccount, timeLeft, getVoterBalances } from '../../utils'
-
 import { getPollData, getVoterAddresses, getPollDataWithoutBalances } from './data'
-
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
 
-export const TableContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  font-size: 12px;
-`
-
-export const Container = styled(TitleContainer)`
-  flex: 0;
-  padding-left: 1.5rem;
-  padding-top: 0.75rem;
-  padding-bottom: 0.5rem;
-`
-
-export const TableRow = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 0.25rem 1.5rem;
-  align-items: center;
-  justify-content: space-between;
-  &:nth-child(odd) {
-    background-color: #fafafa;
-  }
-`
-
-export const WrappedContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  ${Card} {
-    flex: 0 0 28%;
-    width: 25%;
-  }
-  @media (max-width: 768px) {
-    ${Card} {
-      width: 40%;
-      flex: unset;
-    }
-  }
-  @media (max-width: 580px) {
-    ${Card} {
-      width: 100% !important;
-      flex: unset;
-    }
-  }
-`
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
 }
@@ -94,13 +42,19 @@ export const getTimeLeftData = (start, end): Array<any> => {
   let minutes = Math.floor(seconds / 60)
   let hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
+  const totalTime = end - start
+  const now = today < start ? start : today // 'today' can be less than the starting date, so we correct that
+  const leftTime = end - now
+  const progress = (leftTime * 100) / totalTime
+  const correctedProgress = progress < 0 ? 100 : progress // if 'now' is after the ending date we'll get a negative number, so we should address that too
+  const value = 100 - correctedProgress
 
   hours = hours - days * 24
   minutes = minutes - days * 24 * 60 - hours * 60
 
-  if (isEnded) return [{ value: today, text: 'Ended' }, { value: 0 }]
+  if (isEnded) return [{ value: value, text: 'Ended' }, { value: 0 }]
 
-  return [{ time: { days, hours, minutes }, value: today / 1000 }, { value: seconds }]
+  return [{ time: { days, hours, minutes }, value: value }, { value: seconds }]
 }
 
 export const getPollPerOptionData = poll => getPollDataWithoutBalances(poll)
@@ -125,7 +79,7 @@ const getPollPeriods = poll => {
   const start = fromUnixTime(poll.startDate)
 
   const endPoll = fromUnixTime(poll.endDate)
-  const now = new Date()
+  const now = fromUnixTime(Date.now())
   const end = isAfter(endPoll, now) ? now : endPoll
 
   const long = differenceInHours(end, start)
@@ -208,7 +162,6 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-
   const endPoll = fromUnixTime(poll.endDate)
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
@@ -241,7 +194,6 @@ export const getPollMakerHistogramData = async poll => {
       [account]: newBalances,
     }
   }, {})
-
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
