@@ -232,7 +232,7 @@ export const getPollMakerHistogramData = async poll => {
         (acc, el) => {
           return {
             ...acc,
-            [el.label]: el.mkr,
+            [el.label]: Number(el.mkr),
           }
         },
         { ...period },
