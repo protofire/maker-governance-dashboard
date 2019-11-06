@@ -35,8 +35,8 @@ const FilterIconContainer = styled.span`
 const TableRow = styled.span`
   font-size: 13px;
   color: #000;
-
-  @media (min-width: ${props => theme.themeBreakPoints.sm}) {
+  border-right: ${props => (props.separator ? '1px solid #f3f3f3' : 'none')};
+  @media (min-width: ${theme.themeBreakPoints.sm}) {
     ${props =>
       props.width &&
       css`
@@ -55,6 +55,7 @@ const HeaderRow = styled.span`
     flex-direction: row;
     flex: 1;
   }
+  border-right: ${props => (props.separator ? '1px solid #f3f3f3' : 'none')};
 
   @media (min-width: 480px) {
     ${props =>
@@ -69,7 +70,6 @@ const HeaderRow = styled.span`
 const TableSection = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 16px 20px;
   width: 100%;
   ${props =>
     props.isExecutive &&
@@ -80,6 +80,11 @@ const TableSection = styled.div`
 `
 
 const ResponsiveWrapper = styled.div`
+  *,
+  &::after,
+  &:before {
+    box-sizing: initial;
+  }
   overflow-x: auto;
   width: 100%;
 `
@@ -101,6 +106,9 @@ const TableWrapper = styled.div`
   }
 
   ${TableSection} {
+    ${TableRow}, ${HeaderRow} {
+      padding: 16px 20px;
+    }
     ${props => {
       if (!props.expanded) {
         return css`
@@ -110,7 +118,6 @@ const TableWrapper = styled.div`
         return css`
           ${TableRow}, ${HeaderRow} {
             flex: 1;
-            margin-right: 20px;
             text-align: left;
           }
         `
@@ -328,6 +335,11 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
     }
   }, [columns, otherState.filters])
 
+  const isFiltered = filter =>
+    Object.keys(otherState.filters)
+      .map(e => e.toLowerCase())
+      .includes(filter.toLowerCase())
+
   // Render the UI for your table
   return (
     <ResponsiveWrapper>
@@ -335,7 +347,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
         {headerGroups.map(headerGroup => (
           <TableSection header isExecutive={isExecutive} expanded={expanded} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, i) => (
-              <HeaderRow key={column.id} width={column.width}>
+              <HeaderRow key={column.id} width={column.width} separator={column.separator}>
                 <div>
                   <span {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
@@ -346,7 +358,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
                       ref={(el: never) => (itemsRef.current[i] = el)}
                       onClick={() => setFilters(current => ({ ...current, [column.Header]: !current[column.Header] }))}
                     >
-                      <FilterIcon />
+                      <FilterIcon selected={isFiltered(column.Header)} />
                     </FilterIconContainer>
                   )}
                 </div>
@@ -364,7 +376,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
                 <TableSection onClick={() => handleFn(row.original)} {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     return (
-                      <TableRow width={cell.column.width} {...cell.getCellProps()}>
+                      <TableRow width={cell.column.width} separator={cell.column.separator} {...cell.getCellProps()}>
                         {cell.render('Cell')}
                       </TableRow>
                     )
