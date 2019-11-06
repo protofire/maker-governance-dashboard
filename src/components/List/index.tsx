@@ -15,15 +15,14 @@ type Props = {
   columns: Array<any>
   data: Array<any>
   sortBy?: SortBy[]
-  isExecutive?: boolean
   handleRow?: (row: any) => void
 }
 
 function List(props: Props) {
-  const { data, columns, handleRow, sortBy, isExecutive } = props
+  const { data, columns, handleRow, sortBy } = props
   return (
     <CardStyled>
-      <Table isExecutive={isExecutive} handleRow={handleRow} expanded data={data} columns={columns} sortBy={sortBy} />
+      <Table handleRow={handleRow} expanded data={data} columns={columns} sortBy={sortBy} />
     </CardStyled>
   )
 }

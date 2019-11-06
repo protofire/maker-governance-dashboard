@@ -59,7 +59,7 @@ function ExecutiveInfo(props) {
   return (
     <>
       <PageTitle>Executive Votes</PageTitle>
-      <List isExecutive handleRow={getVote} data={data} columns={executivecolumns} sortBy={initialSort} />
+      <List handleRow={getVote} data={data} columns={executivecolumns} sortBy={initialSort} />
     </>
   )
 }

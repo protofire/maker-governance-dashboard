@@ -17,7 +17,7 @@ const Loading = () => (
 const HatIconContainer = styled(HatIcon)`
   position: relative;
   top: 1px;
-  right: 3px;
+  right: 6px;
 `
 
 export const Pollcolumns = () => {
@@ -109,6 +109,7 @@ export const Executivecolumns = governance => {
     {
       Header: 'Status',
       separator: true,
+      hat: true,
       Filter: SelectColumnFilter,
       filter: 'includes',
       accessor: row =>
@@ -126,19 +127,19 @@ export const Executivecolumns = governance => {
       id: 'status',
       Cell: ({ row }) =>
         row.original.id === hat && row.original.id === active ? (
-          <span style={{ color: '#2730a0', marginLeft: '12px' }}>
+          <span style={{ color: '#2730a0' }}>
             <HatIconContainer /> <span>Active</span>
           </span>
         ) : row.original.id === hat ? (
-          <span style={{ color: '#000', marginLeft: '12px' }}>
+          <span style={{ color: '#000' }}>
             <HatIconContainer /> <span>Hat</span>
           </span>
         ) : row.original.id === active ? (
-          <span style={{ color: '#2730a0', marginLeft: '30px' }}>Active</span>
+          <span style={{ color: '#2730a0', marginLeft: '20px' }}>Active</span>
         ) : row.original.casted ? (
-          <span style={{ color: '#00ba9c', marginLeft: '30px' }}>Passed</span>
+          <span style={{ color: '#00ba9c', marginLeft: '20px' }}>Passed</span>
         ) : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12 ? (
-          <span style={{ color: '#fac202', marginLeft: '30px' }}>Open</span>
+          <span style={{ color: '#fac202', marginLeft: '20px' }}>Open</span>
         ) : (
           'Limbo'
         ),
