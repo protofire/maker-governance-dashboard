@@ -174,7 +174,27 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     },
   ]
 }
-
+export const VotedPollcolumns = () => {
+  return [
+    {
+      Header: 'Name',
+      accessor: 'title',
+      filter: 'fuzzyText',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.title}>{row.original.title}</span>
+          </Link>
+        </>
+      ),
+    },
+    {
+      Header: 'Votes',
+      accessor: 'votesCount',
+    },
+  ]
+}
 export const Executivecolumns = (isModalOpen: boolean) => {
   return [
     {

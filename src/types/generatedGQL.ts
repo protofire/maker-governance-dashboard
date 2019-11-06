@@ -123,6 +123,10 @@ export interface GetPolls_polls {
    */
   id: string
   creator: any | null
+  /**
+   *  Number votes
+   */
+  votesCount: any
   url: string | null
   pollId: any
   startDate: any
@@ -148,6 +152,10 @@ export interface getHomeData_polls {
    */
   id: string
   creator: any | null
+  /**
+   *  Number votes
+   */
+  votesCount: any
   url: string | null
   pollId: any
   startDate: any
@@ -803,6 +811,10 @@ export interface pollsDetail {
    */
   id: string
   creator: any | null
+  /**
+   *  Number votes
+   */
+  votesCount: any
   url: string | null
   pollId: any
   startDate: any

@@ -42,6 +42,7 @@ const pollsDetailFragment = gql`
   fragment pollsDetail on Poll {
     id
     creator
+    votesCount
     url
     pollId
     startDate

@@ -18,6 +18,7 @@ import {
   defaultFilters,
   getComponentData,
   Pollcolumns,
+  VotedPollcolumns,
   Executivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
@@ -54,6 +55,8 @@ function HomeDetail(props: Props) {
   const [polls, setPolls] = useState<any[]>([])
 
   const pollcolumns = expanded => Pollcolumns(expanded)
+  const votedPollcolumns = () => VotedPollcolumns()
+
   const executiveColumns = expanded => Executivecolumns(expanded)
   const executives = data.executives
 
@@ -76,6 +79,11 @@ function HomeDetail(props: Props) {
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Most Recent Polls" component="polls" {...props} />
         ),
+      },
+      votedPolls: {
+        data: polls.sort((a, b) => Number(b.votesCount) - Number(a.votesCount)),
+        columns: votedPollcolumns,
+        component: props => <HomeTable expanded content="Most Voted Polls" component="votedPolls" {...props} />,
       },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
@@ -278,7 +286,7 @@ function HomeDetail(props: Props) {
           />
         </CardStyled>
       </ThreeRowGrid>
-      <ThreeRowGrid>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
@@ -295,6 +303,11 @@ function HomeDetail(props: Props) {
         </CardStyled>
         <CardStyled>
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
+        </CardStyled>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
+        <CardStyled style={{ padding: 0 }}>
+          <HomeTable content="Most Voted Polls" component="votedPolls" />
         </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (
