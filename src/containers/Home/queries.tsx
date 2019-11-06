@@ -42,11 +42,15 @@ const pollsDetailFragment = gql`
   fragment pollsDetail on Poll {
     id
     creator
-    votesCount
     url
     pollId
     startDate
     endDate
+    votesCount
+    votes(first: 1000) {
+      voter
+      option
+    }
   }
 `
 export const GOVERNANCE_INFO_QUERY = gql`

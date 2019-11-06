@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
+import BigNumber from 'bignumber.js'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -8,8 +10,12 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
+import { DEFAULT_CACHE_TTL } from '../../constants'
 import { Card, Modal, Spinner, SpinnerContainer, StrippedTableWrapper, Table, ThreeRowGrid } from '../common'
-import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
+import { getPollsData, getMKRSupply } from '../../utils/makerdao'
+import { getPollData } from '../../components/PollDetails/data'
+import { getPollsBalances } from '../List/helpers'
+
 import { getModalContainer } from '../../utils'
 import {
   getVotersVsMkrData,
@@ -36,6 +42,14 @@ const Loading = () => (
   </SpinnerContainer>
 )
 
+const getParticipation = (data, mkrSupply) => {
+  const totalMkr: BigNumber = data.reduce((acc, value) => acc.plus(new BigNumber(value.mkr)), new BigNumber('0'))
+  return totalMkr
+    .times(100)
+    .div(mkrSupply)
+    .toString()
+}
+
 const TABLE_PREVIEW = 5
 
 type Props = {
@@ -49,13 +63,25 @@ function HomeDetail(props: Props) {
   const { data, gData, history } = props
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
+  const cachedData = lscache.get('home-polls') || []
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
+  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
+  const [pollsBalances, setBalances] = useState<any>({})
+
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const [polls, setPolls] = useState<any[]>([])
+  const [polls, setPolls] = useState<any[]>(cachedData)
 
   const pollcolumns = expanded => Pollcolumns(expanded)
   const votedPollcolumns = () => VotedPollcolumns()
+
+  useEffect(() => {
+    if (cachedData.length === 0) getPollsBalances(polls).then(balances => setBalances(balances))
+  }, [polls, cachedData.length])
+
+  useEffect(() => {
+    if (cachedData.length === 0) getMKRSupply().then(supply => setMkrSupply(supply))
+  }, [cachedData.length])
 
   const executiveColumns = expanded => Executivecolumns(expanded)
   const executives = data.executives
@@ -81,9 +107,11 @@ function HomeDetail(props: Props) {
         ),
       },
       votedPolls: {
-        data: polls.sort((a, b) => Number(b.votesCount) - Number(a.votesCount)),
+        data: polls.sort((a, b) => Number(b.participation) - Number(a.participation)),
         columns: votedPollcolumns,
-        component: props => <HomeTable expanded content="Most Voted Polls" component="votedPolls" {...props} />,
+        component: props => (
+          <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
+        ),
       },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
@@ -257,15 +285,26 @@ function HomeDetail(props: Props) {
   }
 
   useEffect(() => {
-    Promise.all([getPollsData(data.polls), getMakerDaoData()])
-      .then(result => {
-        const polls = result[0].filter(Boolean)
+    if (mkrSupply && cachedData.length === 0) {
+      getPollsData(data.polls).then(result => {
+        const polls = result.filter(Boolean)
         setPolls([...polls])
+        Promise.all(
+          polls.map(poll => {
+            return getPollData(poll, pollsBalances).then(data => {
+              return { ...poll, participation: getParticipation(data, mkrSupply) }
+            })
+          }),
+        ).then(pollsWithPluralityAndParticipation => {
+          setPolls(pollsWithPluralityAndParticipation)
+        })
       })
-      .catch(error => {
-        console.log(error)
-      })
-  }, [data])
+    }
+  }, [data.polls, cachedData.length, mkrSupply, pollsBalances])
+
+  useEffect(() => {
+    lscache.set('home-polls', polls, DEFAULT_CACHE_TTL)
+  }, [polls])
 
   return (
     <>
@@ -307,7 +346,7 @@ function HomeDetail(props: Props) {
       </ThreeRowGrid>
       <ThreeRowGrid>
         <CardStyled style={{ padding: 0 }}>
-          <HomeTable content="Most Voted Polls" component="votedPolls" />
+          {polls.length === 0 ? <Loading /> : <HomeTable content="Most Voted Polls" component="votedPolls" />}
         </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (

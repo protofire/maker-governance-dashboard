@@ -190,8 +190,10 @@ export const VotedPollcolumns = () => {
       ),
     },
     {
-      Header: 'Votes',
-      accessor: 'votesCount',
+      Header: 'MKR participation',
+      accessor: 'participation',
+      disableFilters: true,
+      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
     },
   ]
 }
