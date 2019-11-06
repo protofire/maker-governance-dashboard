@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { withRouter } from 'react-router-dom'
+import { fromUnixTime, differenceInMonths } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -19,6 +20,7 @@ import {
   getComponentData,
   Pollcolumns,
   Executivecolumns,
+  UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
 } from './helpers'
@@ -55,6 +57,8 @@ function HomeDetail(props: Props) {
 
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
+  const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
+
   const executives = data.executives
 
   const getPoll = row => {
@@ -83,6 +87,21 @@ function HomeDetail(props: Props) {
         sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
         component: props => (
           <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
+        ),
+      },
+      uncastedExecutives: {
+        data: data.executives
+          .filter(vote => !vote.casted && differenceInMonths(new Date(), fromUnixTime(vote.timestamp)) < 12)
+          .sort((a, b) => Number(b.approvals) - Number(a.approvals)),
+        columns: uncastedExecutiveColumns,
+        component: props => (
+          <HomeTable
+            expanded
+            handleRow={getVote}
+            content="Uncasted Executives"
+            component="uncastedExecutives"
+            {...props}
+          />
         ),
       },
     },
@@ -278,7 +297,7 @@ function HomeDetail(props: Props) {
           />
         </CardStyled>
       </ThreeRowGrid>
-      <ThreeRowGrid>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
@@ -295,6 +314,11 @@ function HomeDetail(props: Props) {
         </CardStyled>
         <CardStyled>
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
+        </CardStyled>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
+        <CardStyled style={{ padding: 0 }}>
+          <HomeTable handleRow={getVote} content="Uncasted Executives" component="uncastedExecutives" />
         </CardStyled>
       </ThreeRowGrid>
       {isModalOpen && (
