@@ -139,8 +139,8 @@ export const ViewAll = styled.span`
 export const DescriptionBox = styled.div`
   color: #777;
   font-size: 13px;
+  overflow: auto;
   margin: 0 auto;
-  overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
 
@@ -148,7 +148,6 @@ export const DescriptionBox = styled.div`
     props.expanded &&
     css`
       max-height: 800px;
-      overflow: scroll;
     `}
 `
 
