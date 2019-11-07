@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTable, useTableState, usePagination, useSortBy, useFilters } from 'react-table'
 import styled, { css } from 'styled-components'
 import { DefaultColumnFilter, fuzzyTextFilterFn } from './filters'
-import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon } from '../Icon'
+import { NextIcon, PreviousIcon, ArrowIcon, FilterIcon, HatIcon } from '../Icon'
+
 import { IconContainer, Select } from '../styled'
 import { theme } from '../../../theme/globalStyle'
 
@@ -21,6 +22,23 @@ type TableProps = {
   sortBy?: SortBy[]
 }
 
+const HatContainer = styled.span`
+  position: absolute;
+  height: 49px;
+  width: 24px;
+  top: 0;
+  left: 0;
+  background: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+const HatIconContainer = styled(HatIcon)`
+  position: relative;
+  top: 1px;
+  left: 4px;
+`
+
 const FilterContainer = styled.div`
   margin-top: 10px;
   position: absolute;
@@ -34,6 +52,11 @@ const FilterIconContainer = styled.span`
 const TableRow = styled.span`
   font-size: 13px;
   color: #000;
+  ${props =>
+    props.hat &&
+    css`
+      position: relative;
+    `}
   border-right: ${props => (props.separator ? '1px solid #f3f3f3' : 'none')};
   @media (min-width: ${theme.themeBreakPoints.sm}) {
     ${props =>
@@ -364,7 +387,17 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
                 <TableSection onClick={() => handleFn(row.original)} {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     return (
-                      <TableRow width={cell.column.width} separator={cell.column.separator} {...cell.getCellProps()}>
+                      <TableRow
+                        hat={cell.row.original.isHat && cell.column.Header === 'Status'}
+                        width={cell.column.width}
+                        separator={cell.column.separator}
+                        {...cell.getCellProps()}
+                      >
+                        {cell.row.original.isHat && cell.column.Header === 'Status' && (
+                          <HatContainer>
+                            <HatIconContainer />
+                          </HatContainer>
+                        )}
                         {cell.render('Cell')}
                       </TableRow>
                     )
