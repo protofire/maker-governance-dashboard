@@ -28,6 +28,15 @@ export const PageTitle = styled.h1`
   padding: 0;
   text-align: left;
 `
+export const PageSubTitle = styled.h1`
+  color: ${props => props.theme.colors.textCommon};
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.35;
+  margin-top: 32px;
+  margin-bottom: 20px;
+  text-align: left;
+`
 
 export const Link = styled.a`
   color: #000;
@@ -159,6 +168,17 @@ export const ThreeRowGrid = styled.div`
 
   @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
     grid-template-columns: 1fr 1fr 1fr;
+  }
+`
+
+export const TwoRowGrid = styled.div`
+  column-gap: ${props => props.theme.separation.gridSeparation};
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${props => props.theme.separation.gridSeparation};
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    grid-template-columns: 1fr 1fr;
   }
 `
 
