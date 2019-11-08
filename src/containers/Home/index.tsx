@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import HomeDetail from '../../components/Home/HomeDetail'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
-import { FullLoading, PageTitle } from '../../components/common'
+import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
 import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 
@@ -34,7 +34,6 @@ function MakerGovernanceInfo() {
 
   return (
     <>
-      <PageTitle>Dashboard</PageTitle>
       <HomeDetail gData={gData} data={homeData.data} />
     </>
   )
