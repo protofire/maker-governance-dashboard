@@ -99,16 +99,37 @@ export const Executivecolumns = () => {
     {
       Header: 'Status',
       separator: true,
+      hat: true,
       Filter: SelectColumnFilter,
       filter: 'includes',
       accessor: row =>
-        row.casted ? 'Passed' : differenceInMonths(new Date(), fromUnixTime(row.timestamp)) < 12 ? 'Open' : 'Limbo',
+        row.isHat && row.isActive
+          ? 'Hat+Active'
+          : row.isHat
+          ? 'Hat'
+          : row.isActive
+          ? 'Active'
+          : row.casted
+          ? 'Passed'
+          : differenceInMonths(new Date(), fromUnixTime(row.timestamp)) < 12
+          ? 'Open'
+          : 'Limbo',
       id: 'status',
       Cell: ({ row }) =>
-        row.original.casted ? (
-          <span style={{ color: '#00ba9c' }}>Passed</span>
+        row.original.isHat && row.original.isActive ? (
+          <span style={{ color: '#00ba9c', marginLeft: '20px' }}>
+            <span>Active</span>
+          </span>
+        ) : row.original.isHat ? (
+          <span style={{ color: '#000', marginLeft: '20px' }}>
+            <span>Hat</span>
+          </span>
+        ) : row.original.isActive ? (
+          <span style={{ color: '#00ba9c', marginLeft: '20px' }}>Active</span>
+        ) : row.original.casted ? (
+          <span style={{ color: '#2730a0', marginLeft: '20px' }}>Passed</span>
         ) : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12 ? (
-          <span style={{ color: '#fac202' }}>Open</span>
+          <span style={{ color: '#fac202', marginLeft: '20px' }}>Open</span>
         ) : (
           'Limbo'
         ),
