@@ -101,7 +101,7 @@ export interface GetGovernanceInfo_governanceInfo {
   locked: any
   lastBlock: any
   lastSynced: any
-  hat: any
+  hat: any | null
 }
 
 export interface GetGovernanceInfo {
@@ -218,7 +218,7 @@ export interface getHomeData_lock {
    *  Action name (act)
    */
   type: ActionType
-  sender: any
+  sender: any | null
 }
 
 export interface getHomeData_free {
@@ -236,7 +236,7 @@ export interface getHomeData_free {
    *  Action name (act)
    */
   type: ActionType
-  sender: any
+  sender: any | null
 }
 
 export interface getHomeData {
@@ -276,7 +276,7 @@ export interface GovernanceInfo_governanceInfo {
   locked: any
   lastBlock: any
   lastSynced: any
-  hat: any
+  hat: any | null
 }
 
 export interface GovernanceInfo {
@@ -720,7 +720,7 @@ export interface makerGovernanceDetail {
   locked: any
   lastBlock: any
   lastSynced: any
-  hat: any
+  hat: any | null
 }
 
 /* tslint:disable */
