@@ -18,12 +18,14 @@ import {
   Link,
   NoData,
   PageTitle,
+  PageSubTitle,
   Select,
   Separator,
   StrippedRowsContainer,
   StrippedTableCell,
   StrippedTableRow,
   ThreeRowGrid,
+  TwoRowGrid,
   Versus,
   ViewAll,
 } from './styled'
@@ -47,6 +49,7 @@ export {
   NextIcon,
   NoData,
   PageTitle,
+  PageSubTitle,
   PreviousIcon,
   Select,
   Separator,
@@ -60,4 +63,5 @@ export {
   ThreeRowGrid,
   Versus,
   ViewAll,
+  TwoRowGrid,
 }

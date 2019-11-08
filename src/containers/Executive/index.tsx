@@ -14,17 +14,23 @@ const getHomeVariables = data => {
   }
 }
 
+const getFullData = (data, governance) =>
+  data.map(vote => ({
+    ...vote,
+    isHat: vote.id === governance.governanceInfo.hat,
+    isActive: vote.id === governance.governanceInfo.active,
+  }))
+
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 function ExecutiveInfo(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [data, setData] = useState<any[]>([])
-  const executivecolumns = React.useMemo(() => Executivecolumns(), [])
   const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const excutivesData = useQuery(VOTES_FIRST_QUERY, { variables: resultVariables })
-
+  const executivecolumns = React.useMemo(() => Executivecolumns(), [])
   const getVote = row => {
     if (row.id) props.history.push(`/executive/${row.id}`)
   }
@@ -60,7 +66,7 @@ function ExecutiveInfo(props) {
   return (
     <>
       <PageTitle>Executive Votes</PageTitle>
-      <List handleRow={getVote} data={data} columns={executivecolumns} sortBy={initialSort} />
+      <List handleRow={getVote} data={getFullData(data, gData)} columns={executivecolumns} sortBy={initialSort} />
     </>
   )
 }

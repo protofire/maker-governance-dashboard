@@ -11,7 +11,17 @@ import {
   MkrDistributionPerExecutiveChart,
 } from './Charts'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-import { Card, Modal, Spinner, SpinnerContainer, StrippedTableWrapper, Table, ThreeRowGrid } from '../common'
+import {
+  Card,
+  Modal,
+  Spinner,
+  SpinnerContainer,
+  StrippedTableWrapper,
+  Table,
+  TwoRowGrid,
+  PageTitle,
+  PageSubTitle,
+} from '../common'
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 import { getPollData } from '../../components/PollDetails/data'
 import { getPollsBalances } from '../List/helpers'
@@ -34,6 +44,10 @@ import styled from 'styled-components'
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
   min-height: fit-content;
+`
+const TableCardStyled = styled(Card)`
+  min-height: ${props => props.theme.defaultCardHeight};
+  height: auto;
 `
 
 const Loading = () => (
@@ -308,31 +322,14 @@ function HomeDetail(props: Props) {
 
   return (
     <>
-      <CardStyled style={{ marginBottom: '20px' }}>
-        <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
-      </CardStyled>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
-        </CardStyled>
+      <PageTitle>System Statistics</PageTitle>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled></CardStyled>
         <CardStyled>
-          <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
+          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
         </CardStyled>
-        <CardStyled>
-          <MkrDistributionPerExecutive
-            content="MKR Distribution By Executive"
-            component="mkrDistributionPerExecutive"
-          />
-        </CardStyled>
-      </ThreeRowGrid>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled style={{ padding: 0 }}>
-          {polls.length === 0 ? (
-            <Loading />
-          ) : (
-            <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
-          )}
-        </CardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {polls.length === 0 ? (
             <Loading />
@@ -343,12 +340,38 @@ function HomeDetail(props: Props) {
         <CardStyled>
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
         </CardStyled>
-      </ThreeRowGrid>
-      <ThreeRowGrid>
-        <CardStyled style={{ padding: 0 }}>
-          {polls.length === 0 ? <Loading /> : <HomeTable content="Most Voted Polls" component="votedPolls" />}
+      </TwoRowGrid>
+      <PageSubTitle>Executives</PageSubTitle>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
+        </TableCardStyled>
+        <CardStyled></CardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
         </CardStyled>
-      </ThreeRowGrid>
+        <CardStyled>
+          <MkrDistributionPerExecutive
+            content="MKR Distribution By Executive"
+            component="mkrDistributionPerExecutive"
+          />
+        </CardStyled>
+      </TwoRowGrid>
+      <PageSubTitle>Polls</PageSubTitle>
+      <TwoRowGrid>
+        <TableCardStyled style={{ padding: 0 }}>
+          {polls.length === 0 ? <Loading /> : <HomeTable content="Most Voted Polls" component="votedPolls" />}
+        </TableCardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          {polls.length === 0 ? (
+            <Loading />
+          ) : (
+            <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
+          )}
+        </TableCardStyled>
+      </TwoRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
           {getModalContainer(homeMap[modalData.type][modalData.component].component)}

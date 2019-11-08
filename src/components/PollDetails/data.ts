@@ -17,7 +17,11 @@ const getPollVotersPerOption = poll => {
 }
 
 const getVoterRegistries = async (addresses, endDate) => {
-  //Queries
+  // The query can't be called with empty array because it errors
+  if (!addresses.length) {
+    return []
+  }
+
   const query = `
     query getVoterRegistries($voters: [Bytes!]!, $endDate: BigInt!  ){
       hot: voterRegistries(first: 1000, where: {hotAddress_in: $voters, timestamp_lte: $endDate}) {
@@ -69,7 +73,14 @@ const stakedByAddress = data => {
 }
 
 const getStakedByAddress = async (addresses, endDate) => {
-  //Queries
+  // The query can't be called with empty array because it errors
+  if (!addresses.length) {
+    return {
+      free: [],
+      lock: [],
+    }
+  }
+
   const query = `
     query getStakedByAddress($voters: [Bytes!]!, $endDate: BigInt!  ) {
       lock: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_lte: $endDate}) {
