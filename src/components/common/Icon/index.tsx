@@ -4,6 +4,7 @@ import { ReactComponent as ExpandIcon } from './expand.svg'
 import { ReactComponent as NextIcon } from './next.svg'
 import { ReactComponent as PreviousIcon } from './previous.svg'
 import { ReactComponent as ArrowIcon } from './arrow.svg'
+import { ReactComponent as HatIcon } from './hat.svg'
 
 const FilterIcon = (props: any) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="10.9" height="10" viewBox="0 0 10.9 10">
@@ -18,4 +19,4 @@ const FilterIcon = (props: any) => (
   </svg>
 )
 
-export { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon, FilterIcon }
+export { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon, FilterIcon, HatIcon }
