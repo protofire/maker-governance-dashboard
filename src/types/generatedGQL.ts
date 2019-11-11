@@ -26,6 +26,8 @@ export interface GetGovernanceInfoApp {
 export interface GetExecutiveVotesInfo_governanceInfo {
   __typename: 'GovernanceInfo'
   countSpells: any
+  hat: any | null
+  active: any | null
 }
 
 export interface GetExecutiveVotesInfo {
