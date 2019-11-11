@@ -29,8 +29,10 @@ import {
   getComponentData,
   Pollcolumns,
   Executivecolumns,
+  TopVotersColumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
+  getTopVoters,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -66,10 +68,17 @@ function HomeDetail(props: Props) {
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [polls, setPolls] = useState<any[]>([])
+  const [topVoters, setTopVoters] = useState<any[]>([])
 
   const pollcolumns = expanded => Pollcolumns(expanded)
   const executiveColumns = expanded => Executivecolumns(expanded)
+  const topVotersColumns = () => TopVotersColumns()
+
   const executives = data.executives
+
+  useEffect(() => {
+    setTopVoters(getTopVoters(executives, polls))
+  }, [executives, polls])
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
@@ -98,6 +107,11 @@ function HomeDetail(props: Props) {
         component: props => (
           <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
         ),
+      },
+      topVoters: {
+        data: topVoters.sort((a, b) => Number(b.count) - Number(a.count)),
+        columns: topVotersColumns,
+        component: props => <HomeTable expanded content="Top Voters" component="topVoters" {...props} />,
       },
     },
     chart: {
@@ -313,13 +327,19 @@ function HomeDetail(props: Props) {
         </CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Polls</PageSubTitle>
-      <TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
           )}
+        </TableCardStyled>
+        <CardStyled></CardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid>
+        <TableCardStyled style={{ padding: 0 }}>
+          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
         </TableCardStyled>
         <CardStyled></CardStyled>
       </TwoRowGrid>

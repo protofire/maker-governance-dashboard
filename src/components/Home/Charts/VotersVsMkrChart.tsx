@@ -12,6 +12,7 @@ const VotersVsMkrChart = props => {
         <Line
           dataKey="count"
           dot={false}
+          isAnimationActive={modalProps.data ? false : true}
           name={'Number of voters'}
           stroke="#2730a0"
           strokeWidth={2}

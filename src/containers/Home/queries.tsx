@@ -35,6 +35,25 @@ const executivesDetailFragment = gql`
     castedWith
     lifted
     liftedWith
+    timeLine(first: 1000) {
+      id
+      timestamp
+      transactionHash
+      sender
+      type: __typename
+      ... on AddAction {
+        locked
+      }
+      ... on RemoveAction {
+        locked
+      }
+      ... on LockAction {
+        wad
+      }
+      ... on FreeAction {
+        wad
+      }
+    }
   }
 `
 
@@ -44,6 +63,11 @@ const pollsDetailFragment = gql`
     creator
     url
     pollId
+    votes(first: 1000) {
+      id
+      voter
+      option
+    }
     startDate
     endDate
   }

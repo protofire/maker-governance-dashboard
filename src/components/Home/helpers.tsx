@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
-import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE } from '../../constants'
+import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE, VOTING_ACTION_ADD } from '../../constants'
 
 const periodsMap = {
   [LAST_YEAR]: getLastYear,
@@ -136,6 +136,29 @@ export const getComponentData = (
   }
 }
 
+export const TopVotersColumns = () => {
+  return [
+    {
+      Header: 'Address',
+      accessor: 'sender',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
+          </Link>
+        </>
+      ),
+    },
+    {
+      Header: 'Participations',
+      disableFilters: true,
+      accessor: 'count',
+      id: 'participations',
+    },
+  ]
+}
+
 export const Pollcolumns = (isModalOpen: boolean) => {
   return [
     {
@@ -253,4 +276,29 @@ export const getTimeTakenForExecutives = executives => {
         }
       })
     }, buckets)
+}
+
+export const getTopVoters = (executives, polls) => {
+  const executivesTimeLine = executives.flatMap(
+    vote => new Set(vote.timeLine.filter(tl => tl.type === VOTING_ACTION_ADD && tl.sender).map(el => el.sender)),
+  )
+  const votesCount = executivesTimeLine.reduce(
+    (accum, tl) => ({
+      ...accum,
+      [tl]: accum[tl] ? accum[tl] + 1 : 1,
+    }),
+    {},
+  )
+  const pollVotes = polls.flatMap(poll => poll.votes.map(v => v.voter))
+  const pollsVotesCount = pollVotes.reduce(
+    (accum, tl) => ({
+      ...accum,
+      [tl]: accum[tl] ? accum[tl] + 1 : 1,
+    }),
+    votesCount,
+  )
+  return Object.keys(pollsVotesCount).map(vp => ({
+    sender: vp,
+    count: pollsVotesCount[vp],
+  }))
 }

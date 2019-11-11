@@ -118,6 +118,22 @@ export interface GetGovernanceInfo {
 // GraphQL query operation: GetPolls
 // ====================================================
 
+export interface GetPolls_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface GetPolls_polls {
   __typename: 'Poll'
   /**
@@ -127,6 +143,7 @@ export interface GetPolls_polls {
   creator: any | null
   url: string | null
   pollId: any
+  votes: GetPolls_polls_votes[] | null
   startDate: any
   endDate: any
 }
@@ -143,6 +160,22 @@ export interface GetPolls {
 // GraphQL query operation: getHomeData
 // ====================================================
 
+export interface getHomeData_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface getHomeData_polls {
   __typename: 'Poll'
   /**
@@ -152,9 +185,112 @@ export interface getHomeData_polls {
   creator: any | null
   url: string | null
   pollId: any
+  votes: getHomeData_polls_votes[] | null
   startDate: any
   endDate: any
 }
+
+export interface getHomeData_executives_timeLine_AddAction {
+  __typename: 'AddAction'
+  /**
+   *  Equals to: <ADD | ADD-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getHomeData_executives_timeLine_RemoveAction {
+  __typename: 'RemoveAction'
+  /**
+   *  Equals to: <REMOVE | REMOVE-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getHomeData_executives_timeLine_LockAction {
+  __typename: 'LockAction'
+  /**
+   *  Equals to: <LOCK>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export interface getHomeData_executives_timeLine_FreeAction {
+  __typename: 'FreeAction'
+  /**
+   *  Equals to: <FREE>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export type getHomeData_executives_timeLine =
+  | getHomeData_executives_timeLine_AddAction
+  | getHomeData_executives_timeLine_RemoveAction
+  | getHomeData_executives_timeLine_LockAction
+  | getHomeData_executives_timeLine_FreeAction
 
 export interface getHomeData_executives {
   __typename: 'Spell'
@@ -186,6 +322,7 @@ export interface getHomeData_executives {
    *  How much MKR it has when the spell is lifted to hat
    */
   liftedWith: any | null
+  timeLine: getHomeData_executives_timeLine[] | null
 }
 
 export interface getHomeData_voters {
@@ -758,6 +895,108 @@ export interface actionsDetail {
 // GraphQL fragment: executivesDetail
 // ====================================================
 
+export interface executivesDetail_timeLine_AddAction {
+  __typename: 'AddAction'
+  /**
+   *  Equals to: <ADD | ADD-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface executivesDetail_timeLine_RemoveAction {
+  __typename: 'RemoveAction'
+  /**
+   *  Equals to: <REMOVE | REMOVE-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface executivesDetail_timeLine_LockAction {
+  __typename: 'LockAction'
+  /**
+   *  Equals to: <LOCK>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export interface executivesDetail_timeLine_FreeAction {
+  __typename: 'FreeAction'
+  /**
+   *  Equals to: <FREE>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export type executivesDetail_timeLine =
+  | executivesDetail_timeLine_AddAction
+  | executivesDetail_timeLine_RemoveAction
+  | executivesDetail_timeLine_LockAction
+  | executivesDetail_timeLine_FreeAction
+
 export interface executivesDetail {
   __typename: 'Spell'
   /**
@@ -788,6 +1027,7 @@ export interface executivesDetail {
    *  How much MKR it has when the spell is lifted to hat
    */
   liftedWith: any | null
+  timeLine: executivesDetail_timeLine[] | null
 }
 
 /* tslint:disable */
@@ -798,6 +1038,22 @@ export interface executivesDetail {
 // GraphQL fragment: pollsDetail
 // ====================================================
 
+export interface pollsDetail_votes {
+  __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface pollsDetail {
   __typename: 'Poll'
   /**
@@ -807,6 +1063,7 @@ export interface pollsDetail {
   creator: any | null
   url: string | null
   pollId: any
+  votes: pollsDetail_votes[] | null
   startDate: any
   endDate: any
 }
