@@ -240,6 +240,28 @@ export const Executivecolumns = (isModalOpen: boolean) => {
   ]
 }
 
+export const UncastedExecutivecolumns = () => {
+  return [
+    {
+      Header: 'Source',
+      accessor: 'id',
+      filter: 'fuzzyText',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+        </>
+      ),
+    },
+    {
+      Header: 'MKR in Support',
+      id: 'approvals',
+      disableFilters: true,
+      accessor: row => Number(row.approvals).toFixed(2),
+    },
+  ]
+}
+
 export const getMkrDistributionPerExecutive = (executives: Array<any>, hat: string) => {
   const result = executives.map(vote => ({
     label: format(fromUnixTime(vote.timestamp), 'dd MMM yy'),

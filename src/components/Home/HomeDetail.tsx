@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
+import { fromUnixTime, differenceInMonths } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -23,10 +24,7 @@ import {
   PageSubTitle,
 } from '../common'
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
-import { getPollData } from '../../components/PollDetails/data'
-import { getPollsBalances } from '../List/helpers'
-
-import { getModalContainer } from '../../utils'
+import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
   getVotersVsMkrData,
   getVotesVsPollsData,
@@ -36,6 +34,7 @@ import {
   Pollcolumns,
   VotedPollcolumns,
   Executivecolumns,
+  UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
 } from './helpers'
@@ -98,6 +97,8 @@ function HomeDetail(props: Props) {
   }, [cachedData.length])
 
   const executiveColumns = expanded => Executivecolumns(expanded)
+  const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
+
   const executives = data.executives
 
   const getPoll = row => {
@@ -133,6 +134,21 @@ function HomeDetail(props: Props) {
         sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
         component: props => (
           <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
+        ),
+      },
+      uncastedExecutives: {
+        data: data.executives
+          .filter(vote => !vote.casted && differenceInMonths(new Date(), fromUnixTime(vote.timestamp)) < 12)
+          .sort((a, b) => Number(b.approvals) - Number(a.approvals)),
+        columns: uncastedExecutiveColumns,
+        component: props => (
+          <HomeTable
+            expanded
+            handleRow={getVote}
+            content="Uncasted Executives"
+            component="uncastedExecutives"
+            {...props}
+          />
         ),
       },
     },
@@ -346,7 +362,9 @@ function HomeDetail(props: Props) {
         <TableCardStyled style={{ padding: 0 }}>
           <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
         </TableCardStyled>
-        <CardStyled></CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable handleRow={getVote} content="Uncasted Executives" component="uncastedExecutives" />
+        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
