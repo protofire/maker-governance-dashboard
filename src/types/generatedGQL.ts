@@ -146,6 +146,10 @@ export interface GetPolls_polls {
   votes: GetPolls_polls_votes[] | null
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
 }
 
 export interface GetPolls {
@@ -188,6 +192,10 @@ export interface getHomeData_polls {
   votes: getHomeData_polls_votes[] | null
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
 }
 
 export interface getHomeData_executives_timeLine_AddAction {
@@ -1066,6 +1074,10 @@ export interface pollsDetail {
   votes: pollsDetail_votes[] | null
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
 }
 
 /* tslint:disable */

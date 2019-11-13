@@ -6,7 +6,7 @@ const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
-const getPollVotersPerOption = poll => {
+export const getPollVotersPerOption = poll => {
   return poll.votes.reduce((acum, el) => {
     const option = acum[el.option] || []
     return {
@@ -16,7 +16,7 @@ const getPollVotersPerOption = poll => {
   }, {})
 }
 
-const getVoterRegistries = async (addresses, endDate) => {
+export const getVoterRegistries = async (addresses, endDate) => {
   // The query can't be called with empty array because it errors
   if (!addresses.length) {
     return []
@@ -55,11 +55,11 @@ export const getVoterAddresses = poll => {
   return Object.keys(pollVoters).flatMap(option => pollVoters[option])
 }
 
-const getVoteProxies = registries => {
+export const getVoteProxies = registries => {
   return Array.from(new Set(registries.flatMap((el: any) => el.voteProxies.flatMap(p => p.id))))
 }
 
-const stakedByAddress = data => {
+export const stakedByAddress = data => {
   const result = [...data.free, ...data.lock].reduce((acc, el) => {
     let current = acc[el.sender] || new BigNumber('0')
     current = el.type === 'FREE' ? current.minus(new BigNumber(el.wad)) : current.plus(new BigNumber(el.wad))
@@ -72,7 +72,7 @@ const stakedByAddress = data => {
   return result
 }
 
-const getStakedByAddress = async (addresses, endDate) => {
+export const getStakedByAddress = async (addresses, endDate) => {
   // The query can't be called with empty array because it errors
   if (!addresses.length) {
     return {
@@ -101,84 +101,6 @@ const getStakedByAddress = async (addresses, endDate) => {
   })
 
   return result
-}
-
-export const getPollData = async (poll, balancesLookup) => {
-  const votersAddresses = getVoterAddresses(poll)
-  const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
-  const voteProxies = getVoteProxies(voteRegistries)
-
-  const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
-  const stakedVoters = stakedByAddress(await getStakedByAddress(votersAddresses, poll.endDate))
-
-  const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
-  const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
-
-  const balances = votersHotCold.reduce((acc, addr) => {
-    const snapshots = balancesLookup[addr]
-    if (snapshots) {
-      const last = snapshots.find(snap => snap.timestamp <= poll.endDate)
-      if (last) {
-        return {
-          ...acc,
-          [addr]: last.amount,
-        }
-      }
-    }
-
-    return acc
-  }, {})
-
-  const stakedVotersAndBalances = votersHotCold.reduce((acc, key) => {
-    const staked = stakedVoters[key] || ZERO
-    const balance = balances[key] ? new BigNumber(balances[key]) : ZERO
-    const amount = staked.plus(balance).toString()
-
-    return {
-      ...acc,
-      [key]: amount,
-    }
-  }, {})
-
-  const lookup = getLookup(votersAddresses, voteRegistries)
-  const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
-
-  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
-    (acc, key) => {
-      const st = stakedTotal[key] || new BigNumber('0')
-      const vt = stakedVotersAndBalances[key] ? new BigNumber(stakedVotersAndBalances[key]) : new BigNumber('0')
-      const amount = st.plus(vt)
-
-      return {
-        ...acc,
-        [key]: amount,
-      }
-    },
-    {},
-  )
-
-  const votersPerOption = getPollVotersPerOption(poll)
-  const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
-    const voters = votersPerOption[op]
-    const total = voters.reduce((acc, v) => {
-      return acc.plus(mkrVoter[v])
-    }, new BigNumber('0'))
-
-    return {
-      ...acc,
-      [op]: total.toNumber().toFixed(2),
-    }
-  }, {})
-
-  const ret = poll.options.map((key, i) => {
-    return {
-      label: key,
-      mkr: mkrOptions[i + 1] || 0,
-      voter: votersPerOption[i + 1] ? votersPerOption[i + 1].length : 0,
-    }
-  })
-
-  return ret
 }
 
 export const getPollDataWithoutBalances = async poll => {
@@ -294,7 +216,7 @@ const getBalanceByAccount = balances => {
   }, {})
 }
 
-const getLookup = (addresses, registries) => {
+export const getLookup = (addresses, registries) => {
   return addresses.reduce((acc, addr) => {
     const reges = registries.reduce((acc: any, reg: any) => {
       if (addr === reg.coldAddress || addr === reg.hotAddress) {
@@ -318,9 +240,9 @@ const getLookup = (addresses, registries) => {
   }, {})
 }
 
-const ZERO = new BigNumber('0')
+export const ZERO = new BigNumber('0')
 // total staked proxy + balance hot + balance cold
-const totalStaked = (poll, lookup, balances, stakedProxies) => {
+export const totalStaked = (poll, lookup, balances, stakedProxies) => {
   let addedColHotByVoter: any = {}
 
   return getVoterAddresses(poll).reduce((acc, voter) => {

@@ -197,7 +197,29 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     },
   ]
 }
-
+export const VotedPollcolumns = () => {
+  return [
+    {
+      Header: 'Name',
+      accessor: 'title',
+      filter: 'fuzzyText',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.title}>{row.original.title}</span>
+          </Link>
+        </>
+      ),
+    },
+    {
+      Header: 'MKR participation',
+      accessor: 'participation',
+      disableFilters: true,
+      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
+    },
+  ]
+}
 export const Executivecolumns = (isModalOpen: boolean) => {
   return [
     {
@@ -237,6 +259,28 @@ export const Executivecolumns = (isModalOpen: boolean) => {
       disableFilters: true,
       Cell: ({ row }) => (row.original.lifted ? format(fromUnixTime(row.original.lifted), 'dd MMM yy') : '-'),
       show: isModalOpen,
+    },
+  ]
+}
+
+export const UncastedExecutivecolumns = () => {
+  return [
+    {
+      Header: 'Source',
+      accessor: 'id',
+      filter: 'fuzzyText',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+        </>
+      ),
+    },
+    {
+      Header: 'MKR in Support',
+      id: 'approvals',
+      disableFilters: true,
+      accessor: row => Number(row.approvals).toFixed(2),
     },
   ]
 }

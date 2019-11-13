@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
+import BigNumber from 'bignumber.js'
+import { fromUnixTime, differenceInMonths } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   VotesVsPollsChart,
@@ -8,6 +11,7 @@ import {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
 } from './Charts'
+import { DEFAULT_CACHE_TTL } from '../../constants'
 import {
   Card,
   Modal,
@@ -19,8 +23,8 @@ import {
   PageTitle,
   PageSubTitle,
 } from '../common'
-import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
-import { getModalContainer } from '../../utils'
+import { getPollsData, getMKRSupply } from '../../utils/makerdao'
+import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
   getVotersVsMkrData,
   getVotesVsPollsData,
@@ -28,8 +32,10 @@ import {
   defaultFilters,
   getComponentData,
   Pollcolumns,
+  VotedPollcolumns,
   Executivecolumns,
   TopVotersColumns,
+  UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
@@ -51,6 +57,14 @@ const Loading = () => (
   </SpinnerContainer>
 )
 
+const getParticipation = (data, mkrSupply) => {
+  const totalMkr: BigNumber = data.reduce((acc, value) => acc.plus(new BigNumber(value.mkr)), new BigNumber('0'))
+  return totalMkr
+    .times(100)
+    .div(mkrSupply)
+    .toString()
+}
+
 const TABLE_PREVIEW = 5
 
 type Props = {
@@ -64,21 +78,37 @@ function HomeDetail(props: Props) {
   const { data, gData, history } = props
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
+  const cachedDataPoll = lscache.get('home-polls') || []
+  const cachedDataTopVoters = lscache.get('home-topVoters') || []
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
+  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
+  const [pollsBalances, setBalances] = useState<any>({})
+
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const [polls, setPolls] = useState<any[]>([])
-  const [topVoters, setTopVoters] = useState<any[]>([])
+  const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
+  const [polls, setPolls] = useState<any[]>(cachedDataPoll)
 
   const pollcolumns = expanded => Pollcolumns(expanded)
+  const votedPollcolumns = () => VotedPollcolumns()
+
+  useEffect(() => {
+    if (cachedDataPoll.length === 0) getPollsBalances(polls).then(balances => setBalances(balances))
+  }, [polls, cachedDataPoll.length])
+
+  useEffect(() => {
+    if (cachedDataPoll.length === 0) getMKRSupply().then(supply => setMkrSupply(supply))
+  }, [cachedDataPoll.length])
+
   const executiveColumns = expanded => Executivecolumns(expanded)
   const topVotersColumns = () => TopVotersColumns()
+  const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
 
   const executives = data.executives
 
   useEffect(() => {
-    setTopVoters(getTopVoters(executives, polls))
-  }, [executives, polls])
+    if (cachedDataTopVoters.length === 0) setTopVoters(getTopVoters(executives, polls))
+  }, [executives, polls, cachedDataTopVoters.length])
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
@@ -100,6 +130,13 @@ function HomeDetail(props: Props) {
           <HomeTable handleRow={getPoll} expanded content="Most Recent Polls" component="polls" {...props} />
         ),
       },
+      votedPolls: {
+        data: polls.sort((a, b) => Number(b.participation) - Number(a.participation)),
+        columns: votedPollcolumns,
+        component: props => (
+          <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
+        ),
+      },
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
         columns: expanded => executiveColumns(expanded),
@@ -112,6 +149,21 @@ function HomeDetail(props: Props) {
         data: topVoters.sort((a, b) => Number(b.count) - Number(a.count)),
         columns: topVotersColumns,
         component: props => <HomeTable expanded content="Top Voters" component="topVoters" {...props} />,
+      },
+      uncastedExecutives: {
+        data: data.executives
+          .filter(vote => !vote.casted && differenceInMonths(new Date(), fromUnixTime(vote.timestamp)) < 12)
+          .sort((a, b) => Number(b.approvals) - Number(a.approvals)),
+        columns: uncastedExecutiveColumns,
+        component: props => (
+          <HomeTable
+            expanded
+            handleRow={getVote}
+            content="Uncasted Executives"
+            component="uncastedExecutives"
+            {...props}
+          />
+        ),
       },
     },
     chart: {
@@ -277,15 +329,27 @@ function HomeDetail(props: Props) {
   }
 
   useEffect(() => {
-    Promise.all([getPollsData(data.polls), getMakerDaoData()])
-      .then(result => {
-        const polls = result[0].filter(Boolean)
+    if (mkrSupply && cachedDataPoll.length === 0) {
+      getPollsData(data.polls).then(result => {
+        const polls = result.filter(Boolean)
         setPolls([...polls])
+        Promise.all(
+          polls.map(poll => {
+            return getPollData(poll, pollsBalances).then(data => {
+              return { ...poll, participation: getParticipation(data, mkrSupply) }
+            })
+          }),
+        ).then(pollsWithPluralityAndParticipation => {
+          setPolls(pollsWithPluralityAndParticipation)
+        })
       })
-      .catch(error => {
-        console.log(error)
-      })
-  }, [data])
+    }
+  }, [data.polls, cachedDataPoll.length, mkrSupply, pollsBalances])
+
+  useEffect(() => {
+    lscache.set('home-polls', polls, DEFAULT_CACHE_TTL)
+    lscache.set('home-topVoters', topVoters, DEFAULT_CACHE_TTL)
+  }, [polls, topVoters])
 
   return (
     <>
@@ -308,12 +372,21 @@ function HomeDetail(props: Props) {
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
         </CardStyled>
       </TwoRowGrid>
+      <PageSubTitle>Voter Behaviour</PageSubTitle>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <TableCardStyled style={{ padding: 0 }}>
+          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+        </TableCardStyled>
+        <CardStyled></CardStyled>
+      </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
           <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
         </TableCardStyled>
-        <CardStyled></CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable handleRow={getVote} content="Uncasted Executives" component="uncastedExecutives" />
+        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
@@ -329,19 +402,15 @@ function HomeDetail(props: Props) {
       <PageSubTitle>Polls</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
+          {polls.length === 0 ? <Loading /> : <HomeTable content="Most Voted Polls" component="votedPolls" />}
+        </TableCardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
             <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
           )}
         </TableCardStyled>
-        <CardStyled></CardStyled>
-      </TwoRowGrid>
-      <TwoRowGrid>
-        <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
-        </TableCardStyled>
-        <CardStyled></CardStyled>
       </TwoRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>
