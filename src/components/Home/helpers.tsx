@@ -174,7 +174,29 @@ export const Pollcolumns = (isModalOpen: boolean) => {
     },
   ]
 }
-
+export const VotedPollcolumns = () => {
+  return [
+    {
+      Header: 'Name',
+      accessor: 'title',
+      filter: 'fuzzyText',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.title}>{row.original.title}</span>
+          </Link>
+        </>
+      ),
+    },
+    {
+      Header: 'MKR participation',
+      accessor: 'participation',
+      disableFilters: true,
+      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
+    },
+  ]
+}
 export const Executivecolumns = (isModalOpen: boolean) => {
   return [
     {

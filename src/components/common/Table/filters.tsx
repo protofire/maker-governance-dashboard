@@ -18,7 +18,7 @@ const FilterWrapper = styled.div`
     border-right: 6px solid transparent;
     content: '';
     height: 0;
-    left: calc(50% - 3px);
+    left: calc(12% - 3px);
     position: absolute;
     top: -6px;
     width: 0;
@@ -26,12 +26,12 @@ const FilterWrapper = styled.div`
   }
 
   &::after {
-    border-bottom: 8px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 7px solid rgba(0, 0, 0, 0.05);
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     content: '';
     height: 0;
-    left: calc(50% - 5px);
+    left: calc(12% - 5px);
     position: absolute;
     top: -7px;
     width: 0;
@@ -56,7 +56,6 @@ const SearchField = styled.input`
   height: 38px;
   outline: none;
   padding: 0 12px;
-  width: 100%;
 
   &::placeholder {
     color: ${props => props.theme.colors.textLight};

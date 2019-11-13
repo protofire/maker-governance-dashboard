@@ -1,6 +1,18 @@
 import React from 'react'
 import { request } from 'graphql-request'
+import BigNumber from 'bignumber.js'
 import { IconContainer, CloseIcon } from '../components/common'
+import {
+  getVoterAddresses,
+  getVoterRegistries,
+  getVoteProxies,
+  stakedByAddress,
+  getStakedByAddress,
+  ZERO,
+  getLookup,
+  totalStaked,
+  getPollVotersPerOption,
+} from '../components/PollDetails/data'
 
 import {
   startOfMonth,
@@ -204,4 +216,107 @@ export const getVoterBalances = async (address, endDate) => {
   }
 
   return result
+}
+
+export const getPollData = async (poll, balancesLookup) => {
+  const votersAddresses = getVoterAddresses(poll)
+  const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
+  const voteProxies = getVoteProxies(voteRegistries)
+
+  const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
+  const stakedVoters = stakedByAddress(await getStakedByAddress(votersAddresses, poll.endDate))
+
+  const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
+  const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
+
+  const balances = votersHotCold.reduce((acc, addr) => {
+    const snapshots = balancesLookup[addr]
+    if (snapshots) {
+      const last = snapshots.find(snap => snap.timestamp <= poll.endDate)
+      if (last) {
+        return {
+          ...acc,
+          [addr]: last.amount,
+        }
+      }
+    }
+
+    return acc
+  }, {})
+
+  const stakedVotersAndBalances = votersHotCold.reduce((acc, key) => {
+    const staked = stakedVoters[key] || ZERO
+    const balance = balances[key] ? new BigNumber(balances[key]) : ZERO
+    const amount = staked.plus(balance).toString()
+
+    return {
+      ...acc,
+      [key]: amount,
+    }
+  }, {})
+
+  const lookup = getLookup(votersAddresses, voteRegistries)
+  const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
+
+  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
+    (acc, key) => {
+      const st = stakedTotal[key] || new BigNumber('0')
+      const vt = stakedVotersAndBalances[key] ? new BigNumber(stakedVotersAndBalances[key]) : new BigNumber('0')
+      const amount = st.plus(vt)
+
+      return {
+        ...acc,
+        [key]: amount,
+      }
+    },
+    {},
+  )
+
+  const votersPerOption = getPollVotersPerOption(poll)
+  const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
+    const voters = votersPerOption[op]
+    const total = voters.reduce((acc, v) => {
+      return acc.plus(mkrVoter[v])
+    }, ZERO)
+
+    return {
+      ...acc,
+      [op]: total.toNumber().toFixed(2),
+    }
+  }, {})
+
+  const ret = poll.options.map((key, i) => {
+    return {
+      label: key,
+      mkr: mkrOptions[i + 1] || 0,
+      voter: votersPerOption[i + 1] ? votersPerOption[i + 1].length : 0,
+    }
+  })
+
+  return ret
+}
+
+export const getPollsBalances = async polls => {
+  const now = new Date()
+  const allVoters = Array.from(
+    new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(now))))
+  return allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
+    }
+  }, {})
 }
