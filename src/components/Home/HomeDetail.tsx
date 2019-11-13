@@ -118,7 +118,7 @@ function HomeDetail(props: Props) {
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => (
-          <HomeTable handleRow={getPoll} expanded content="Most Recent Polls" component="polls" {...props} />
+          <HomeTable handleRow={getPoll} expanded content="Recent Polls" component="polls" {...props} />
         ),
       },
       votedPolls: {
@@ -158,8 +158,8 @@ function HomeDetail(props: Props) {
         component: props => (
           <VotersVsMkr
             expanded
-            content="Number of voters"
-            versus="Total MKR staked"
+            content="Number of Voters"
+            versus="Total MKR Staked"
             component="votersVsMkr"
             {...props}
           />
@@ -189,7 +189,7 @@ function HomeDetail(props: Props) {
         component: props => (
           <TimeTakenForExecutives
             expanded
-            content="Executive Votes - Time Taken To Pass"
+            content="Executive Time to Pass"
             component="timeTakenForExecutives"
             {...props}
           />
@@ -342,16 +342,12 @@ function HomeDetail(props: Props) {
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled></CardStyled>
         <CardStyled>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
+          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
         </CardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          {polls.length === 0 ? (
-            <Loading />
-          ) : (
-            <VotesVsPolls content="Total Votes" versus="Polls" component="votesVsPolls" />
-          )}
+          {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
         </CardStyled>
         <CardStyled>
           <Gini content="Voting MKR Gini Coefficient" component="gini" />
@@ -368,7 +364,7 @@ function HomeDetail(props: Props) {
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          <TimeTakenForExecutives content="Executive Votes - Time Taken To Pass" component="timeTakenForExecutives" />
+          <TimeTakenForExecutives content="Executive Time to Pass" component="timeTakenForExecutives" />
         </CardStyled>
         <CardStyled>
           <MkrDistributionPerExecutive
@@ -386,7 +382,7 @@ function HomeDetail(props: Props) {
           {polls.length === 0 ? (
             <Loading />
           ) : (
-            <HomeTable handleRow={getPoll} content="Most Recent Polls" component="polls" />
+            <HomeTable handleRow={getPoll} content="Recent Polls" component="polls" />
           )}
         </TableCardStyled>
       </TwoRowGrid>
