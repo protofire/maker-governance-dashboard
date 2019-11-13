@@ -9,8 +9,8 @@ import {
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances } from '../../utils'
-import { getPollData, getVoterAddresses, getPollDataWithoutBalances } from './data'
+import { shortenAccount, timeLeft, getVoterBalances, getPollData } from '../../utils'
+import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
 import { getUnixTime } from 'date-fns/esm'
 

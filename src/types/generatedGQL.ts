@@ -118,6 +118,18 @@ export interface GetGovernanceInfo {
 // GraphQL query operation: GetPolls
 // ====================================================
 
+export interface GetPolls_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface GetPolls_polls {
   __typename: 'Poll'
   /**
@@ -129,6 +141,11 @@ export interface GetPolls_polls {
   pollId: any
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+  votes: GetPolls_polls_votes[] | null
 }
 
 export interface GetPolls {
@@ -143,6 +160,18 @@ export interface GetPolls {
 // GraphQL query operation: getHomeData
 // ====================================================
 
+export interface getHomeData_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface getHomeData_polls {
   __typename: 'Poll'
   /**
@@ -154,6 +183,11 @@ export interface getHomeData_polls {
   pollId: any
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+  votes: getHomeData_polls_votes[] | null
 }
 
 export interface getHomeData_executives {
@@ -798,6 +832,18 @@ export interface executivesDetail {
 // GraphQL fragment: pollsDetail
 // ====================================================
 
+export interface pollsDetail_votes {
+  __typename: 'PollVote'
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+}
+
 export interface pollsDetail {
   __typename: 'Poll'
   /**
@@ -809,6 +855,11 @@ export interface pollsDetail {
   pollId: any
   startDate: any
   endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+  votes: pollsDetail_votes[] | null
 }
 
 /* tslint:disable */
