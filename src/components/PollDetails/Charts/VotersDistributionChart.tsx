@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Line, YAxis } from 'recharts'
 import { defaultColors } from './'
-import { Chart, ChartWrapper } from '../../common'
+import { Chart, ChartWrapper, LegendLi } from '../../common'
+import { CustomSvg } from '../../common/Icon'
 
 const VotersDistributionChart = props => {
   const [selectedLines, setSelectedLine] = useState<any>([])
@@ -16,9 +17,30 @@ const VotersDistributionChart = props => {
   const { wrapperProps, modalProps, options, colors } = props
   const chartColors = [...defaultColors, ...colors]
 
+  const renderLegend = props => {
+    const { payload, onMouseEnter, onMouseLeave, onClick } = props
+    return (
+      <ul className="recharts-default-legend" style={{ listStyleType: 'none' }}>
+        {payload.map((entry, index) => (
+          <LegendLi
+            onMouseEnter={() => onMouseEnter(entry)}
+            onMouseLeave={() => onMouseLeave(entry)}
+            onClick={() => onClick(entry)}
+            disabledValue={selectedLines.includes(entry.value)}
+            className={`recharts-legend-item legend-item-${index}`}
+            key={`item-${index}`}
+          >
+            <CustomSvg color={entry.color} />
+            <span>{entry.value}</span>
+          </LegendLi>
+        ))}
+      </ul>
+    )
+  }
+
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
-      <Chart getOpacity={getOpacities} handleLegend={selectLine} scale="point" {...modalProps}>
+      <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} scale="point" {...modalProps}>
         <YAxis />
         {options.map((option, i) => (
           <Line

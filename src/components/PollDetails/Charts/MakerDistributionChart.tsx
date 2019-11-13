@@ -1,16 +1,8 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import { Line, YAxis } from 'recharts'
 import { defaultColors } from './'
-import { Chart, ChartWrapper } from '../../common'
+import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
-
-const LegendLi = styled.li`
-  display: inline-block;
-  margin-right: 10px;
-  cursor: pointer;
-  opacity: ${props => (props.disabledValue ? '0.6' : '1')};
-`
 
 const MakerDistributionChart = props => {
   const [selectedLines, setSelectedLine] = useState<any>([])
