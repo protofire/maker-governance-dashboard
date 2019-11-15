@@ -186,7 +186,7 @@ export function getPollsData(polls) {
 }
 
 export async function getMKRSupply() {
-  const url: any = new URL(MKR_SUPPLY_API || ''),
+  const url: any = new URL(MKR_SUPPLY_API || '/etherscan-api'),
     params = {
       module: 'stats',
       action: 'tokensupply',
