@@ -31,4 +31,4 @@
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
-  REACT_APP_ETHERSCAN_API_URI=REACT_APP_ETHERSCAN_API_URI='/etherscan-api'
+  REACT_APP_ETHERSCAN_API_URI='/etherscan-api'
