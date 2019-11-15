@@ -90,10 +90,16 @@ function PollDetails(props: Props) {
           <MakerDistribution expanded content="MKR Count By Option" component="makerDistribution" {...props} />
         ),
       },
-      pollPerOption: {
+      pollPerOptionVoters: {
         data: pollPerOptionData,
         component: props => (
-          <PollPerOption expanded content="Voters" versus="MKR Voter Per Option" component="pollPerOption" {...props} />
+          <PollPerOption isVoter expanded content="Voters Per Option" component="pollPerOptionVoters" {...props} />
+        ),
+      },
+      pollPerOptionMkr: {
+        data: pollPerOptionData,
+        component: props => (
+          <PollPerOption expanded content="MKR Voter Per Option" component="pollPerOptionMkr" {...props} />
         ),
       },
     },
@@ -178,6 +184,7 @@ function PollDetails(props: Props) {
       <PollPerOptionChart
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
+        isVoter={props.isVoter}
       />
     )
   }
@@ -221,7 +228,7 @@ function PollDetails(props: Props) {
           <TimeLeft content="Time left" component="timeLeft" />
         </CardStyled>
       </ThreeRowGrid>
-      <ThreeRowGrid>
+      <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
         </CardStyled>
@@ -229,9 +236,18 @@ function PollDetails(props: Props) {
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
-            <PollPerOption content="Voters" versus="MKR Voter Per Option" component="pollPerOption" />
+            <PollPerOption content="Voters Per Option" isVoter component="pollPerOptionVoters" />
           )}
         </CardStyled>
+        <CardStyled>
+          {pollPerOptionData.length === 0 ? (
+            <Loading />
+          ) : (
+            <PollPerOption content="MKR Voter Per Option" component="pollPerOptionMkr" />
+          )}
+        </CardStyled>
+      </ThreeRowGrid>
+      <ThreeRowGrid>
         <CardStyled>
           {mkrDistributionData.length === 0 ? (
             <Loading />
