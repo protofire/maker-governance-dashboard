@@ -3,6 +3,11 @@
   command = "npm run build"
 
 [[redirects]]
+  from = "/etherscan-api"
+  to = "https://api.etherscan.io/api"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -11,16 +16,19 @@
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance-v2"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance-v2"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
-  ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_URI='/etherscan-api'
 
 [context.branch-deploy.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
-  ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_URI='/etherscan-api'
 
 [context.deploy-preview.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/lmcorbalan/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
-  ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
+  REACT_APP_ETHERSCAN_API_URI='/etherscan-api'

@@ -9,8 +9,7 @@ const path = 'content/governance-dashboard'
 
 const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
 
-const MKR_SUPPLY_API =
-  'https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2&apikey='
+const MKR_SUPPLY_API = process.env.REACT_APP_ETHERSCAN_API_URI
 const PRECISION = new BigNumber('10').exponentiatedBy(18)
 
 const check = async res => {
@@ -187,8 +186,16 @@ export function getPollsData(polls) {
 }
 
 export async function getMKRSupply() {
+  const url: any = new URL(MKR_SUPPLY_API || ''),
+    params = {
+      module: 'stats',
+      action: 'tokensupply',
+      contractaddress: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
+      apikey: process.env.REACT_APP_ETHERSCAN_API_KEY,
+    }
+  Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
   try {
-    const res = await fetch(`${MKR_SUPPLY_API}${process.env.ETHERSCAN_API_KEY}`)
+    const res = await fetch(url)
     if (!res.ok) {
       throw new Error(`unable to fetch MKR supply: ${res.status} - ${await res.text()}`)
     }
