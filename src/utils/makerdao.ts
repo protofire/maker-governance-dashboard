@@ -186,14 +186,7 @@ export function getPollsData(polls) {
 }
 
 export async function getMKRSupply() {
-  const url: any = new URL(MKR_SUPPLY_API || '/etherscan-api', document.location.origin),
-    params = {
-      module: 'stats',
-      action: 'tokensupply',
-      contractaddress: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
-      apikey: process.env.REACT_APP_ETHERSCAN_API_KEY,
-    }
-  Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+  const url: any = new URL(MKR_SUPPLY_API || '/etherscan-api', document.location.origin)
   try {
     const res = await fetch(url)
     if (!res.ok) {
