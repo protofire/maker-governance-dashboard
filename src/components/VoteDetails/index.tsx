@@ -80,8 +80,8 @@ function VoteDetails(props: Props) {
         component: props => (
           <VotersVsMkr
             expanded
-            content="Number of voters"
-            versus="Total MKR staked"
+            content="Number of Voters"
+            versus="Total MKR Staked"
             component="votersVsMkr"
             {...props}
           />
@@ -214,7 +214,7 @@ function VoteDetails(props: Props) {
           )}
         </CardStyled>
         <CardStyled style={{ gridArea: 'col4' }}>
-          <VotersVsMkr content="Number of voters" versus="Total MKR staked" component="votersVsMkr" />
+          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
         </CardStyled>
         <CardStyled style={{ gridArea: 'col5' }}>
           <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
