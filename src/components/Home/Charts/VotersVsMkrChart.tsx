@@ -15,7 +15,7 @@ const VotersVsMkrChart = props => {
           strokeOpacity={opacities.count}
           dataKey="count"
           dot={false}
-          name={'Number of voters'}
+          name={'Number of Voters'}
           stroke="#2730a0"
           strokeWidth={2}
           type="monotone"
@@ -26,7 +26,7 @@ const VotersVsMkrChart = props => {
           strokeOpacity={opacities.mkr}
           dot={false}
           isAnimationActive={modalProps.data ? false : true}
-          name={'Total MKR staked'}
+          name={'Total MKR Staked'}
           stroke="#27a02c"
           strokeWidth={2}
           type="monotone"

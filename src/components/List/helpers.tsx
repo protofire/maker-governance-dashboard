@@ -50,6 +50,14 @@ export const Pollcolumns = () => {
       width: 80,
     },
     {
+      Header: 'Total MKR Staked',
+      accessor: 'total-mkr',
+      disableFilters: true,
+      sortType: (a, b) => a.original.plurality.totalMkr - b.original.plurality.totalMkr,
+      Cell: ({ row }) => (row.original.plurality ? row.original.plurality.totalMkr : <Loading />),
+      width: 80,
+    },
+    {
       Header: 'MKR Participation',
       accessor: 'participation',
       separator: true,
