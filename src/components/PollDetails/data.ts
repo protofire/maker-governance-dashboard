@@ -163,7 +163,6 @@ export const getPollDataWithoutBalances = async poll => {
       voter: votersPerOption[i + 1] ? votersPerOption[i + 1].length : 0,
     }
   })
-
   return ret
 }
 
