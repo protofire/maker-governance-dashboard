@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { ComposedChart, XAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Select } from '../styled'
@@ -32,8 +32,48 @@ const ChartContainer = styled(ResponsiveContainer)`
     }
   }
 `
+
 const ChartComponent = React.memo(function Chart(props: any) {
-  const { data, width, height, children, modalStyles, xLabel, showXaxis, legend, scale } = props
+  const {
+    data,
+    width,
+    height,
+    children,
+    modalStyles,
+    xLabel,
+    showXaxis,
+    legend,
+    scale,
+    handleLegend,
+    getOpacity,
+  } = props
+
+  const setInitialOpacity = legends => {
+    const opacities = legends.reduce(
+      (accum, legend) => ({
+        ...accum,
+        [legend]: 1,
+      }),
+      {},
+    )
+    getOpacity && getOpacity(opacities)
+    return opacities
+  }
+  const legends = Object.keys(data[0])
+  const [opacity, setOpacity] = useState(setInitialOpacity(legends))
+
+  useEffect(() => {
+    getOpacity && getOpacity(opacity)
+  }, [opacity, getOpacity])
+  const handleMouseEnter = o => {
+    const { dataKey } = o
+    setOpacity(current => ({ ...current, [dataKey]: 0.5 }))
+  }
+
+  const handleMouseLeave = o => {
+    const { dataKey } = o
+    setOpacity(current => ({ ...current, [dataKey]: 1 }))
+  }
   return (
     <>
       <ChartContainer {...modalStyles}>
@@ -46,7 +86,16 @@ const ChartComponent = React.memo(function Chart(props: any) {
             tick={{ fill: '#cccccc', fontSize: 10 }}
           />
           <Tooltip />
-          <Legend data={data} content={legend} iconType="rect" align="left" verticalAlign="bottom" />
+          <Legend
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleLegend}
+            data={data}
+            content={legend}
+            iconType="rect"
+            align="left"
+            verticalAlign="bottom"
+          />
           {children}
         </ComposedChart>
       </ChartContainer>

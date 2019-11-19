@@ -19,4 +19,23 @@ const FilterIcon = (props: any) => (
   </svg>
 )
 
-export { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon, FilterIcon, HatIcon }
+const CustomSvg = (props: any) => (
+  <>
+    {/*
+ // @ts-ignore */}
+    <svg
+      className="recharts-surface"
+      width="14"
+      height="14"
+      viewBox="0 0 32 32"
+      version="1.1"
+      style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }}
+    >
+      {/*
+ // @ts-ignore */}
+      <path stroke="none" fill={props.color} d="M0,4h32v24h-32z" className="recharts-legend-icon"></path>
+    </svg>
+  </>
+)
+
+export { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon, FilterIcon, HatIcon, CustomSvg }

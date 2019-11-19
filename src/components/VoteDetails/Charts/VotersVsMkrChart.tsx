@@ -13,7 +13,7 @@ const VotersVsMkrChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={'Number of voters'}
+          name={'Number of Voters'}
           stroke="#2730a0"
           strokeWidth={2}
           type="monotone"
@@ -23,7 +23,7 @@ const VotersVsMkrChart = props => {
         <Line
           isAnimationActive={modalProps.data ? false : true}
           dot={false}
-          name={'Total MKR staked'}
+          name={'Total MKR Staked'}
           stroke="#27a02c"
           strokeWidth={2}
           type="monotone"

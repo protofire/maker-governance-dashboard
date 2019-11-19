@@ -14,6 +14,7 @@ import {
   StrippedTableRow,
   StrippedTableCell,
   ThreeRowGrid,
+  StrippedRowsContainer,
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { DEFAULT_CACHE_TTL } from '../../constants'
@@ -26,6 +27,8 @@ import {
   getPollPerOptionData,
   getPollVotersHistogramData,
   getPollMakerHistogramData,
+  getTopVoters,
+  getTopVotersTableData,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -53,8 +56,16 @@ function PollDetails(props: Props) {
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [pollPerOptionData, setPollPerOptionData] = useState<any>(pollPerOptionCached)
   const [mkrDistributionData, setMkrDistributionData] = useState<any>(mkrDistributionCached)
+  const [topVoters, setTopVoters] = useState({})
+
+  const timeLeftData = getTimeLeftData(poll.startDate, poll.endDate)
 
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
+
+  useEffect(() => {
+    getTopVoters(poll).then(data => setTopVoters(data))
+  }, [poll])
+
   useEffect(() => {
     if (pollPerOptionCached.length === 0) getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
 
@@ -75,7 +86,7 @@ function PollDetails(props: Props) {
     },
     chart: {
       timeLeft: {
-        data: getTimeLeftData(poll.startDate, poll.endDate),
+        data: timeLeftData,
         component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
       },
       votersDistribution: {
@@ -209,12 +220,16 @@ function PollDetails(props: Props) {
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Details">
-            {getPollTableData(poll).map(el => (
-              <StrippedTableRow key={el.label}>
-                <StrippedTableCell>{el.label}</StrippedTableCell>
-                <StrippedTableCell>{el.value}</StrippedTableCell>
-              </StrippedTableRow>
-            ))}
+            {mkrDistributionData.length === 0 ? (
+              <Loading />
+            ) : (
+              getPollTableData(poll, mkrDistributionData).map(el => (
+                <StrippedTableRow key={el.label}>
+                  <StrippedTableCell>{el.label}</StrippedTableCell>
+                  <StrippedTableCell>{el.value}</StrippedTableCell>
+                </StrippedTableRow>
+              ))
+            )}
           </StrippedTableWrapper>
         </CardStyled>
         <CardStyled>
@@ -256,6 +271,27 @@ function PollDetails(props: Props) {
           )}
         </CardStyled>
       </ThreeRowGrid>
+      <ThreeRowGrid>
+        <CardStyled style={{ padding: 0 }}>
+          <StrippedTableWrapper content="Top Voters">
+            <StrippedRowsContainer>
+              {Object.keys(topVoters).length === 0 ? (
+                <Loading />
+              ) : (
+                getTopVotersTableData(topVoters)
+                  .slice(0, 8)
+                  .map(el => (
+                    <StrippedTableRow key={el.sender}>
+                      <StrippedTableCell>{el.supports}%</StrippedTableCell>
+                      <StrippedTableCell>{el.sender}</StrippedTableCell>
+                    </StrippedTableRow>
+                  ))
+              )}
+            </StrippedRowsContainer>
+          </StrippedTableWrapper>
+        </CardStyled>
+      </ThreeRowGrid>
+
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
           {getModalContainer(voteMap[modalData.type][modalData.component].component)}
