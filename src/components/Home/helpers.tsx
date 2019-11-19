@@ -323,8 +323,8 @@ export const getTimeTakenForExecutives = executives => {
 }
 
 export const getTopVoters = (executives, polls) => {
-  const executivesTimeLine = executives.flatMap(
-    vote => new Set(vote.timeLine.filter(tl => tl.type === VOTING_ACTION_ADD && tl.sender).map(el => el.sender)),
+  const executivesTimeLine = executives.flatMap(vote =>
+    Array.from(new Set(vote.timeLine.filter(tl => tl.type === VOTING_ACTION_ADD && tl.sender).map(el => el.sender))),
   )
   const votesCount = executivesTimeLine.reduce(
     (accum, tl) => ({
