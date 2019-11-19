@@ -58,6 +58,8 @@ function PollDetails(props: Props) {
   const [mkrDistributionData, setMkrDistributionData] = useState<any>(mkrDistributionCached)
   const [topVoters, setTopVoters] = useState({})
 
+  const timeLeftData = getTimeLeftData(poll.startDate, poll.endDate)
+
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
   useEffect(() => {
@@ -84,7 +86,7 @@ function PollDetails(props: Props) {
     },
     chart: {
       timeLeft: {
-        data: getTimeLeftData(poll.startDate, poll.endDate),
+        data: timeLeftData,
         component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
       },
       votersDistribution: {
@@ -211,12 +213,16 @@ function PollDetails(props: Props) {
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Details">
-            {getPollTableData(poll).map(el => (
-              <StrippedTableRow key={el.label}>
-                <StrippedTableCell>{el.label}</StrippedTableCell>
-                <StrippedTableCell>{el.value}</StrippedTableCell>
-              </StrippedTableRow>
-            ))}
+            {mkrDistributionData.length === 0 ? (
+              <Loading />
+            ) : (
+              getPollTableData(poll, mkrDistributionData).map(el => (
+                <StrippedTableRow key={el.label}>
+                  <StrippedTableCell>{el.label}</StrippedTableCell>
+                  <StrippedTableCell>{el.value}</StrippedTableCell>
+                </StrippedTableRow>
+              ))
+            )}
           </StrippedTableWrapper>
         </CardStyled>
         <CardStyled>
