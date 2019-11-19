@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const VotersVsMkrChart = props => {
+  const [opacities, setOpacities] = useState({ count: 1, mkr: 1 })
   const { wrapperProps, modalProps } = props
+  const getOpacities = opacities => setOpacities(opacities)
   return (
     <ChartWrapper {...wrapperProps}>
-      <Chart {...modalProps}>
+      <Chart getOpacity={getOpacities} {...modalProps}>
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />
         <Line
+          strokeOpacity={opacities.count}
           dataKey="count"
           dot={false}
           name={'Number of Voters'}
@@ -20,6 +23,7 @@ const VotersVsMkrChart = props => {
         />
         <Line
           dataKey="mkr"
+          strokeOpacity={opacities.mkr}
           dot={false}
           isAnimationActive={modalProps.data ? false : true}
           name={'Total MKR Staked'}

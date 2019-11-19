@@ -28,6 +28,7 @@ import {
   TwoRowGrid,
   Versus,
   ViewAll,
+  LegendLi,
 } from './styled'
 
 export {
@@ -64,4 +65,5 @@ export {
   Versus,
   ViewAll,
   TwoRowGrid,
+  LegendLi,
 }
