@@ -93,16 +93,6 @@ export interface GetExecutivesVotesDataVariables {
 export interface GetGovernanceInfo_governanceInfo {
   __typename: 'GovernanceInfo'
   id: string
-  countProxies: any
-  countAddresses: any
-  countSlates: any
-  countSpells: any
-  countLock: any
-  countFree: any
-  countPolls: any
-  locked: any
-  lastBlock: any
-  lastSynced: any
   hat: any | null
 }
 
@@ -522,7 +512,7 @@ export interface GetPollsDataVariables {
 // GraphQL query operation: GetSpell
 // ====================================================
 
-export interface GetSpell_spell {
+export interface GetSpell_spells {
   __typename: 'Spell'
   /**
    *  ID represent the contract address
@@ -560,11 +550,7 @@ export interface GetSpell_spell {
 }
 
 export interface GetSpell {
-  spell: GetSpell_spell | null
-}
-
-export interface GetSpellVariables {
-  id: string
+  spells: GetSpell_spells[]
 }
 
 /* tslint:disable */

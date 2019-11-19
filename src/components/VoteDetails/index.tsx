@@ -13,7 +13,7 @@ import {
   StrippedTableRow,
 } from '../common'
 import { getModalContainer } from '../../utils'
-import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
+import { VotersVsMkrChart, ApprovalsByAddressChart, ExecutiveVsHatChart } from './Charts'
 import {
   defaultFilters,
   getApprovalsByAddress,
@@ -22,6 +22,7 @@ import {
   getTopSupportersTableData,
   getVoteTableData,
   getVotersVsMkrData,
+  getExecutiveVsHat,
 } from './helpers'
 
 const VoteDetailContainer = styled.div`
@@ -55,10 +56,12 @@ const CardStyled = styled(Card)`
 type Props = {
   vote: any
   votingActions: Array<any>
+  executives: Array<any>
+  governanceInfo: any
 }
 
 function VoteDetails(props: Props) {
-  const { vote, votingActions } = props
+  const { vote, votingActions, executives, governanceInfo } = props
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
@@ -80,6 +83,18 @@ function VoteDetails(props: Props) {
             content="Number of voters"
             versus="Total MKR staked"
             component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+      executiveVsHat: {
+        data: getExecutiveVsHat(vote, executives, governanceInfo.hat),
+        component: props => (
+          <ExecutiveVsHat
+            expanded
+            content="Executive vote"
+            versus="Current Hat"
+            component="executiveVsHat"
             {...props}
           />
         ),
@@ -136,6 +151,17 @@ function VoteDetails(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     return (
       <VotersVsMkrChart
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
+      />
+    )
+  }
+
+  // Executive vs current hat
+  const ExecutiveVsHat = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    return (
+      <ExecutiveVsHatChart
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
       />
@@ -206,6 +232,9 @@ function VoteDetails(props: Props) {
                 ))}
             </StrippedRowsContainer>
           </StrippedTableWrapper>
+        </CardStyled>
+        <CardStyled>
+          <ExecutiveVsHat content="Executive vote" versus="Current Hat" component="executiveVsHat" />
         </CardStyled>
       </VoteDetailContainer>
       {isModalOpen && (

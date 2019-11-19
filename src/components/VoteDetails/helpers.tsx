@@ -146,3 +146,35 @@ export const getApprovalsByAddress = (votingActions: Array<any>): Array<any> => 
     })
   }, buckets)
 }
+
+export const getExecutiveVsHat = (vote, executives, hat) => {
+  const data = [
+    {
+      mkr: Number(vote.approvals).toFixed(2),
+      isHat: false,
+      casted: !!vote.casted,
+    },
+  ]
+
+  if (vote.id === hat) {
+    const nextVote = executives
+      .filter(v => v.id !== hat && v.id !== vote.id)
+      .reduce((max, vote) => (max.votes > vote.approvals ? max : vote))
+    return [
+      ...data,
+      {
+        mkr: Number(nextVote.approvals).toFixed(2),
+        isNext: true,
+      },
+    ]
+  } else {
+    const hatVote = executives.find(vote => vote.id === hat)
+    return [
+      ...data,
+      {
+        mkr: Number(hatVote.approvals).toFixed(2),
+        isHat: true,
+      },
+    ]
+  }
+}
