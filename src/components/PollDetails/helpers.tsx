@@ -1,36 +1,75 @@
 import {
   fromUnixTime,
+  getUnixTime,
   format,
-  formatDistance,
-  formatDistanceToNow,
+  differenceInDays,
   addHours,
   startOfHour,
   endOfHour,
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances, getPollData } from '../../utils'
+import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData } from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
-import { getUnixTime } from 'date-fns/esm'
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
 }
+export const getTopVoters = async poll => {
+  const balancesLookup = await getAllBalances(poll)
+  return await getVotersBalance(poll, balancesLookup)
+}
 
-export const getPollTableData = poll => {
+const getTimeOpened = (from, to) => {
+  const diffDays = differenceInDays(to, from)
+  const diffHours = differenceInHours(to, from) % 24
+  if (diffDays > 0 && diffHours > 0) {
+    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
+  } else if (diffDays <= 0) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
+  else return `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
+}
+
+const getKeysWithHighestValue = (o, n) => {
+  var keys = Object.keys(o)
+  keys.sort(function(a, b) {
+    return o[b] - o[a]
+  })
+  return keys.slice(0, n)
+}
+
+const getTimeLeftText = time => {
+  if (time[0].time.days > 0 && time[0].time.hours > 0) {
+    return `${time[0].time.days} ${time[0].time.days === 1 ? 'day' : 'days'} ${time[0].time.hours} ${
+      time[0].time.hours === 1 ? 'hour' : 'hours'
+    }`
+  } else if (time[0].time.days <= 0) return `${time[0].time.hours} ${time[0].time.hours === 1 ? 'hour' : 'hours'}`
+  else return `${time[0].time.days} ${time[0].time.days === 1 ? 'day' : 'days'}`
+}
+
+export const getPollTableData = (poll, mkrDistributionData) => {
+  const lastDistValue = mkrDistributionData[mkrDistributionData.length - 1]
+  const { Abstein, endDate, from, to, label, ...rest } = lastDistValue
+  const winOption = getKeysWithHighestValue(rest, 1)[0]
+  const time = getTimeLeftData(poll.startDate, poll.endDate)
   return [
-    { value: shortenAccount(poll.source.toLowerCase()), label: 'Source' },
-    { value: format(fromUnixTime(poll.startDate), 'P'), label: 'Started' },
-    { value: Number(poll.votesCount) === 0 ? 'No' : 'Yes', label: 'Voted' },
-    { value: timeLeft(poll.endDate) === 'Ended' ? 'Yes' : 'No', label: 'Ended' },
-    { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Active', label: 'Status' },
+    { value: shortenAccount(poll.source.toLowerCase()), label: 'Poll Address' },
+    { value: format(fromUnixTime(poll.startDate), 'P'), label: 'Start Date' },
+    { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Open', label: 'Status' },
     {
       value:
-        timeLeft(poll.endDate) === 'Ended'
-          ? formatDistance(fromUnixTime(poll.startDate), fromUnixTime(poll.endDate), { addSuffix: false })
-          : formatDistanceToNow(fromUnixTime(poll.startDate), { addSuffix: false }),
+        time[0].text === 'Ended'
+          ? getTimeOpened(fromUnixTime(poll.startDate), fromUnixTime(poll.endDate))
+          : getTimeOpened(fromUnixTime(poll.startDate), Date.now()),
       label: 'Time opened',
+    },
+    {
+      value: time[0].text === 'Ended' ? 'Ended' : getTimeLeftText(time),
+      label: 'Time Remaining',
+    },
+    {
+      value: winOption,
+      label: 'Winning Option',
     },
   ]
 }
@@ -144,6 +183,41 @@ export const getPollVotersHistogramData = poll => {
   })
 }
 
+const getAllBalances = async poll => {
+  const endPoll = fromUnixTime(poll.endDate)
+  const now = new Date()
+  const end = isAfter(endPoll, now) ? now : endPoll
+  const allVoters = Array.from(
+    new Set(
+      poll.timeLine.reduce((voters, tl) => {
+        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
+          return [...voters, tl.sender]
+        }
+
+        return voters
+      }, []),
+    ),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
+  return allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
+    }
+  }, {})
+}
+
 export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
@@ -162,38 +236,7 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-  const endPoll = fromUnixTime(poll.endDate)
-  const now = new Date()
-  const end = isAfter(endPoll, now) ? now : endPoll
-  const allVoters = Array.from(
-    new Set(
-      poll.timeLine.reduce((voters, tl) => {
-        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
-          return [...voters, tl.sender]
-        }
-
-        return voters
-      }, []),
-    ),
-  )
-
-  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
-  const balancesLookup = allBalances.flat().reduce((lookup, snapshot: any) => {
-    const account = snapshot.account.address
-    const balances = lookup[account] || []
-    const newBalances = [
-      ...balances,
-      {
-        amount: snapshot.amount,
-        timestamp: snapshot.timestamp,
-      },
-    ]
-
-    return {
-      ...lookup,
-      [account]: newBalances,
-    }
-  }, {})
+  const balancesLookup = await getAllBalances(poll)
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
@@ -239,4 +282,14 @@ export const getPollMakerHistogramData = async poll => {
       )
     }),
   )
+}
+
+export const getTopVotersTableData = topVoters => {
+  const total: any = Object.values(topVoters).reduce((a: any, b: any) => Number(a) + Number(b), 0)
+  const data = Object.entries(topVoters).map((el: any) => ({
+    sender: shortenAccount(el[0]),
+    supports: ((Number(el[1]) * 100) / total).toFixed(1),
+  }))
+
+  return data.sort((a: any, b: any) => b.supports - a.supports)
 }

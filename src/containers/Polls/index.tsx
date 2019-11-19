@@ -42,7 +42,11 @@ function PollsInfo(props) {
       (prev, current) => (Number(prev.mkr) > Number(current.mkr) ? prev : current),
       0,
     )
-    return { option: winnerOption, mkr: totalMkr ? Number((winnerOption.mkr * 100) / totalMkr).toFixed(2) : '0' }
+    return {
+      option: winnerOption,
+      totalMkr: totalMkr.toFixed(2),
+      mkr: totalMkr ? Number((winnerOption.mkr * 100) / totalMkr).toFixed(2) : '0',
+    }
   }
   const getParticipation = (data, mkrSupply) => {
     const totalMkr: BigNumber = data.reduce((acc, value) => acc.plus(new BigNumber(value.mkr)), new BigNumber('0'))
