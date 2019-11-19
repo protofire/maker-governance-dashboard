@@ -9,12 +9,16 @@ import {
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances, getPollData } from '../../utils'
+import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData } from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
+}
+export const getTopVoters = async poll => {
+  const balancesLookup = await getAllBalances(poll)
+  return await getVotersBalance(poll, balancesLookup)
 }
 
 const getTimeOpened = (from, to) => {
@@ -179,6 +183,41 @@ export const getPollVotersHistogramData = poll => {
   })
 }
 
+const getAllBalances = async poll => {
+  const endPoll = fromUnixTime(poll.endDate)
+  const now = new Date()
+  const end = isAfter(endPoll, now) ? now : endPoll
+  const allVoters = Array.from(
+    new Set(
+      poll.timeLine.reduce((voters, tl) => {
+        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
+          return [...voters, tl.sender]
+        }
+
+        return voters
+      }, []),
+    ),
+  )
+
+  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
+  return allBalances.flat().reduce((lookup, snapshot: any) => {
+    const account = snapshot.account.address
+    const balances = lookup[account] || []
+    const newBalances = [
+      ...balances,
+      {
+        amount: snapshot.amount,
+        timestamp: snapshot.timestamp,
+      },
+    ]
+
+    return {
+      ...lookup,
+      [account]: newBalances,
+    }
+  }, {})
+}
+
 export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
@@ -197,38 +236,7 @@ export const getPollMakerHistogramData = async poll => {
     }
   }, {})
 
-  const endPoll = fromUnixTime(poll.endDate)
-  const now = new Date()
-  const end = isAfter(endPoll, now) ? now : endPoll
-  const allVoters = Array.from(
-    new Set(
-      poll.timeLine.reduce((voters, tl) => {
-        if (tl.type === 'VotePollAction' && tl.timestamp <= getUnixTime(end)) {
-          return [...voters, tl.sender]
-        }
-
-        return voters
-      }, []),
-    ),
-  )
-
-  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
-  const balancesLookup = allBalances.flat().reduce((lookup, snapshot: any) => {
-    const account = snapshot.account.address
-    const balances = lookup[account] || []
-    const newBalances = [
-      ...balances,
-      {
-        amount: snapshot.amount,
-        timestamp: snapshot.timestamp,
-      },
-    ]
-
-    return {
-      ...lookup,
-      [account]: newBalances,
-    }
-  }, {})
+  const balancesLookup = await getAllBalances(poll)
 
   const votersPerPeriod = periods.map(period => {
     poll.timeLine.forEach(el => {
@@ -274,4 +282,14 @@ export const getPollMakerHistogramData = async poll => {
       )
     }),
   )
+}
+
+export const getTopVotersTableData = topVoters => {
+  const total: any = Object.values(topVoters).reduce((a: any, b: any) => Number(a) + Number(b), 0)
+  const data = Object.entries(topVoters).map((el: any) => ({
+    sender: shortenAccount(el[0]),
+    supports: ((Number(el[1]) * 100) / total).toFixed(1),
+  }))
+
+  return data.sort((a: any, b: any) => b.supports - a.supports)
 }
