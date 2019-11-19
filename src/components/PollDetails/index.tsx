@@ -204,12 +204,16 @@ function PollDetails(props: Props) {
       <ThreeRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Details">
-            {getPollTableData(poll, mkrDistributionData).map(el => (
-              <StrippedTableRow key={el.label}>
-                <StrippedTableCell>{el.label}</StrippedTableCell>
-                <StrippedTableCell>{el.value}</StrippedTableCell>
-              </StrippedTableRow>
-            ))}
+            {mkrDistributionData.length === 0 ? (
+              <Loading />
+            ) : (
+              getPollTableData(poll, mkrDistributionData).map(el => (
+                <StrippedTableRow key={el.label}>
+                  <StrippedTableCell>{el.label}</StrippedTableCell>
+                  <StrippedTableCell>{el.value}</StrippedTableCell>
+                </StrippedTableRow>
+              ))
+            )}
           </StrippedTableWrapper>
         </CardStyled>
         <CardStyled>
