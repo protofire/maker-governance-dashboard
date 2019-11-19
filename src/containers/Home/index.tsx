@@ -28,7 +28,6 @@ function MakerGovernanceInfo() {
   }, [gData])
 
   const homeData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
-
   if (homeData.loading || gResult.loading) return <FullLoading />
   if (homeData.error || gResult.error) return <Error />
 
