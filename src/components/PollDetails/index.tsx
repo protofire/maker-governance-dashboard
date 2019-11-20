@@ -270,8 +270,6 @@ function PollDetails(props: Props) {
             <MakerDistribution content="MKR Count By Option" component="makerDistribution" />
           )}
         </CardStyled>
-      </ThreeRowGrid>
-      <ThreeRowGrid>
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Top Voters">
             <StrippedRowsContainer>

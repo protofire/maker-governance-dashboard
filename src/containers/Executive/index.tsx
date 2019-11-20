@@ -14,12 +14,27 @@ const getHomeVariables = data => {
   }
 }
 
+// Remove when bug is fixed
+const fakeVote = (vote, active) => ({
+  ...vote,
+  casted: '1574092638',
+  isActive: active,
+})
+
 const getFullData = (data, governance) =>
-  data.map(vote => ({
-    ...vote,
-    isHat: vote.id === governance.governanceInfo.hat,
-    isActive: vote.id === governance.governanceInfo.active,
-  }))
+  data.map(vote => {
+    const nVote =
+      vote.id === '0xf44113760c4f70afeeb412c63bc713b13e6e202e'
+        ? fakeVote(vote, true)
+        : vote.id === '0xfa635d9093c2dd637cf19d48df6ea1dbde56ddb1'
+        ? fakeVote(vote, false)
+        : vote
+    return {
+      isHat: vote.id === governance.governanceInfo.hat,
+      isActive: vote.id === governance.governanceInfo.active,
+      ...nVote,
+    }
+  })
 
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
