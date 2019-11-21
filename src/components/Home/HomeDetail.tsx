@@ -37,6 +37,7 @@ import {
   UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
+  getMRKResponsiveness,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -100,6 +101,8 @@ function HomeDetail(props: Props) {
   const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
 
   const executives = data.executives
+
+  getMRKResponsiveness(executives)
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)

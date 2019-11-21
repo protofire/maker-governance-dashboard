@@ -6,7 +6,15 @@ import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
-import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE } from '../../constants'
+import {
+  LAST_YEAR,
+  LAST_MONTH,
+  LAST_WEEK,
+  LAST_DAY,
+  ACTION_FREE,
+  VOTING_ACTION_LOCK,
+  VOTING_ACTION_ADD,
+} from '../../constants'
 
 const periodsMap = {
   [LAST_YEAR]: getLastYear,
@@ -297,4 +305,19 @@ export const getTimeTakenForExecutives = executives => {
         }
       })
     }, buckets)
+}
+
+export const getMRKResponsiveness = executives => {
+  console.log(executives)
+  /*
+  const events = executives.flatMap(vote =>
+    vote.timeLine
+      .filter(tl => tl === VOTING_ACTION_ADD || tl === VOTING_ACTION_LOCK)
+      .map(v => ({
+        ...v,
+        mkr: v.action === VOTING_ACTION_ADD ? v.locked : v.wad,
+      })),
+  )
+  console.log(events)
+  */
 }
