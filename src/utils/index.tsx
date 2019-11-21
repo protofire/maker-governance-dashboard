@@ -218,7 +218,7 @@ export const getVoterBalances = async (address, endDate) => {
   return result
 }
 
-export const getPollData = async (poll, balancesLookup) => {
+export const getVotersBalance = async (poll, balancesLookup) => {
   const votersAddresses = getVoterAddresses(poll)
   const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
   const voteProxies = getVoteProxies(voteRegistries)
@@ -258,7 +258,7 @@ export const getPollData = async (poll, balancesLookup) => {
   const lookup = getLookup(votersAddresses, voteRegistries)
   const stakedTotal = totalStaked(poll, lookup, balances, stakedProxies)
 
-  const mkrVoter = Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
+  return Array.from(new Set([...Object.keys(stakedTotal), ...Object.keys(stakedVotersAndBalances)])).reduce(
     (acc, key) => {
       const st = stakedTotal[key] || new BigNumber('0')
       const vt = stakedVotersAndBalances[key] ? new BigNumber(stakedVotersAndBalances[key]) : new BigNumber('0')
@@ -271,7 +271,10 @@ export const getPollData = async (poll, balancesLookup) => {
     },
     {},
   )
+}
 
+export const getPollData = async (poll, balancesLookup) => {
+  const mkrVoter = await getVotersBalance(poll, balancesLookup)
   const votersPerOption = getPollVotersPerOption(poll)
   const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
     const voters = votersPerOption[op]
@@ -301,7 +304,6 @@ export const getPollsBalances = async polls => {
   const allVoters = Array.from(
     new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
   )
-
   const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(now))))
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
@@ -313,7 +315,6 @@ export const getPollsBalances = async polls => {
         timestamp: snapshot.timestamp,
       },
     ]
-
     return {
       ...lookup,
       [account]: newBalances,

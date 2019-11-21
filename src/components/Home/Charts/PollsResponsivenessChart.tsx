@@ -2,7 +2,7 @@ import React from 'react'
 import { Bar, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
-const ExecutivesResponsivenessChart = props => {
+const PollsResponsivenessChart = props => {
   const { wrapperProps, modalProps } = props
 
   return (
@@ -13,11 +13,11 @@ const ExecutivesResponsivenessChart = props => {
           isAnimationActive={modalProps.data ? false : true}
           name={'MKR Responsiveness'}
           dataKey="mkr"
-          fill="#61b6b0"
+          fill="#a04827"
         />
       </Chart>
     </ChartWrapper>
   )
 }
 
-export default ExecutivesResponsivenessChart
+export default PollsResponsivenessChart

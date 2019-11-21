@@ -5,7 +5,15 @@ import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
 
-import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
+import {
+  getLastYear,
+  getLastWeek,
+  getLastMonth,
+  getLastDay,
+  shortenAccount,
+  timeLeft,
+  getPollsBalances,
+} from '../../utils'
 import {
   LAST_YEAR,
   LAST_MONTH,
@@ -142,6 +150,29 @@ export const getComponentData = (
     expanded,
     versus,
   }
+}
+
+export const TopVotersColumns = () => {
+  return [
+    {
+      Header: 'Address',
+      accessor: 'sender',
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <Link>
+            <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
+          </Link>
+        </>
+      ),
+    },
+    {
+      Header: 'Participations',
+      disableFilters: true,
+      accessor: 'count',
+      id: 'participations',
+    },
+  ]
 }
 
 export const Pollcolumns = (isModalOpen: boolean) => {
@@ -307,7 +338,7 @@ export const getTimeTakenForExecutives = executives => {
     }, buckets)
 }
 
-export const getMRKResponsiveness = executives => {
+export const getMKRResponsiveness = executives => {
   const events = executives.flatMap(vote =>
     vote.timeLine
       .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
@@ -324,14 +355,65 @@ export const getMRKResponsiveness = executives => {
     mkr: 0,
   }))
 
-  return events.reduce((acc, event) => {
+  const periodEvents = events.reduce((acc, event) => {
     const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.vote_date))
     return acc.map(bucket => ({
       ...bucket,
-      mkr:
-        diffDays >= bucket.from && diffDays < bucket.to
-          ? (Number(bucket.mkr) + Number(event.mkr)).toFixed(2)
-          : Number(bucket.mkr).toFixed(2),
+      mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.mkr) : bucket.mkr,
     }))
   }, buckets)
+  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+}
+
+export const getPollsMKRResponsiveness = async polls => {
+  const pollsVotes = polls.flatMap(poll =>
+    poll.votes.map(v => ({
+      ...v,
+      poll_date: poll.startDate,
+    })),
+  )
+  const pollBalances = await getPollsBalances(polls)
+  const buckets = Array.from({ length: 7 }, (v, i) => i).map(num => ({
+    from: num,
+    to: num + 1,
+    label: `${num}-${num + 1} days`,
+    mkr: 0,
+  }))
+
+  const events = Object.keys(pollBalances).flatMap(pb => pollBalances[pb])
+  const periodEvents = events.reduce((acc, event) => {
+    const selectedVote = pollsVotes.find(pv => pv.timestamp === event.timestamp)
+    if (!selectedVote) return acc
+    const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(selectedVote.poll_date))
+    return acc.map(bucket => ({
+      ...bucket,
+      mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.amount) : bucket.mkr,
+    }))
+  }, buckets)
+  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+}
+
+export const getTopVoters = (executives, polls) => {
+  const executivesTimeLine = executives.flatMap(vote =>
+    Array.from(new Set(vote.timeLine.filter(tl => tl.type === VOTING_ACTION_ADD && tl.sender).map(el => el.sender))),
+  )
+  const votesCount = executivesTimeLine.reduce(
+    (accum, tl) => ({
+      ...accum,
+      [tl]: accum[tl] ? accum[tl] + 1 : 1,
+    }),
+    {},
+  )
+  const pollVotes = polls.flatMap(poll => poll.votes.map(v => v.voter))
+  const pollsVotesCount = pollVotes.reduce(
+    (accum, tl) => ({
+      ...accum,
+      [tl]: accum[tl] ? accum[tl] + 1 : 1,
+    }),
+    votesCount,
+  )
+  return Object.keys(pollsVotesCount).map(vp => ({
+    sender: vp,
+    count: pollsVotesCount[vp],
+  }))
 }

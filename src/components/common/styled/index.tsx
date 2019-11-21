@@ -1,6 +1,14 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 
+export const LegendLi = styled.li`
+  display: inline-block;
+  text-decoration: ${props => (props.disabledValue ? 'line-through' : 'none')};
+  margin-right: 10px;
+  cursor: pointer;
+  opacity: ${props => (props.disabledValue ? '0.6' : '1')};
+`
+
 export const Card = styled.div`
   align-items: flex-start;
   background-color: ${props => props.theme.cards.backgroundColor};

@@ -121,6 +121,10 @@ export interface GetGovernanceInfo {
 export interface GetPolls_polls_votes {
   __typename: 'PollVote'
   /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
    *  Voters's Address
    */
   voter: any
@@ -128,6 +132,10 @@ export interface GetPolls_polls_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
 
 export interface GetPolls_polls {
@@ -139,13 +147,13 @@ export interface GetPolls_polls {
   creator: any | null
   url: string | null
   pollId: any
+  votes: GetPolls_polls_votes[] | null
   startDate: any
   endDate: any
   /**
    *  Number votes
    */
   votesCount: any
-  votes: GetPolls_polls_votes[] | null
 }
 
 export interface GetPolls {
@@ -163,6 +171,10 @@ export interface GetPolls {
 export interface getHomeData_polls_votes {
   __typename: 'PollVote'
   /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
    *  Voters's Address
    */
   voter: any
@@ -170,6 +182,10 @@ export interface getHomeData_polls_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
 
 export interface getHomeData_polls {
@@ -181,13 +197,13 @@ export interface getHomeData_polls {
   creator: any | null
   url: string | null
   pollId: any
+  votes: getHomeData_polls_votes[] | null
   startDate: any
   endDate: any
   /**
    *  Number votes
    */
   votesCount: any
-  votes: getHomeData_polls_votes[] | null
 }
 
 export interface getHomeData_executives_timeLine_AddAction {
@@ -1041,6 +1057,10 @@ export interface executivesDetail {
 export interface pollsDetail_votes {
   __typename: 'PollVote'
   /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
    *  Voters's Address
    */
   voter: any
@@ -1048,6 +1068,10 @@ export interface pollsDetail_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
 
 export interface pollsDetail {
@@ -1059,13 +1083,13 @@ export interface pollsDetail {
   creator: any | null
   url: string | null
   pollId: any
+  votes: pollsDetail_votes[] | null
   startDate: any
   endDate: any
   /**
    *  Number votes
    */
   votesCount: any
-  votes: pollsDetail_votes[] | null
 }
 
 /* tslint:disable */

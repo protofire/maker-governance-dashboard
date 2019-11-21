@@ -63,13 +63,15 @@ const pollsDetailFragment = gql`
     creator
     url
     pollId
+    votes(first: 1000) {
+      id
+      voter
+      option
+      timestamp
+    }
     startDate
     endDate
     votesCount
-    votes(first: 1000) {
-      voter
-      option
-    }
   }
 `
 export const GOVERNANCE_INFO_QUERY = gql`
