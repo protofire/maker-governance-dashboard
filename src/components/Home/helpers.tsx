@@ -308,16 +308,30 @@ export const getTimeTakenForExecutives = executives => {
 }
 
 export const getMRKResponsiveness = executives => {
-  console.log(executives)
-  /*
   const events = executives.flatMap(vote =>
     vote.timeLine
-      .filter(tl => tl === VOTING_ACTION_ADD || tl === VOTING_ACTION_LOCK)
+      .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
       .map(v => ({
         ...v,
-        mkr: v.action === VOTING_ACTION_ADD ? v.locked : v.wad,
+        vote_date: vote.timestamp,
+        mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
       })),
   )
-  console.log(events)
-  */
+  const buckets = Array.from({ length: 30 }, (v, i) => i).map(num => ({
+    from: num,
+    to: num + 1,
+    label: `${num}-${num + 1} days`,
+    mkr: 0,
+  }))
+
+  return events.reduce((acc, event) => {
+    const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.vote_date))
+    return acc.map(bucket => ({
+      ...bucket,
+      mkr:
+        diffDays >= bucket.from && diffDays < bucket.to
+          ? (Number(bucket.mkr) + Number(event.mkr)).toFixed(2)
+          : Number(bucket.mkr).toFixed(2),
+    }))
+  }, buckets)
 }

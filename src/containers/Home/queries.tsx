@@ -35,6 +35,25 @@ const executivesDetailFragment = gql`
     castedWith
     lifted
     liftedWith
+    timeLine(first: 1000) {
+      id
+      timestamp
+      transactionHash
+      sender
+      type: __typename
+      ... on AddAction {
+        locked
+      }
+      ... on RemoveAction {
+        locked
+      }
+      ... on LockAction {
+        wad
+      }
+      ... on FreeAction {
+        wad
+      }
+    }
   }
 `
 

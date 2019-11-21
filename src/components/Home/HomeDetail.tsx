@@ -10,6 +10,7 @@ import {
   GiniChart,
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
+  ExecutivesResponsivenessChart,
 } from './Charts'
 import { DEFAULT_CACHE_TTL } from '../../constants'
 import {
@@ -102,8 +103,6 @@ function HomeDetail(props: Props) {
 
   const executives = data.executives
 
-  getMRKResponsiveness(executives)
-
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
   }
@@ -164,6 +163,17 @@ function HomeDetail(props: Props) {
             content="Number of voters"
             versus="Total MKR staked"
             component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+      executivesResponsiveness: {
+        data: getMRKResponsiveness(executives),
+        component: props => (
+          <ExecutivesResponsiveness
+            expanded
+            content="Votes Responsiveness"
+            component="executivesResponsiveness"
             {...props}
           />
         ),
@@ -294,6 +304,18 @@ function HomeDetail(props: Props) {
 
     return (
       <TimeTakenChart
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
+      />
+    )
+  }
+
+  // Votes Responsiveness graph data
+  const ExecutivesResponsiveness = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <ExecutivesResponsivenessChart
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
       />
