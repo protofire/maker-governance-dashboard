@@ -72,6 +72,21 @@ const pollsDetailFragment = gql`
     startDate
     endDate
     votesCount
+    timeLine(first: 1000) {
+      id
+      timestamp
+      type: __typename
+      ... on VotePollAction {
+        sender
+        timestamp
+      }
+      ... on CreatePollAction {
+        block
+      }
+      ... on WithdrawPollAction {
+        block
+      }
+    }
   }
 `
 export const GOVERNANCE_INFO_QUERY = gql`

@@ -13,6 +13,8 @@ import {
   shortenAccount,
   timeLeft,
   getPollsBalances,
+  getVoterBalances,
+  getVotersBalance,
 } from '../../utils'
 import {
   LAST_YEAR,
@@ -22,6 +24,7 @@ import {
   ACTION_FREE,
   VOTING_ACTION_LOCK,
   VOTING_ACTION_ADD,
+  POLL_VOTE_ACTION,
 } from '../../constants'
 
 const periodsMap = {
@@ -366,31 +369,69 @@ export const getMKRResponsiveness = executives => {
 }
 
 export const getPollsMKRResponsiveness = async polls => {
-  const pollsVotes = polls.flatMap(poll =>
-    poll.votes.map(v => ({
-      ...v,
-      poll_date: poll.startDate,
-    })),
-  )
-  const pollBalances = await getPollsBalances(polls)
   const buckets = Array.from({ length: 7 }, (v, i) => i).map(num => ({
     from: num,
     to: num + 1,
     label: `${num}-${num + 1} days`,
     mkr: 0,
   }))
+  console.log(polls)
+  const pollBalances = await getPollsBalances(polls)
+  const pollVotes = polls.map(poll => {
+    return {
+      voters: poll.timeLine
+        .filter(v => v.type === POLL_VOTE_ACTION)
+        .reduce(
+          (accum, v) => ({
+            ...accum,
+            [v.sender]:
+              accum[v.sender] && accum[v.sender].timestamp < v.timestamp
+                ? accum[v.sender]
+                : { ...v, poll_startDate: poll.startDate, poll_endDate: poll.endDate, poll_id: poll.id },
+          }),
+          {},
+        ),
+    }
+  })
 
-  const events = Object.keys(pollBalances).flatMap(pb => pollBalances[pb])
-  const periodEvents = events.reduce((acc, event) => {
-    const selectedVote = pollsVotes.find(pv => pv.timestamp === event.timestamp)
-    if (!selectedVote) return acc
-    const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(selectedVote.poll_date))
-    return acc.map(bucket => ({
-      ...bucket,
-      mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.amount) : bucket.mkr,
-    }))
-  }, buckets)
+  await Promise.all(
+    polls.map(async (poll, index) => {
+      const totalBalance = await getVotersBalance(poll, pollBalances)
+      Object.keys(pollVotes[index].voters).forEach(addr => {
+        pollVotes[index].voters[addr].balance = totalBalance[addr]
+      })
+    }),
+  )
+
+  //console.log('data', pollVotes)
+  /*
+  const resp = pollVotes.map(vote => {
+    const { poll_startDate, voters } = vote
+    return Object.keys(voters).reduce((acc, v) => {
+      const diffDays = differenceInDays(fromUnixTime(voters[v].timestamp), fromUnixTime(poll_startDate))
+      return acc.map(bucket => ({
+        ...bucket,
+        mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + voters[v].balance.toNumber() : bucket.mkr,
+      }))
+    }, buckets)
+  })
+  */
+  console.log('rest', pollVotes.flatMap(vote => Object.keys(vote.voters).map(v => vote.voters[v])))
+  /*
+  const periodEvents =
+    pollVotes.reduce(async (acc, event) => {
+      const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.startDate))
+      return acc.map(bucket => ({
+        ...bucket,
+        mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.balance) : bucket.mkr,
+      }))
+    }, buckets)
+
   return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+
+  return []
+  */
+  return []
 }
 
 export const getTopVoters = (executives, polls) => {
