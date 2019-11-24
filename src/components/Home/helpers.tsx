@@ -13,7 +13,6 @@ import {
   shortenAccount,
   timeLeft,
   getPollsBalances,
-  getVoterBalances,
   getVotersBalance,
 } from '../../utils'
 import {
@@ -375,7 +374,7 @@ export const getPollsMKRResponsiveness = async polls => {
     label: `${num}-${num + 1} days`,
     mkr: 0,
   }))
-  console.log(polls)
+
   const pollBalances = await getPollsBalances(polls)
   const pollVotes = polls.map(poll => {
     return {
@@ -398,29 +397,15 @@ export const getPollsMKRResponsiveness = async polls => {
     polls.map(async (poll, index) => {
       const totalBalance = await getVotersBalance(poll, pollBalances)
       Object.keys(pollVotes[index].voters).forEach(addr => {
-        pollVotes[index].voters[addr].balance = totalBalance[addr]
+        pollVotes[index].voters[addr].balance = totalBalance[addr].toNumber()
       })
     }),
   )
 
-  //console.log('data', pollVotes)
-  /*
-  const resp = pollVotes.map(vote => {
-    const { poll_startDate, voters } = vote
-    return Object.keys(voters).reduce((acc, v) => {
-      const diffDays = differenceInDays(fromUnixTime(voters[v].timestamp), fromUnixTime(poll_startDate))
-      return acc.map(bucket => ({
-        ...bucket,
-        mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + voters[v].balance.toNumber() : bucket.mkr,
-      }))
-    }, buckets)
-  })
-  */
-  console.log('rest', pollVotes.flatMap(vote => Object.keys(vote.voters).map(v => vote.voters[v])))
-  /*
-  const periodEvents =
-    pollVotes.reduce(async (acc, event) => {
-      const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.startDate))
+  const periodEvents = pollVotes
+    .flatMap(vote => Object.keys(vote.voters).map(v => vote.voters[v]))
+    .reduce((acc, event) => {
+      const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.poll_startDate))
       return acc.map(bucket => ({
         ...bucket,
         mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.balance) : bucket.mkr,
@@ -428,10 +413,6 @@ export const getPollsMKRResponsiveness = async polls => {
     }, buckets)
 
   return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
-
-  return []
-  */
-  return []
 }
 
 export const getTopVoters = (executives, polls) => {
