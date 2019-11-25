@@ -10,6 +10,7 @@ import {
   GiniChart,
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
+  MKRActivenessChart,
 } from './Charts'
 import { DEFAULT_CACHE_TTL } from '../../constants'
 import {
@@ -39,6 +40,7 @@ import {
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
+  getMKRActiveness,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -190,6 +192,10 @@ function HomeDetail(props: Props) {
           />
         ),
       },
+      mkrActiveness: {
+        data: getMKRActiveness(data.executives),
+        component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
+      },
       votesVsPolls: {
         data: getVotesVsPollsData(data.executives, polls, chartFilters.votesVsPolls),
         component: props => <VotesVsPolls expanded content="Total Votes" component="votesVsPolls" {...props} />,
@@ -271,6 +277,18 @@ function HomeDetail(props: Props) {
 
     return (
       <VotesVsPollsChart
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
+  }
+
+  // MKR activeness graph data
+  const MKRActiveness = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <MKRActivenessChart
         wrapperProps={getWrapperProps(data)}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
       />
@@ -370,10 +388,12 @@ function HomeDetail(props: Props) {
       </TwoRowGrid>
       <PageSubTitle>Voter Behaviour</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          <MKRActiveness content="MKR Activeness" component="mkrActiveness" />,
+        </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
           {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
         </TableCardStyled>
-        <CardStyled></CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>

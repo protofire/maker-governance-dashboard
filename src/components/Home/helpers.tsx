@@ -1,12 +1,21 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import { format, fromUnixTime, differenceInDays } from 'date-fns'
+import { format, fromUnixTime, differenceInDays, subDays, getUnixTime, startOfDay } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
 
 import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
-import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY, ACTION_FREE, VOTING_ACTION_ADD } from '../../constants'
+import {
+  LAST_YEAR,
+  LAST_MONTH,
+  LAST_WEEK,
+  LAST_DAY,
+  ACTION_FREE,
+  VOTING_ACTION_ADD,
+  VOTING_ACTION_REMOVE,
+  VOTING_ACTION_LOCK,
+} from '../../constants'
 
 const periodsMap = {
   [LAST_YEAR]: getLastYear,
@@ -345,4 +354,88 @@ export const getTopVoters = (executives, polls) => {
     sender: vp,
     count: pollsVotesCount[vp],
   }))
+}
+
+export const getMKRActiveness = executives => {
+  const DAYS = 60
+  const date = getUnixTime(subDays(Date.now(), DAYS - 1))
+  const executivesTimeLine = executives
+    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.type !== VOTING_ACTION_REMOVE && tl.sender))))
+    .filter(tl => tl.timestamp >= date)
+
+  const groupByAddressDate = executivesTimeLine.reduce((acc, tl) => {
+    const datekey = getUnixTime(startOfDay(fromUnixTime(tl.timestamp)))
+    return {
+      ...acc,
+      [datekey]: acc[datekey]
+        ? {
+            ...acc[datekey],
+            ...{
+              [tl.sender]:
+                acc[datekey][tl.sender] && acc[datekey][tl.sender].events
+                  ? { events: [...acc[datekey][tl.sender].events, tl].sort((a, b) => b.timestamp - a.timestamp) }
+                  : { events: [tl] },
+            },
+          }
+        : {
+            [tl.sender]: { events: [tl] },
+          },
+    }
+  }, {})
+
+  //activeness logic
+  let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
+
+  const startPos = DAYS / 2 - 1
+  Object.keys(groupByAddressDate)
+    .slice(startPos, DAYS)
+    .forEach((day, i) => {
+      let hasAddObj = {}
+      Object.keys(groupByAddressDate)
+        .slice(i, startPos + i + 1)
+        .forEach(window => {
+          Object.keys(groupByAddressDate[day]).forEach(addr => {
+            const value = groupByAddressDate[window][addr]
+              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
+              : 0
+            hasAddObj[addr] = value
+            activenessDeepClone[window].result = activenessDeepClone[window].result
+              ? value + activenessDeepClone[window].result
+              : value
+          })
+        })
+    })
+  const resultObj = Object.keys(activenessDeepClone)
+    .map(day => ({
+      day: Number(day),
+      activeness: activenessDeepClone[day].result / (DAYS / 2),
+    }))
+    .slice(startPos, DAYS - 1)
+
+  const periods = periodsMap[LAST_MONTH]()
+
+  return periods.map(el => {
+    const obj = resultObj.find(ev => ev.day >= el.from && ev.day <= el.to)
+    return {
+      ...el,
+      activeness: obj ? Number(obj.activeness.toFixed(2)) : 0,
+    }
+  })
+}
+
+const getActivenessValue = (events, hasAdd) => {
+  let addValue = hasAdd
+  return events.reduce((acc, event) => {
+    if (!hasAdd) {
+      addValue = event.type === VOTING_ACTION_ADD ? Number(event.locked) : 0
+      return addValue
+    }
+    return event.type === VOTING_ACTION_ADD
+      ? Number(event.locked)
+      : event.type === VOTING_ACTION_LOCK
+      ? acc + Number(event.wad)
+      : event.type === VOTING_ACTION_LOCK
+      ? acc - Number(event.wad)
+      : addValue
+  }, hasAdd)
 }
