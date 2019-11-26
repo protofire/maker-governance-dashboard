@@ -359,10 +359,13 @@ export const getTopVoters = (executives, polls) => {
 export const getMKRActiveness = executives => {
   const DAYS = 60
   const date = getUnixTime(subDays(Date.now(), DAYS - 1))
+
+  //Get all votes events equal or greater than date
   const executivesTimeLine = executives
     .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.type !== VOTING_ACTION_REMOVE && tl.sender))))
     .filter(tl => tl.timestamp >= date)
 
+  //Group events by date and by address and sort events by timestamp.
   const groupByAddressDate = executivesTimeLine.reduce((acc, tl) => {
     const datekey = getUnixTime(startOfDay(fromUnixTime(tl.timestamp)))
     return {
@@ -384,8 +387,9 @@ export const getMKRActiveness = executives => {
   }, {})
 
   //activeness logic
-  let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
 
+  let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
+  //For each day and address sum all the events.
   const startPos = DAYS / 2 - 1
   Object.keys(groupByAddressDate)
     .slice(startPos, DAYS)
@@ -405,6 +409,8 @@ export const getMKRActiveness = executives => {
           })
         })
     })
+
+  //Get the average of each day.
   const resultObj = Object.keys(activenessDeepClone)
     .map(day => ({
       day: Number(day),
@@ -412,8 +418,9 @@ export const getMKRActiveness = executives => {
     }))
     .slice(startPos, DAYS - 1)
 
-  const periods = periodsMap[LAST_MONTH]()
+  const periods = periodsMap[LAST_MONTH]() //get last month periods
 
+  //for each period, get the right average value
   return periods.map(el => {
     const obj = resultObj.find(ev => ev.day >= el.from && ev.day <= el.to)
     return {
