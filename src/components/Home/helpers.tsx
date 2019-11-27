@@ -368,7 +368,17 @@ export const getMKRResponsiveness = executives => {
 }
 
 export const getPollsMKRResponsiveness = async polls => {
-  const buckets = Array.from({ length: 7 }, (v, i) => i).map(num => ({
+  const days = Math.max(
+    ...polls.map(poll => {
+      const start = poll.startDate >= 1e12 ? (poll.startDate / 1e3).toFixed(0) : poll.startDate
+      const end = poll.endDate >= 1e12 ? (poll.endDate / 1e3).toFixed(0) : poll.endDate
+      const diffDays = differenceInDays(fromUnixTime(end), fromUnixTime(start))
+
+      return diffDays
+    }),
+  )
+
+  const buckets = Array.from({ length: days }, (v, i) => i).map(num => ({
     from: num,
     to: num + 1,
     label: `${num}-${num + 1} days`,
