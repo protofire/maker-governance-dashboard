@@ -15,6 +15,7 @@ import {
   VOTING_ACTION_ADD,
   VOTING_ACTION_REMOVE,
   VOTING_ACTION_LOCK,
+  VOTING_ACTION_FREE,
 } from '../../constants'
 
 const periodsMap = {
@@ -388,17 +389,21 @@ export const getMKRActiveness = executives => {
 
   //activeness logic
 
-  let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
+  //let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
+  let valuePerDay = {}
+
   //For each day and address sum all the events.
   const startPos = DAYS / 2 - 1
   Object.keys(groupByAddressDate)
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
+      let activenessDeepClone = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
         .forEach(window => {
-          Object.keys(groupByAddressDate[day]).forEach(addr => {
+          activenessDeepClone[window] = {}
+          Object.keys(groupByAddressDate[window]).forEach(addr => {
             const value = groupByAddressDate[window][addr]
               ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
               : 0
@@ -408,15 +413,18 @@ export const getMKRActiveness = executives => {
               : value
           })
         })
+      valuePerDay[day] = getAverage(activenessDeepClone)
     })
 
   //Get the average of each day.
+  /*
   const resultObj = Object.keys(activenessDeepClone)
     .map(day => ({
       day: Number(day),
       activeness: activenessDeepClone[day].result / (DAYS / 2),
     }))
     .slice(startPos, DAYS - 1)
+
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
 
@@ -428,6 +436,14 @@ export const getMKRActiveness = executives => {
       activeness: obj ? Number(obj.activeness.toFixed(2)) : 0,
     }
   })
+  */
+  return []
+}
+
+const getAverage = obj => {
+  const objArray = Object.keys(obj)
+  const result = objArray.reduce((accum: any, day) => obj[day].result + accum, 0)
+  return result / objArray.length
 }
 
 const getActivenessValue = (events, hasAdd) => {
@@ -441,7 +457,7 @@ const getActivenessValue = (events, hasAdd) => {
       ? Number(event.locked)
       : event.type === VOTING_ACTION_LOCK
       ? acc + Number(event.wad)
-      : event.type === VOTING_ACTION_LOCK
+      : event.type === VOTING_ACTION_FREE
       ? acc - Number(event.wad)
       : addValue
   }, hasAdd)
