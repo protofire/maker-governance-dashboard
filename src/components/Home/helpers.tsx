@@ -389,7 +389,6 @@ export const getMKRActiveness = executives => {
 
   //activeness logic
 
-  //let activenessDeepClone = JSON.parse(JSON.stringify(groupByAddressDate))
   let valuePerDay = {}
 
   //For each day and address sum all the events.
@@ -413,31 +412,19 @@ export const getMKRActiveness = executives => {
               : value
           })
         })
-      valuePerDay[day] = getAverage(activenessDeepClone)
+      valuePerDay[day] = getAverage(activenessDeepClone) //Get the average of each day.
     })
-
-  //Get the average of each day.
-  /*
-  const resultObj = Object.keys(activenessDeepClone)
-    .map(day => ({
-      day: Number(day),
-      activeness: activenessDeepClone[day].result / (DAYS / 2),
-    }))
-    .slice(startPos, DAYS - 1)
-
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
 
   //for each period, get the right average value
   return periods.map(el => {
-    const obj = resultObj.find(ev => ev.day >= el.from && ev.day <= el.to)
+    const day = Object.keys(valuePerDay).find(day => Number(day) >= el.from && Number(day) <= el.to)
     return {
       ...el,
-      activeness: obj ? Number(obj.activeness.toFixed(2)) : 0,
+      activeness: day ? Number(valuePerDay[day].toFixed(2)) : 0,
     }
   })
-  */
-  return []
 }
 
 const getAverage = obj => {
