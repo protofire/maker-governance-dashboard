@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import lscache from 'lscache'
 import HomeDetail from '../../components/Home/HomeDetail'
+import { getMKRResponsiveness } from '../../components/Home/helpers'
+
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
 import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
+import { DEFAULT_CACHE_TTL } from '../../constants'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -19,21 +23,36 @@ const getHomeVariables = data => {
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 function MakerGovernanceInfo() {
+  const cachedDataExecutivesResponsiveness = lscache.get('executives-responsiveness') || []
+
+  const [executivesResponsiveness, setExecutivesResponsiveness] = useState<any>(cachedDataExecutivesResponsiveness)
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
+
+  const homeData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+
+  useEffect(() => {
+    if (homeData.data && homeData.data.executives) {
+      if (cachedDataExecutivesResponsiveness.length === 0)
+        setExecutivesResponsiveness(getMKRResponsiveness(homeData.data.executives))
+    }
+  }, [homeData, cachedDataExecutivesResponsiveness.length])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
 
-  const homeData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
-  if (homeData.loading || gResult.loading) return <FullLoading />
+  useEffect(() => {
+    lscache.set('executives-responsiveness', executivesResponsiveness, DEFAULT_CACHE_TTL)
+  }, [executivesResponsiveness])
+
+  if (homeData.loading || gResult.loading || executivesResponsiveness.length === 0) return <FullLoading />
   if (homeData.error || gResult.error) return <Error />
 
   return (
     <>
-      <HomeDetail gData={gData} data={homeData.data} />
+      <HomeDetail executivesResponsiveness={executivesResponsiveness} gData={gData} data={homeData.data} />
     </>
   )
 }

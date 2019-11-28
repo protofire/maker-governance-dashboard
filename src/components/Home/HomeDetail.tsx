@@ -10,6 +10,8 @@ import {
   GiniChart,
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
+  ExecutivesResponsivenessChart,
+  PollsResponsivenessChart,
 } from './Charts'
 import { DEFAULT_CACHE_TTL } from '../../constants'
 import {
@@ -39,6 +41,7 @@ import {
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
+  getPollsMKRResponsiveness,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -71,15 +74,18 @@ type Props = {
   data: getHomeData
   gData: GetGovernanceInfo
   history?: any
+  executivesResponsiveness?: any
   subscribeToChanges?: () => void
 }
 
 function HomeDetail(props: Props) {
-  const { data, gData, history } = props
+  const { data, gData, history, executivesResponsiveness } = props
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
   const cachedDataPoll = lscache.get('home-polls') || []
   const cachedDataTopVoters = lscache.get('home-topVoters') || []
+  const cachedDataPollsResponsiveness = lscache.get('polls-responsiveness') || []
+
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
   const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
@@ -87,14 +93,18 @@ function HomeDetail(props: Props) {
 
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
-  const [polls, setPolls] = useState<any[]>(cachedDataPoll)
+  const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
+
+  const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
 
   const pollcolumns = expanded => Pollcolumns(expanded)
   const votedPollcolumns = () => VotedPollcolumns()
 
   useEffect(() => {
     if (cachedDataPoll.length === 0) getPollsBalances(polls).then(balances => setBalances(balances))
-  }, [polls, cachedDataPoll.length])
+    if (cachedDataPollsResponsiveness.length === 0)
+      getPollsMKRResponsiveness(polls).then(responsiveness => setPollsResponsiveness(responsiveness))
+  }, [polls, cachedDataPoll.length, cachedDataPollsResponsiveness.length])
 
   useEffect(() => {
     if (cachedDataPoll.length === 0) getMKRSupply().then(supply => setMkrSupply(supply))
@@ -175,6 +185,28 @@ function HomeDetail(props: Props) {
             content="Number of Voters"
             versus="Total MKR Staked"
             component="votersVsMkr"
+            {...props}
+          />
+        ),
+      },
+      pollsResponsiveness: {
+        data: pollsResponsiveness,
+        component: props => (
+          <PollsResponsiveness
+            expanded
+            content="Polls - MKR Responsiveness"
+            component="pollsResponsiveness"
+            {...props}
+          />
+        ),
+      },
+      executivesResponsiveness: {
+        data: executivesResponsiveness,
+        component: props => (
+          <ExecutivesResponsiveness
+            expanded
+            content="Votes - MKR Responsiveness"
+            component="executivesResponsiveness"
             {...props}
           />
         ),
@@ -311,6 +343,30 @@ function HomeDetail(props: Props) {
     )
   }
 
+  // Votes Responsiveness graph data
+  const ExecutivesResponsiveness = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <ExecutivesResponsivenessChart
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
+      />
+    )
+  }
+
+  // Polls Responsiveness graph data
+  const PollsResponsiveness = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <PollsResponsivenessChart
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
+      />
+    )
+  }
+
   // Table Data
   const HomeTable = props => {
     const data = getComponentData('table', props.component, props.content, props.expanded)
@@ -349,7 +405,8 @@ function HomeDetail(props: Props) {
   useEffect(() => {
     lscache.set('home-polls', polls, DEFAULT_CACHE_TTL)
     lscache.set('home-topVoters', topVoters, DEFAULT_CACHE_TTL)
-  }, [polls, topVoters])
+    lscache.set('polls-responsiveness', pollsResponsiveness, DEFAULT_CACHE_TTL)
+  }, [polls, topVoters, pollsResponsiveness])
 
   return (
     <>
@@ -370,9 +427,25 @@ function HomeDetail(props: Props) {
       </TwoRowGrid>
       <PageSubTitle>Voter Behaviour</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          {executivesResponsiveness.length === 0 ? (
+            <Loading />
+          ) : (
+            <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
+          )}
+        </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
           {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
         </TableCardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          {pollsResponsiveness.length === 0 ? (
+            <Loading />
+          ) : (
+            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
+          )}
+        </CardStyled>
         <CardStyled></CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
