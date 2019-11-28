@@ -22,7 +22,7 @@ export const ChartSelect = props => {
 }
 
 const ChartContainer = styled(ResponsiveContainer)`
-  font-size: 14px;
+  font-size: 12px;
 
   ${Legend} {
     ul {

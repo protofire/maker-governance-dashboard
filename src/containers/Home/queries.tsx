@@ -67,13 +67,25 @@ const pollsDetailFragment = gql`
       id
       voter
       option
+      timestamp
     }
     startDate
     endDate
     votesCount
-    votes(first: 1000) {
-      voter
-      option
+    timeLine(first: 1000) {
+      id
+      timestamp
+      type: __typename
+      ... on VotePollAction {
+        sender
+        timestamp
+      }
+      ... on CreatePollAction {
+        block
+      }
+      ... on WithdrawPollAction {
+        block
+      }
     }
   }
 `
