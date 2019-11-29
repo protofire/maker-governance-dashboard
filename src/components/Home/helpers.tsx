@@ -5,7 +5,16 @@ import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
 
-import { getLastYear, getLastWeek, getLastMonth, getLastDay, shortenAccount, timeLeft } from '../../utils'
+import {
+  getLastYear,
+  getLastWeek,
+  getLastMonth,
+  getLastDay,
+  shortenAccount,
+  timeLeft,
+  getPollsBalances,
+  getVotersBalance,
+} from '../../utils'
 import {
   LAST_YEAR,
   LAST_MONTH,
@@ -16,6 +25,7 @@ import {
   VOTING_ACTION_REMOVE,
   VOTING_ACTION_LOCK,
   VOTING_ACTION_FREE,
+  POLL_VOTE_ACTION,
 } from '../../constants'
 
 const periodsMap = {
@@ -332,6 +342,91 @@ export const getTimeTakenForExecutives = executives => {
     }, buckets)
 }
 
+export const getMKRResponsiveness = executives => {
+  const events = executives.flatMap(vote =>
+    vote.timeLine
+      .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
+      .map(v => ({
+        ...v,
+        vote_date: vote.timestamp,
+        mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
+      })),
+  )
+  const buckets = Array.from({ length: 30 }, (v, i) => i).map(num => ({
+    from: num,
+    to: num + 1,
+    label: `${num}-${num + 1} days`,
+    mkr: 0,
+  }))
+
+  const periodEvents = events.reduce((acc, event) => {
+    const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.vote_date))
+    return acc.map(bucket => ({
+      ...bucket,
+      mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.mkr) : bucket.mkr,
+    }))
+  }, buckets)
+  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+}
+
+export const getPollsMKRResponsiveness = async polls => {
+  const days = Math.max(
+    ...polls.map(poll => {
+      const start = poll.startDate >= 1e12 ? (poll.startDate / 1e3).toFixed(0) : poll.startDate
+      const end = poll.endDate >= 1e12 ? (poll.endDate / 1e3).toFixed(0) : poll.endDate
+      const diffDays = differenceInDays(fromUnixTime(end), fromUnixTime(start))
+
+      return diffDays
+    }),
+  )
+
+  const buckets = Array.from({ length: days }, (v, i) => i).map(num => ({
+    from: num,
+    to: num + 1,
+    label: `${num}-${num + 1} days`,
+    mkr: 0,
+  }))
+
+  const pollBalances = await getPollsBalances(polls)
+  const pollVotes = polls.map(poll => {
+    return {
+      voters: poll.timeLine
+        .filter(v => v.type === POLL_VOTE_ACTION)
+        .reduce(
+          (accum, v) => ({
+            ...accum,
+            [v.sender]:
+              accum[v.sender] && accum[v.sender].timestamp < v.timestamp
+                ? accum[v.sender]
+                : { ...v, poll_startDate: poll.startDate, poll_endDate: poll.endDate, poll_id: poll.id },
+          }),
+          {},
+        ),
+    }
+  })
+
+  await Promise.all(
+    polls.map(async (poll, index) => {
+      const totalBalance = await getVotersBalance(poll, pollBalances)
+      Object.keys(pollVotes[index].voters).forEach(addr => {
+        pollVotes[index].voters[addr].balance = totalBalance[addr].toNumber()
+      })
+    }),
+  )
+
+  const periodEvents = pollVotes
+    .flatMap(vote => Object.keys(vote.voters).map(v => vote.voters[v]))
+    .reduce((acc, event) => {
+      const diffDays = differenceInDays(fromUnixTime(event.timestamp), fromUnixTime(event.poll_startDate))
+      return acc.map(bucket => ({
+        ...bucket,
+        mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.balance) : bucket.mkr,
+      }))
+    }, buckets)
+
+  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+}
+
 export const getTopVoters = (executives, polls) => {
   const executivesTimeLine = executives.flatMap(vote =>
     Array.from(new Set(vote.timeLine.filter(tl => tl.type === VOTING_ACTION_ADD && tl.sender).map(el => el.sender))),
@@ -397,26 +492,23 @@ export const getMKRActiveness = executives => {
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
-      let activenessDeepClone = {}
+      let activenessByWindow = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
         .forEach(window => {
-          activenessDeepClone[window] = {}
+          activenessByWindow[window] = 0
           Object.keys(groupByAddressDate[window]).forEach(addr => {
             const value = groupByAddressDate[window][addr]
               ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
               : 0
             hasAddObj[addr] = value
-            activenessDeepClone[window].result = activenessDeepClone[window].result
-              ? value + activenessDeepClone[window].result
-              : value
+            activenessByWindow[window] += value
           })
         })
-      valuePerDay[day] = getAverage(activenessDeepClone) //Get the average of each day.
+      valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
     })
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
-
   //for each period, get the right average value
   return periods.map(el => {
     const day = Object.keys(valuePerDay).find(day => Number(day) >= el.from && Number(day) <= el.to)
@@ -429,7 +521,7 @@ export const getMKRActiveness = executives => {
 
 const getAverage = obj => {
   const objArray = Object.keys(obj)
-  const result = objArray.reduce((accum: any, day) => obj[day].result + accum, 0)
+  const result = objArray.reduce((accum: any, day) => obj[day] + accum, 0)
   return result / objArray.length
 }
 
