@@ -12,6 +12,9 @@ export const VOTING_ACTION_LOCK = 'LockAction'
 export const VOTING_ACTION_ADD = 'AddAction'
 export const VOTING_ACTION_REMOVE = 'RemoveAction'
 
+//Poll actions
+export const POLL_VOTE_ACTION = 'VotePollAction'
+
 export const DEFAULT_FETCH_ROWS = 300
 
 //Polls list
