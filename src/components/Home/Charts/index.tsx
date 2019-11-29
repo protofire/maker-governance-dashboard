@@ -4,6 +4,8 @@ import VotersVsMkrChart from './VotersVsMkrChart'
 import MkrDistributionPerExecutiveChart from './MkrDistributionPerExecutiveChart'
 import GiniChart from './GiniChart'
 import MKRActivenessChart from './MKRActivenessChart'
+import ExecutivesResponsivenessChart from './ExecutivesResponsivenessChart'
+import PollsResponsivenessChart from './PollsResponsivenessChart'
 
 export {
   VotesVsPollsChart,
@@ -12,4 +14,6 @@ export {
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
   MKRActivenessChart,
+  ExecutivesResponsivenessChart,
+  PollsResponsivenessChart,
 }

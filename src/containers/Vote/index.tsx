@@ -30,12 +30,6 @@ function VoteInfo(props: Props) {
 
   const { data: vData, ...vResult } = useQuery(EXECUTIVE_INFO_QUERY, { variables: resultVariables })
 
-  // Remove when bug is fixed
-  const fakeVote = vote => ({
-    ...vote,
-    casted: '1574092638',
-  })
-
   useEffect(() => {
     getMakerDaoData()
       .then(({ executiveVotes }) => {
@@ -51,9 +45,7 @@ function VoteInfo(props: Props) {
 
   useEffect(() => {
     if (vData && vData.spell && voteId) {
-      const spell =
-        vData.spell.id === '0xf44113760c4f70afeeb412c63bc713b13e6e202e' ? fakeVote(vData.spell) : vData.spell
-      setData(() => ({ ...makerData, ...spell }))
+      setData(() => ({ ...makerData, ...vData.spell }))
       setResultVariables(getExecutiveVariables({ id: voteId, timeLineCount: vData.spell.timeLineCount }))
     }
   }, [vData, voteId, makerData])

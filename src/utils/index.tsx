@@ -304,7 +304,6 @@ export const getPollsBalances = async polls => {
   const allVoters = Array.from(
     new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
   )
-
   const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(now))))
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
@@ -316,7 +315,6 @@ export const getPollsBalances = async polls => {
         timestamp: snapshot.timestamp,
       },
     ]
-
     return {
       ...lookup,
       [account]: newBalances,

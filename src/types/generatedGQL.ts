@@ -132,7 +132,64 @@ export interface GetPolls_polls_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
+
+export interface GetPolls_polls_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+}
+
+export interface GetPolls_polls_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface GetPolls_polls_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type GetPolls_polls_timeLine =
+  | GetPolls_polls_timeLine_VotePollAction
+  | GetPolls_polls_timeLine_CreatePollAction
+  | GetPolls_polls_timeLine_WithdrawPollAction
 
 export interface GetPolls_polls {
   __typename: 'Poll'
@@ -150,6 +207,10 @@ export interface GetPolls_polls {
    *  Number votes
    */
   votesCount: any
+  /**
+   *  Poll historical data
+   */
+  timeLine: GetPolls_polls_timeLine[] | null
 }
 
 export interface GetPolls {
@@ -178,7 +239,64 @@ export interface getHomeData_polls_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
+
+export interface getHomeData_polls_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+}
+
+export interface getHomeData_polls_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface getHomeData_polls_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type getHomeData_polls_timeLine =
+  | getHomeData_polls_timeLine_VotePollAction
+  | getHomeData_polls_timeLine_CreatePollAction
+  | getHomeData_polls_timeLine_WithdrawPollAction
 
 export interface getHomeData_polls {
   __typename: 'Poll'
@@ -196,6 +314,10 @@ export interface getHomeData_polls {
    *  Number votes
    */
   votesCount: any
+  /**
+   *  Poll historical data
+   */
+  timeLine: getHomeData_polls_timeLine[] | null
 }
 
 export interface getHomeData_executives_timeLine_AddAction {
@@ -1060,7 +1182,64 @@ export interface pollsDetail_votes {
    *  Selected option
    */
   option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
 }
+
+export interface pollsDetail_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+}
+
+export interface pollsDetail_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface pollsDetail_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type pollsDetail_timeLine =
+  | pollsDetail_timeLine_VotePollAction
+  | pollsDetail_timeLine_CreatePollAction
+  | pollsDetail_timeLine_WithdrawPollAction
 
 export interface pollsDetail {
   __typename: 'Poll'
@@ -1078,6 +1257,10 @@ export interface pollsDetail {
    *  Number votes
    */
   votesCount: any
+  /**
+   *  Poll historical data
+   */
+  timeLine: pollsDetail_timeLine[] | null
 }
 
 /* tslint:disable */
