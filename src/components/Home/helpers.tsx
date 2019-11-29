@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import { format, fromUnixTime, differenceInDays } from 'date-fns'
+import { format, fromUnixTime, differenceInDays, subDays, getUnixTime, startOfDay } from 'date-fns'
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
@@ -21,8 +21,10 @@ import {
   LAST_WEEK,
   LAST_DAY,
   ACTION_FREE,
-  VOTING_ACTION_LOCK,
   VOTING_ACTION_ADD,
+  VOTING_ACTION_REMOVE,
+  VOTING_ACTION_LOCK,
+  VOTING_ACTION_FREE,
   POLL_VOTE_ACTION,
 } from '../../constants'
 
@@ -448,4 +450,94 @@ export const getTopVoters = (executives, polls) => {
     sender: vp,
     count: pollsVotesCount[vp],
   }))
+}
+
+export const getMKRActiveness = executives => {
+  const DAYS = 60
+  const date = getUnixTime(subDays(Date.now(), DAYS - 1))
+
+  //Get all votes events equal or greater than date
+  const executivesTimeLine = executives
+    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.type !== VOTING_ACTION_REMOVE && tl.sender))))
+    .filter(tl => tl.timestamp >= date)
+
+  //Group events by date and by address and sort events by timestamp.
+  const groupByAddressDate = executivesTimeLine.reduce((acc, tl) => {
+    const datekey = getUnixTime(startOfDay(fromUnixTime(tl.timestamp)))
+    return {
+      ...acc,
+      [datekey]: acc[datekey]
+        ? {
+            ...acc[datekey],
+            ...{
+              [tl.sender]:
+                acc[datekey][tl.sender] && acc[datekey][tl.sender].events
+                  ? { events: [...acc[datekey][tl.sender].events, tl].sort((a, b) => b.timestamp - a.timestamp) }
+                  : { events: [tl] },
+            },
+          }
+        : {
+            [tl.sender]: { events: [tl] },
+          },
+    }
+  }, {})
+
+  //activeness logic
+
+  let valuePerDay = {}
+
+  //For each day and address sum all the events.
+  const startPos = DAYS / 2 - 1
+  Object.keys(groupByAddressDate)
+    .slice(startPos, DAYS)
+    .forEach((day, i) => {
+      let hasAddObj = {}
+      let activenessByWindow = {}
+      Object.keys(groupByAddressDate)
+        .slice(i, startPos + i + 1)
+        .forEach(window => {
+          activenessByWindow[window] = 0
+          Object.keys(groupByAddressDate[window]).forEach(addr => {
+            const value = groupByAddressDate[window][addr]
+              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
+              : 0
+            hasAddObj[addr] = value
+            activenessByWindow[window] += value
+          })
+        })
+      valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
+    })
+
+  const periods = periodsMap[LAST_MONTH]() //get last month periods
+  //for each period, get the right average value
+  return periods.map(el => {
+    const day = Object.keys(valuePerDay).find(day => Number(day) >= el.from && Number(day) <= el.to)
+    return {
+      ...el,
+      activeness: day ? Number(valuePerDay[day].toFixed(2)) : 0,
+    }
+  })
+}
+
+const getAverage = obj => {
+  const objArray = Object.keys(obj)
+  const result = objArray.reduce((accum: any, day) => obj[day] + accum, 0)
+  return result / objArray.length
+}
+
+const getActivenessValue = (events, hasAdd) => {
+  let addValue = hasAdd
+  return events.reduce((acc, event) => {
+    if (!hasAdd) {
+      addValue = event.type === VOTING_ACTION_ADD ? Number(event.locked) : 0
+      return addValue
+    }
+    return event.type === VOTING_ACTION_ADD
+      ? Number(event.locked)
+      : event.type === VOTING_ACTION_LOCK
+      ? acc + Number(event.wad)
+      : event.type === VOTING_ACTION_FREE
+      ? acc - Number(event.wad)
+      : addValue
+  }, hasAdd)
 }
