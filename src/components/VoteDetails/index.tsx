@@ -72,16 +72,14 @@ function VoteDetails(props: Props) {
       },
     },
     chart: {
-      votersVsMkr: {
+      mkrStaked: {
+        data: getVotersVsMkrData(votingActions, vote),
+        component: props => <VotersVsMkr expanded content="Total MKR Staked" component="mkrStaked" {...props} />,
+      },
+      numberOfVoters: {
         data: getVotersVsMkrData(votingActions, vote),
         component: props => (
-          <VotersVsMkr
-            expanded
-            content="Number of Voters"
-            versus="Total MKR Staked"
-            component="votersVsMkr"
-            {...props}
-          />
+          <VotersVsMkr voters expanded content="Number of Voters" component="numberOfVoters" {...props} />
         ),
       },
       approvalsByAddress: {
@@ -136,6 +134,7 @@ function VoteDetails(props: Props) {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
     return (
       <VotersVsMkrChart
+        voters={props.voters}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
       />
@@ -188,12 +187,15 @@ function VoteDetails(props: Props) {
           )}
         </CardStyled>
         <CardStyled style={{ gridArea: 'col4' }}>
-          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
+          <VotersVsMkr content="Number of Voters" voters component="numberOfVoters" />
         </CardStyled>
         <CardStyled style={{ gridArea: 'col5' }}>
+          <VotersVsMkr content="Total MKR Staked" component="mkrStaked" />
+        </CardStyled>
+        <CardStyled style={{ gridArea: 'col6' }}>
           <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
         </CardStyled>
-        <CardStyled style={{ padding: 0, gridArea: 'col6' }}>
+        <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper content="Top Supporters">
             <StrippedRowsContainer>
               {getTopSupportersTableData(topSupporters, vote)
