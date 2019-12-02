@@ -68,7 +68,7 @@ function VoteDetails(props: Props) {
     table: {
       description: {
         data: vote.about,
-        component: props => <Description expanded content="Description" component="description" {...props} />,
+        component: props => <Description expanded content="Executive Description" component="description" {...props} />,
       },
     },
     chart: {
@@ -171,7 +171,7 @@ function VoteDetails(props: Props) {
     <>
       <VoteDetailContainer>
         <CardStyled style={{ padding: 0, gridArea: 'col1' }}>
-          <StrippedTableWrapper content="Details">
+          <StrippedTableWrapper content="Executive Details">
             {getVoteTableData(vote).map(el => (
               <StrippedTableRow key={el.label}>
                 <StrippedTableCell>{el.label}</StrippedTableCell>
@@ -182,7 +182,7 @@ function VoteDetails(props: Props) {
         </CardStyled>
         <CardStyled style={{ gridArea: 'col2' }}>
           {vote.about ? (
-            <Description content="Description" component="description" />
+            <Description content="Executive Description" component="description" />
           ) : (
             <NoData>Cannot fetch executive description.</NoData>
           )}
