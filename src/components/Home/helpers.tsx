@@ -506,22 +506,20 @@ const getActiveness = (executives, window) => {
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
-      let activenessDeepClone = {}
+      let activenessByWindow = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
         .forEach(window => {
-          activenessDeepClone[window] = {}
+          activenessByWindow[window] = 0
           Object.keys(groupByAddressDate[window]).forEach(addr => {
             const value = groupByAddressDate[window][addr]
               ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
               : 0
             hasAddObj[addr] = value
-            activenessDeepClone[window].result = activenessDeepClone[window].result
-              ? value + activenessDeepClone[window].result
-              : value
+            activenessByWindow[window] += value
           })
         })
-      valuePerDay[day] = getAverage(activenessDeepClone) //Get the average of each day.
+      valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
     })
   return valuePerDay
 }
@@ -547,7 +545,6 @@ export const getMKRActiveness = executives => {
   const valuePerDay = getActiveness(executives, 30)
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
-
   //for each period, get the right average value
   return periods.map(el => {
     const day = Object.keys(valuePerDay).find(day => Number(day) >= el.from && Number(day) <= el.to)
@@ -560,7 +557,7 @@ export const getMKRActiveness = executives => {
 
 const getAverage = obj => {
   const objArray = Object.keys(obj)
-  const result = objArray.reduce((accum: any, day) => obj[day].result + accum, 0)
+  const result = objArray.reduce((accum: any, day) => obj[day] + accum, 0)
   return result / objArray.length
 }
 
