@@ -1,7 +1,7 @@
-import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { fromUnixTime, format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
-import { shortenAccount, getHourlyFromTo } from '../../utils'
+import { shortenAccount, getHourlyFromTo, getTimeOpened } from '../../utils'
 import {
   LAST_YEAR,
   VOTING_ACTION_FREE,
@@ -16,12 +16,13 @@ export const getVoteTableData = vote => {
     : new Date(vote.date)
   const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   return [
-    { value: shortenAccount(vote.id), label: 'Source' },
-    { value: format(startDate, 'P'), label: 'Started' },
-    { value: mkr_approvals ? 'Yes' : 'No', label: 'Voted' },
-    { value: vote.casted ? 'Yes' : 'No', label: 'Ended' },
-    { value: vote.casted ? 'Closed' : 'Active', label: 'Status' },
-    { value: formatDistanceToNow(startDate, { addSuffix: false }), label: 'Time opened' },
+    { value: shortenAccount(vote.id), label: 'Spell Address' },
+    { value: format(startDate, 'P'), label: 'Start Date' },
+    { value: vote.casted ? 'Passed' : 'Open', label: 'Status' },
+    {
+      value: vote.casted ? getTimeOpened(startDate, fromUnixTime(vote.casted)) : getTimeOpened(startDate, Date.now()),
+      label: 'Time opened',
+    },
     { value: mkr_approvals, label: 'MKR in support' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]
