@@ -89,15 +89,7 @@ function VoteDetails(props: Props) {
       },
       executiveVsHat: {
         data: getExecutiveVsHat(vote, executives, governanceInfo.hat),
-        component: props => (
-          <ExecutiveVsHat
-            expanded
-            content="Executive vote"
-            versus="Current Hat"
-            component="executiveVsHat"
-            {...props}
-          />
-        ),
+        component: props => <ExecutiveVsHat expanded content="Vs Current Hat" component="executiveVsHat" {...props} />,
       },
       approvalsByAddress: {
         data: getApprovalsByAddress(votingActions),
@@ -234,7 +226,7 @@ function VoteDetails(props: Props) {
           </StrippedTableWrapper>
         </CardStyled>
         <CardStyled>
-          <ExecutiveVsHat content="Executive vote" versus="Current Hat" component="executiveVsHat" />
+          <ExecutiveVsHat content="Vs Current Hat" component="executiveVsHat" />
         </CardStyled>
       </VoteDetailContainer>
       {isModalOpen && (
