@@ -193,6 +193,7 @@ function PollDetails(props: Props) {
 
     return (
       <PollPerOptionChart
+        colors={colors}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
         isVoter={props.isVoter}
