@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   fromUnixTime,
   getUnixTime,
@@ -12,6 +13,7 @@ import {
 import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData } from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
+import { AddressNav } from '../common'
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
@@ -53,7 +55,10 @@ export const getPollTableData = (poll, mkrDistributionData) => {
   const winOption = getKeysWithHighestValue(rest, 1)[0]
   const time = getTimeLeftData(poll.startDate, poll.endDate)
   return [
-    { value: shortenAccount(poll.source.toLowerCase()), label: 'Poll Address' },
+    {
+      value: <AddressNav address={poll.source.toLowerCase()}>{shortenAccount(poll.source.toLowerCase())}</AddressNav>,
+      label: 'Poll Address',
+    },
     { value: format(fromUnixTime(poll.startDate), 'P'), label: 'Start Date' },
     { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Open', label: 'Status' },
     {
@@ -287,7 +292,7 @@ export const getPollMakerHistogramData = async poll => {
 export const getTopVotersTableData = topVoters => {
   const total: any = Object.values(topVoters).reduce((a: any, b: any) => Number(a) + Number(b), 0)
   const data = Object.entries(topVoters).map((el: any) => ({
-    sender: shortenAccount(el[0]),
+    sender: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
     supports: ((Number(el[1]) * 100) / total).toFixed(1),
   }))
 

@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip'
 import { format, fromUnixTime, differenceInMonths } from 'date-fns'
 import { timeLeft } from '../../utils'
 import { SelectColumnFilter } from '../common/Table/filters'
-import { Spinner, SpinnerContainer } from '../common'
+import { Spinner, SpinnerContainer, AddressNav } from '../common'
 
 const Loading = () => (
   <SpinnerContainer>
@@ -149,7 +149,13 @@ export const Executivecolumns = () => {
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
-          <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+          {row.original.title ? (
+            <span data-tip={row.original.title}>{row.original.title}</span>
+          ) : (
+            <AddressNav address={row.original.id}>
+              <span data-tip={row.original.id}>{row.original.id}</span>
+            </AddressNav>
+          )}
         </>
       ),
       filter: 'fuzzyText',

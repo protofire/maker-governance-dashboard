@@ -7,6 +7,8 @@ import Spinner, { SpinnerContainer } from './Spinner'
 import StrippedTableWrapper from './StrippedTableWrapper'
 import Table from './Table'
 import { ChartSelect } from './Chart'
+import AddressNav from './AddressNav'
+import CopyToClipboard from './CopyToClipboard'
 import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
 
 import {
@@ -38,6 +40,8 @@ export {
   CardTitleContainer,
   Chart,
   ChartSelect,
+  AddressNav,
+  CopyToClipboard,
   ChartWrapper,
   CloseIcon,
   DescriptionBox,
