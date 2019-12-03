@@ -26,6 +26,7 @@ import {
   StrippedTableRow,
   ThreeRowGrid,
   TwoRowGrid,
+  CenteredRowGrid,
   Versus,
   ViewAll,
   LegendLi,
@@ -65,5 +66,6 @@ export {
   Versus,
   ViewAll,
   TwoRowGrid,
+  CenteredRowGrid,
   LegendLi,
 }
