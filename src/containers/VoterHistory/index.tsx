@@ -10,6 +10,7 @@ import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 
 type Props = {
   match: any
+  history?: any
 }
 
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
@@ -23,7 +24,7 @@ const getHomeVariables = data => {
 }
 
 function VoterHistory(props: Props) {
-  const { match } = props
+  const { match, history } = props
   const voterId = match.params.id
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [executives, setExecutives] = useState<any[]>([])
@@ -35,6 +36,11 @@ function VoterHistory(props: Props) {
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
   const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+
+  const getItem = row => {
+    if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
+    else history.push(`/poll/${row.id}`)
+  }
 
   const setPlurality = plurality => {
     const winnerOption = plurality.reduce(
@@ -119,7 +125,7 @@ function VoterHistory(props: Props) {
   return (
     <>
       <PageTitle>Voter History</PageTitle>
-      <List data={[...executives, ...polls]} columns={historyColumns} />
+      <List handleRow={getItem} data={[...executives, ...polls]} columns={historyColumns} />
     </>
   )
 }
