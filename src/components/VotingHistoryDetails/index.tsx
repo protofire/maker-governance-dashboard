@@ -7,6 +7,7 @@ import { Spinner, SpinnerContainer } from '../common'
 type Props = {
   polls: Array<any>
   executives: Array<any>
+  history?: any
 }
 
 const Error = () => <div>ERROR: The address is invalid. </div>
@@ -43,7 +44,7 @@ const VotingHistoryContainer = styled.div`
 const validateInputAddresses = address => /^(0x){1}[0-9a-fA-F]{40}$/i.test(address)
 
 function VotingHistoryDetails(props: Props) {
-  const { polls, executives } = props
+  const { polls, executives, history } = props
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [found, setFound] = useState(true)
@@ -69,10 +70,9 @@ function VotingHistoryDetails(props: Props) {
         setFound(false)
         setError(false)
       } else {
-        //redirect to voter page
-        console.log('found!')
         setError(false)
         setFound(true)
+        history.push(`/voter/${value}`)
       }
     } else {
       setError(true)
