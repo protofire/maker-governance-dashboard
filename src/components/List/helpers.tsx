@@ -192,3 +192,73 @@ export const Executivecolumns = () => {
     },
   ]
 }
+
+export const VoterHistoryColumns = () => {
+  return [
+    {
+      Header: 'Type',
+      separator: true,
+      Filter: SelectColumnFilter,
+      accessor: row => (row.__typename === 'Spell' ? 'Executive' : 'Poll'),
+      width: 100,
+    },
+    {
+      Header: 'Status',
+      separator: true,
+      Filter: SelectColumnFilter,
+      filter: 'includes',
+      accessor: row =>
+        row.__typename === 'Spell' && row.casted
+          ? 'Passed'
+          : row.__typename !== 'Spell' && timeLeft(row.endDate) === 'Ended'
+          ? 'Ended'
+          : 'Open',
+      id: 'status',
+      Cell: ({ row }) =>
+        row.original.__typename === 'Spell' && row.original.casted ? (
+          <span style={{ color: '#2730a0', marginLeft: '20px' }}>Passed</span>
+        ) : row.__typename !== 'Spell' && timeLeft(row.original.endDate) === 'Ended' ? (
+          <span style={{ color: '#444', marginLeft: '20px' }}>Ended</span>
+        ) : (
+          <span style={{ color: '#fac202', marginLeft: '20px' }}>Open</span>
+        ),
+      width: 100,
+    },
+    {
+      Header: 'Name',
+      separator: true,
+      accessor: row => row.title || row.id,
+      Cell: ({ row }) => (
+        <>
+          <ReactTooltip place="top" type="dark" effect="solid" />
+          <span data-tip={row.original.title || row.original.id}>{row.original.title || row.original.id}</span>
+        </>
+      ),
+      filter: 'fuzzyText',
+    },
+    {
+      Header: 'Category',
+      Filter: SelectColumnFilter,
+      separator: true,
+      filter: 'includes',
+      show: false,
+      accessor: () => 'uncategorized',
+      width: 100,
+    },
+    {
+      Header: 'Winning Option',
+      accessor: 'win-option',
+      separator: true,
+      disableFilters: true,
+      width: 100,
+      Cell: ({ row }) =>
+        row.original.__typename === 'Spell' ? (
+          'N/A'
+        ) : row.original.plurality ? (
+          row.original.plurality.option.label
+        ) : (
+          <Loading />
+        ),
+    },
+  ]
+}

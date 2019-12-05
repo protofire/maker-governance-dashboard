@@ -10,6 +10,7 @@ import Polls from '../Polls'
 import Executive from '../Executive'
 import Vote from '../Vote'
 import Poll from '../Poll'
+import VoterHistory from '../VoterHistory'
 
 import Footer from '../../components/common/Footer'
 import MainWrapper from '../../components/common/MainWrapper'
@@ -41,6 +42,7 @@ function App() {
               <Route exact path="/executive/:id" component={Vote} />
               <Route exact path="/polls" component={Polls} />
               <Route exact path="/poll/:id" component={Poll} />
+              <Route exact path="/voter/:id" component={VoterHistory} />
             </Switch>
             <Footer />
           </MainScroll>
