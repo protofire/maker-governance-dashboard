@@ -1,7 +1,9 @@
+import React from 'react'
 import { fromUnixTime, format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
 import { shortenAccount, getHourlyFromTo, getTimeOpened } from '../../utils'
+import { AddressNav } from '../common'
 import {
   LAST_YEAR,
   VOTING_ACTION_FREE,
@@ -16,7 +18,15 @@ export const getVoteTableData = vote => {
     : new Date(vote.date)
   const mkr_approvals = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   return [
-    { value: shortenAccount(vote.id), label: 'Spell Address' },
+    {
+      value: (
+        <AddressNav address={vote.id}>
+          {' '}
+          <span>{shortenAccount(vote.id)}</span>
+        </AddressNav>
+      ),
+      label: 'Spell Address',
+    },
     { value: format(startDate, 'P'), label: 'Start Date' },
     { value: vote.casted ? 'Passed' : 'Open', label: 'Status' },
     {
@@ -31,7 +41,7 @@ export const getVoteTableData = vote => {
 export const getTopSupportersTableData = (supporters, vote) => {
   const total = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   const data = Object.entries(supporters).map((el: any) => ({
-    sender: shortenAccount(el[0]),
+    sender: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
     supports: ((el[1].mkr * 100) / total).toFixed(1),
   }))
 
