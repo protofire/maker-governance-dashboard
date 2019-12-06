@@ -1,8 +1,8 @@
 import React from 'react'
-import { fromUnixTime, format, formatDistanceToNow } from 'date-fns'
+import { fromUnixTime, format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import BigNumber from 'bignumber.js'
-import { shortenAccount, getHourlyFromTo } from '../../utils'
+import { shortenAccount, getHourlyFromTo, getTimeOpened } from '../../utils'
 import { AddressNav } from '../common'
 import {
   LAST_YEAR,
@@ -25,13 +25,14 @@ export const getVoteTableData = vote => {
           <span>{shortenAccount(vote.id)}</span>
         </AddressNav>
       ),
-      label: 'Source',
+      label: 'Spell Address',
     },
-    { value: format(startDate, 'P'), label: 'Started' },
-    { value: mkr_approvals ? 'Yes' : 'No', label: 'Voted' },
-    { value: vote.casted ? 'Yes' : 'No', label: 'Ended' },
-    { value: vote.casted ? 'Closed' : 'Active', label: 'Status' },
-    { value: formatDistanceToNow(startDate, { addSuffix: false }), label: 'Time opened' },
+    { value: format(startDate, 'P'), label: 'Start Date' },
+    { value: vote.casted ? 'Passed' : 'Open', label: 'Status' },
+    {
+      value: vote.casted ? getTimeOpened(startDate, fromUnixTime(vote.casted)) : getTimeOpened(startDate, Date.now()),
+      label: 'Time opened',
+    },
     { value: mkr_approvals, label: 'MKR in support' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]

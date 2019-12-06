@@ -3,14 +3,13 @@ import {
   fromUnixTime,
   getUnixTime,
   format,
-  differenceInDays,
   addHours,
   startOfHour,
   endOfHour,
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData } from '../../utils'
+import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData, getTimeOpened } from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
 import { AddressNav } from '../common'
@@ -21,15 +20,6 @@ export const defaultFilters = {
 export const getTopVoters = async poll => {
   const balancesLookup = await getAllBalances(poll)
   return await getVotersBalance(poll, balancesLookup)
-}
-
-const getTimeOpened = (from, to) => {
-  const diffDays = differenceInDays(to, from)
-  const diffHours = differenceInHours(to, from) % 24
-  if (diffDays > 0 && diffHours > 0) {
-    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
-  } else if (diffDays <= 0) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
-  else return `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
 }
 
 const getKeysWithHighestValue = (o, n) => {
