@@ -221,7 +221,7 @@ function VoteDetails(props: Props) {
                 .map(el => (
                   <StrippedTableRow key={el.sender}>
                     <StrippedTableCell>{el.supports}%</StrippedTableCell>
-                    <StrippedTableCell>{el.sender}</StrippedTableCell>
+                    <StrippedTableCell>{el.s}</StrippedTableCell>
                   </StrippedTableRow>
                 ))}
             </StrippedRowsContainer>
