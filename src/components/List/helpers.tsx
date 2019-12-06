@@ -14,6 +14,23 @@ const Loading = () => (
 export const Pollcolumns = () => {
   return [
     {
+      Header: 'Status',
+      Filter: SelectColumnFilter,
+      filter: 'includes',
+      accessor: row => (timeLeft(row.endDate) === 'Ended' ? 'Ended' : 'Active'),
+      Cell: ({ row }) => timeLeft(row.original.endDate),
+      width: 100,
+    },
+    {
+      Header: 'Category',
+      Filter: SelectColumnFilter,
+      separator: true,
+      show: false,
+      filter: 'includes',
+      accessor: row => 'uncategorized',
+      width: 100,
+    },
+    {
       Header: 'Name',
       separator: true,
       accessor: 'title',
@@ -50,28 +67,12 @@ export const Pollcolumns = () => {
       width: 80,
     },
     {
-      Header: 'Total MKR Staked',
-      accessor: 'total-mkr',
-      disableFilters: true,
-      sortType: (a, b) => a.original.plurality.totalMkr - b.original.plurality.totalMkr,
-      Cell: ({ row }) => (row.original.plurality ? row.original.plurality.totalMkr : <Loading />),
-      width: 80,
-    },
-    {
       Header: 'MKR Participation',
       accessor: 'participation',
       separator: true,
       disableFilters: true,
       Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : <Loading />),
       width: 80,
-    },
-    {
-      Header: 'Category',
-      Filter: SelectColumnFilter,
-      separator: true,
-      filter: 'includes',
-      accessor: row => 'uncategorized',
-      width: 100,
     },
     {
       Header: 'Start',
@@ -89,13 +90,6 @@ export const Pollcolumns = () => {
       separator: true,
       sortType: 'datetime',
       Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
-      width: 100,
-    },
-    {
-      Header: 'Status',
-      Filter: SelectColumnFilter,
-      filter: 'includes',
-      accessor: row => timeLeft(row.endDate),
       width: 100,
     },
   ]
@@ -124,7 +118,7 @@ export const Executivecolumns = () => {
       id: 'status',
       Cell: ({ row }) =>
         row.original.isHat && row.original.isActive ? (
-          <span style={{ color: '#00ba9c', marginLeft: '20px' }}>
+          <span style={{ color: '#00ba9c', marginLeft: '20px', fontWeight: 700 }}>
             <span>Active</span>
           </span>
         ) : row.original.isHat ? (
@@ -132,7 +126,7 @@ export const Executivecolumns = () => {
             <span>Hat</span>
           </span>
         ) : row.original.isActive ? (
-          <span style={{ color: '#00ba9c', marginLeft: '20px' }}>Active</span>
+          <span style={{ color: '#00ba9c', marginLeft: '20px', fontWeight: 700 }}>Active</span>
         ) : row.original.casted ? (
           <span style={{ color: '#2730a0', marginLeft: '20px' }}>Passed</span>
         ) : differenceInMonths(new Date(), fromUnixTime(row.original.timestamp)) < 12 ? (
@@ -140,6 +134,15 @@ export const Executivecolumns = () => {
         ) : (
           'Limbo'
         ),
+      width: 100,
+    },
+    {
+      Header: 'Category',
+      Filter: SelectColumnFilter,
+      separator: true,
+      show: false,
+      filter: 'includes',
+      accessor: row => 'uncategorized',
       width: 100,
     },
     {
@@ -159,14 +162,6 @@ export const Executivecolumns = () => {
       separator: true,
       disableFilters: true,
       accessor: row => Number(row.approvals).toFixed(2),
-      width: 100,
-    },
-    {
-      Header: 'Category',
-      Filter: SelectColumnFilter,
-      separator: true,
-      filter: 'includes',
-      accessor: row => 'uncategorized',
       width: 100,
     },
     {
