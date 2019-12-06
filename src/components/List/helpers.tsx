@@ -153,7 +153,9 @@ export const Executivecolumns = () => {
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
           {row.original.title ? (
-            <span data-tip={row.original.title}>{row.original.title}</span>
+            <AddressNav address={row.original.id}>
+              <span data-tip={row.original.title}>{row.original.title}</span>
+            </AddressNav>
           ) : (
             <AddressNav address={row.original.id}>
               <span data-tip={row.original.id}>{row.original.id}</span>
