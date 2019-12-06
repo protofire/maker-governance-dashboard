@@ -179,6 +179,25 @@ export const ThreeRowGrid = styled.div`
   }
 `
 
+export const CenteredRowGrid = styled.div`
+  @media (max-width: ${props => props.theme.themeBreakPoints.xl}) {
+    column-gap: ${props => props.theme.separation.gridSeparation};
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: ${props => props.theme.separation.gridSeparation};
+  }
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 0 auto;
+    ${Card} {
+      width: 401px;
+      margin-right: ${props => props.theme.separation.gridSeparation};
+    }
+  }
+`
+
 export const TwoRowGrid = styled.div`
   column-gap: ${props => props.theme.separation.gridSeparation};
   display: grid;
