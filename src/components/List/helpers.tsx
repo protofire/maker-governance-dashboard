@@ -140,6 +140,7 @@ export const Executivecolumns = () => {
       Header: 'Category',
       Filter: SelectColumnFilter,
       separator: true,
+      show: false,
       filter: 'includes',
       accessor: row => 'uncategorized',
       width: 100,
