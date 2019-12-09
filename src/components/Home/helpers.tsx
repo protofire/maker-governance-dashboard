@@ -507,7 +507,6 @@ const getActiveness = (executives, window) => {
     }
   }, {})
 
-  console.log(window, Object.keys(groupByAddressDate).length)
   //activeness logic
 
   let valuePerDay = {}
