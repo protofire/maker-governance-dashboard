@@ -181,7 +181,7 @@ function HomeDetail(props: Props) {
           <HomeTable
             expanded
             handleRow={getVote}
-            content="Uncasted Executives"
+            content="Uncast Executives"
             component="uncastedExecutives"
             {...props}
           />
@@ -498,7 +498,7 @@ function HomeDetail(props: Props) {
           <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Uncasted Executives" component="uncastedExecutives" />
+          <HomeTable handleRow={getVote} content="Uncast Executives" component="uncastedExecutives" />
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>

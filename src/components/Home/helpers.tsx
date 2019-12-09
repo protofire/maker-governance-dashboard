@@ -4,6 +4,7 @@ import { format, fromUnixTime, differenceInDays, subDays, getUnixTime, startOfDa
 import gini from 'gini'
 import BigNumber from 'bignumber.js'
 import { Link } from '../common/styled'
+import { AddressNav } from '../common'
 
 import {
   getLastYear,
@@ -164,9 +165,11 @@ export const TopVotersColumns = () => {
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
-          <Link>
-            <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
-          </Link>
+          <AddressNav address={row.original.sender}>
+            <Link>
+              <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
+            </Link>
+          </AddressNav>
         </>
       ),
     },
@@ -263,7 +266,11 @@ export const Executivecolumns = (isModalOpen: boolean) => {
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
-          <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+          <AddressNav address={row.original.id}>
+            <Link>
+              <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+            </Link>
+          </AddressNav>
         </>
       ),
     },
@@ -306,7 +313,11 @@ export const UncastedExecutivecolumns = () => {
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
-          <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+          <AddressNav address={row.original.id}>
+            <Link>
+              <span data-tip={row.original.id}>{shortenAccount(row.original.id)}</span>
+            </Link>
+          </AddressNav>
         </>
       ),
     },
