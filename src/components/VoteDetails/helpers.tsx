@@ -31,9 +31,9 @@ export const getVoteTableData = vote => {
     { value: vote.casted ? 'Passed' : 'Open', label: 'Status' },
     {
       value: vote.casted ? getTimeOpened(startDate, fromUnixTime(vote.casted)) : getTimeOpened(startDate, Date.now()),
-      label: 'Time opened',
+      label: 'Time Open',
     },
-    { value: mkr_approvals, label: 'MKR in support' },
+    { value: mkr_approvals, label: '# of MKR Staked' },
     { value: vote.casted ? 'Yes' : 'No', label: 'Executed' },
   ]
 }
