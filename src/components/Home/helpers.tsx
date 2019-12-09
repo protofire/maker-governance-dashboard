@@ -507,12 +507,16 @@ const getActiveness = (executives, window) => {
     }
   }, {})
 
+  console.log(window, Object.keys(groupByAddressDate).length)
   //activeness logic
 
   let valuePerDay = {}
+  let adjustedWindow = window
+
+  if (Object.keys(groupByAddressDate).length < window) adjustedWindow = Object.keys(groupByAddressDate).length
 
   //For each day and address sum all the events.
-  const startPos = DAYS / 2 - 1
+  const startPos = adjustedWindow - 1
   Object.keys(groupByAddressDate)
     .slice(startPos, DAYS)
     .forEach((day, i) => {
