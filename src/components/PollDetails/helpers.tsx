@@ -1,17 +1,18 @@
+import React from 'react'
 import {
   fromUnixTime,
   getUnixTime,
   format,
-  differenceInDays,
   addHours,
   startOfHour,
   endOfHour,
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData } from '../../utils'
+import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData, getTimeOpened } from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
+import { AddressNav } from '../common'
 
 export const defaultFilters = {
   votersVsMkr: LAST_YEAR,
@@ -19,15 +20,6 @@ export const defaultFilters = {
 export const getTopVoters = async poll => {
   const balancesLookup = await getAllBalances(poll)
   return await getVotersBalance(poll, balancesLookup)
-}
-
-const getTimeOpened = (from, to) => {
-  const diffDays = differenceInDays(to, from)
-  const diffHours = differenceInHours(to, from) % 24
-  if (diffDays > 0 && diffHours > 0) {
-    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
-  } else if (diffDays <= 0) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
-  else return `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
 }
 
 const getKeysWithHighestValue = (o, n) => {
@@ -53,7 +45,10 @@ export const getPollTableData = (poll, mkrDistributionData) => {
   const winOption = getKeysWithHighestValue(rest, 1)[0]
   const time = getTimeLeftData(poll.startDate, poll.endDate)
   return [
-    { value: shortenAccount(poll.source.toLowerCase()), label: 'Poll Address' },
+    {
+      value: <AddressNav address={poll.source.toLowerCase()}>{shortenAccount(poll.source.toLowerCase())}</AddressNav>,
+      label: 'Poll Address',
+    },
     { value: format(fromUnixTime(poll.startDate), 'P'), label: 'Start Date' },
     { value: timeLeft(poll.endDate) === 'Ended' ? 'Closed' : 'Open', label: 'Status' },
     {
@@ -287,7 +282,7 @@ export const getPollMakerHistogramData = async poll => {
 export const getTopVotersTableData = topVoters => {
   const total: any = Object.values(topVoters).reduce((a: any, b: any) => Number(a) + Number(b), 0)
   const data = Object.entries(topVoters).map((el: any) => ({
-    sender: shortenAccount(el[0]),
+    sender: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
     supports: ((Number(el[1]) * 100) / total).toFixed(1),
   }))
 
