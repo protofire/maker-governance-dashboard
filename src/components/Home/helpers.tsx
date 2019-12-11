@@ -182,6 +182,20 @@ export const TopVotersColumns = () => {
   ]
 }
 
+export const ActivenessBreakdownColumns = () => {
+  return [
+    {
+      Header: 'Period',
+      accessor: 'period',
+    },
+    {
+      Header: 'MKR',
+      disableFilters: true,
+      accessor: row => (row.activeness ? row.activeness.toFixed(2) : Number(0).toFixed(2)),
+    },
+  ]
+}
+
 export const Pollcolumns = (isModalOpen: boolean) => {
   return [
     {
@@ -463,8 +477,8 @@ export const getTopVoters = (executives, polls) => {
   }))
 }
 
-export const getMKRActiveness = executives => {
-  const DAYS = 60
+const getActiveness = (executives, window) => {
+  const DAYS = window * 2
   const date = getUnixTime(subDays(Date.now(), DAYS - 1))
 
   //Get all votes events equal or greater than date
@@ -496,9 +510,12 @@ export const getMKRActiveness = executives => {
   //activeness logic
 
   let valuePerDay = {}
+  let adjustedWindow = window
+
+  if (Object.keys(groupByAddressDate).length < window) adjustedWindow = Object.keys(groupByAddressDate).length
 
   //For each day and address sum all the events.
-  const startPos = DAYS / 2 - 1
+  const startPos = adjustedWindow - 1
   Object.keys(groupByAddressDate)
     .slice(startPos, DAYS)
     .forEach((day, i) => {
@@ -518,6 +535,28 @@ export const getMKRActiveness = executives => {
         })
       valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
     })
+  return valuePerDay
+}
+
+export const getActivenessBreakdown = executives => {
+  const valueLastDay = { period: 'Last Day', activeness: Object.values(getActiveness(executives, 1)).slice(-1)[0] }
+  const valueLastWeek = { period: 'Last Week', activeness: Object.values(getActiveness(executives, 7)).slice(-1)[0] }
+  const valueLastMonth = { period: 'Last Month', activeness: Object.values(getActiveness(executives, 30)).slice(-1)[0] }
+  const valueLast3Months = {
+    period: 'Last 3 Months',
+    activeness: Object.values(getActiveness(executives, 90)).slice(-1)[0],
+  }
+  const valueLast6Months = {
+    period: 'Last 6 Months',
+    activeness: Object.values(getActiveness(executives, 180)).slice(-1)[0],
+  }
+  const valueLastYear = { period: 'Last Year', activeness: Object.values(getActiveness(executives, 365)).slice(-1)[0] }
+
+  return [valueLastDay, valueLastWeek, valueLastMonth, valueLast3Months, valueLast6Months, valueLastYear]
+}
+
+export const getMKRActiveness = executives => {
+  const valuePerDay = getActiveness(executives, 30)
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
   //for each period, get the right average value

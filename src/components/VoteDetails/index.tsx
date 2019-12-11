@@ -13,7 +13,7 @@ import {
   StrippedTableRow,
 } from '../common'
 import { getModalContainer } from '../../utils'
-import { VotersVsMkrChart, ApprovalsByAddressChart } from './Charts'
+import { VotersVsMkrChart, ApprovalsByAddressChart, ExecutiveVsHatChart } from './Charts'
 import {
   defaultFilters,
   getApprovalsByAddress,
@@ -22,6 +22,7 @@ import {
   getTopSupportersTableData,
   getVoteTableData,
   getVotersVsMkrData,
+  getExecutiveVsHat,
 } from './helpers'
 
 const VoteDetailContainer = styled.div`
@@ -55,10 +56,12 @@ const CardStyled = styled(Card)`
 type Props = {
   vote: any
   votingActions: Array<any>
+  executives: Array<any>
+  governanceInfo: any
 }
 
 function VoteDetails(props: Props) {
-  const { vote, votingActions } = props
+  const { vote, votingActions, executives, governanceInfo } = props
   const [isModalOpen, setModalOpen] = useState(false)
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
@@ -81,6 +84,10 @@ function VoteDetails(props: Props) {
         component: props => (
           <VotersVsMkr voters expanded content="Number of Voters" component="numberOfVoters" {...props} />
         ),
+      },
+      executiveVsHat: {
+        data: getExecutiveVsHat(vote, executives, governanceInfo.hat),
+        component: props => <ExecutiveVsHat expanded content="Vs Current Hat" component="executiveVsHat" {...props} />,
       },
       approvalsByAddress: {
         data: getApprovalsByAddress(votingActions),
@@ -135,6 +142,17 @@ function VoteDetails(props: Props) {
     return (
       <VotersVsMkrChart
         voters={props.voters}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        wrapperProps={getWrapperProps(data)}
+      />
+    )
+  }
+
+  // Executive vs current hat
+  const ExecutiveVsHat = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+    return (
+      <ExecutiveVsHatChart
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
       />
@@ -203,11 +221,14 @@ function VoteDetails(props: Props) {
                 .map(el => (
                   <StrippedTableRow key={el.sender}>
                     <StrippedTableCell>{el.supports}%</StrippedTableCell>
-                    <StrippedTableCell>{el.sender}</StrippedTableCell>
+                    <StrippedTableCell>{el.s}</StrippedTableCell>
                   </StrippedTableRow>
                 ))}
             </StrippedRowsContainer>
           </StrippedTableWrapper>
+        </CardStyled>
+        <CardStyled>
+          <ExecutiveVsHat content="Vs Current Hat" component="executiveVsHat" />
         </CardStyled>
       </VoteDetailContainer>
       {isModalOpen && (

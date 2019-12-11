@@ -41,7 +41,8 @@ export const getVoteTableData = vote => {
 export const getTopSupportersTableData = (supporters, vote) => {
   const total = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   const data = Object.entries(supporters).map((el: any) => ({
-    sender: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
+    s: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
+    sender: shortenAccount(el[0]),
     supports: ((el[1].mkr * 100) / total).toFixed(1),
   }))
 
@@ -156,4 +157,36 @@ export const getApprovalsByAddress = (votingActions: Array<any>): Array<any> => 
       }
     })
   }, buckets)
+}
+
+export const getExecutiveVsHat = (vote, executives, hat) => {
+  const data = [
+    {
+      mkr: Number(vote.approvals).toFixed(2),
+      isHat: false,
+      casted: !!vote.casted,
+    },
+  ]
+
+  if (vote.id === hat) {
+    const nextVote = executives
+      .filter(v => v.id !== hat && v.id !== vote.id)
+      .reduce((max, vote) => (Number(max.approvals) > Number(vote.approvals) ? max : vote))
+    return [
+      ...data,
+      {
+        mkr: Number(nextVote.approvals).toFixed(2),
+        isNext: true,
+      },
+    ]
+  } else {
+    const hatVote = executives.find(vote => vote.id === hat)
+    return [
+      ...data,
+      {
+        mkr: Number(hatVote.approvals).toFixed(2),
+        isHat: true,
+      },
+    ]
+  }
 }
