@@ -58,6 +58,11 @@ export const getVotesVsPollsData = (votes: Array<any>, polls: Array<any>, time: 
   })
 }
 
+export const getMostVotedPolls = polls =>
+  polls[0].participation ? polls.sort((a, b) => Number(b.participation) - Number(a.participation)) : []
+
+export const getRecentPolls = polls => polls.sort((a, b) => Number(b.startDate) - Number(a.startDate))
+
 export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
   const periods = periodsMap[time]()
 
