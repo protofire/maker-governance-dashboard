@@ -14,6 +14,7 @@ import {
   StrippedTableRow,
   StrippedTableCell,
   ThreeRowGrid,
+  CenteredRowGrid,
   StrippedRowsContainer,
 } from '../common'
 import { getModalContainer } from '../../utils'
@@ -193,6 +194,7 @@ function PollDetails(props: Props) {
 
     return (
       <PollPerOptionChart
+        colors={colors}
         modalProps={getModalProps(data.type, data.component, data.expanded)}
         wrapperProps={getWrapperProps(data)}
         isVoter={props.isVoter}
@@ -262,7 +264,7 @@ function PollDetails(props: Props) {
           )}
         </CardStyled>
       </ThreeRowGrid>
-      <ThreeRowGrid>
+      <CenteredRowGrid>
         <CardStyled>
           {mkrDistributionData.length === 0 ? (
             <Loading />
@@ -288,7 +290,7 @@ function PollDetails(props: Props) {
             </StrippedRowsContainer>
           </StrippedTableWrapper>
         </CardStyled>
-      </ThreeRowGrid>
+      </CenteredRowGrid>
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>

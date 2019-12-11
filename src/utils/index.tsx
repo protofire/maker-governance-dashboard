@@ -321,3 +321,12 @@ export const getPollsBalances = async polls => {
     }
   }, {})
 }
+
+export const getTimeOpened = (from, to) => {
+  const diffDays = differenceInDays(to, from)
+  const diffHours = differenceInHours(to, from) % 24
+  if (diffDays > 0 && diffHours > 0) {
+    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
+  } else if (diffDays <= 0) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
+  else return `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
+}

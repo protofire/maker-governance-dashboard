@@ -745,7 +745,7 @@ export interface GetPollsDataVariables {
 // GraphQL query operation: GetSpell
 // ====================================================
 
-export interface GetSpell_spell {
+export interface GetSpell_spells {
   __typename: 'Spell'
   /**
    *  ID represent the contract address
@@ -783,11 +783,7 @@ export interface GetSpell_spell {
 }
 
 export interface GetSpell {
-  spell: GetSpell_spell | null
-}
-
-export interface GetSpellVariables {
-  id: string
+  spells: GetSpell_spells[]
 }
 
 /* tslint:disable */
