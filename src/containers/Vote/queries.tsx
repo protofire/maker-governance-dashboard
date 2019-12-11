@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const EXECUTIVE_INFO_QUERY = gql`
-  query GetSpell($id: ID!) {
-    spell(id: $id) {
+  query GetSpell {
+    spells {
       id
       timestamp
       casted
@@ -12,6 +12,14 @@ export const EXECUTIVE_INFO_QUERY = gql`
       approvals
       timeLineCount
       totalVotes
+    }
+  }
+`
+export const GOVERNANCE_INFO_QUERY_VOTE = gql`
+  query GetGovernanceInfo {
+    governanceInfo(id: "0x0") {
+      id
+      hat
     }
   }
 `
