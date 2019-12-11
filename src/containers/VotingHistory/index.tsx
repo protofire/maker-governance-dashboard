@@ -15,7 +15,7 @@ const getHomeVariables = data => {
   }
 }
 
-function VotingHistory() {
+function VotingHistory(props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
@@ -31,7 +31,11 @@ function VotingHistory() {
   return (
     <>
       <PageTitle>Voting History</PageTitle>
-      <VotingHistoryDetails polls={historyData.data.polls} executives={historyData.data.executives} />
+      <VotingHistoryDetails
+        history={props.history}
+        polls={historyData.data.polls}
+        executives={historyData.data.executives}
+      />
     </>
   )
 }

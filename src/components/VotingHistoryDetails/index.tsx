@@ -76,6 +76,7 @@ function VotingHistoryDetails(props: Props) {
       }
     } else {
       setError(true)
+      setFound(true)
     }
     setLoading(false)
   }
