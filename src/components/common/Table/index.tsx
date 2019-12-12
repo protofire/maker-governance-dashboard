@@ -24,7 +24,7 @@ type TableProps = {
 
 const HatContainer = styled.span`
   position: absolute;
-  height: 49px;
+  height: 51px;
   width: 24px;
   top: 0;
   left: 0;
@@ -200,11 +200,11 @@ const RowsSection = styled.div`
   }
 `
 
-const ArrowSort = styled(({ up, ...props }) => <ArrowIcon {...props} />)`
+const ArrowSort = styled(({ up, hidden, ...props }) => <ArrowIcon {...props} />)`
   left: 5px;
   position: relative;
-  top: 1px;
   transform: ${props => (props.up ? 'rotate(180deg)' : 'rotate(0deg)')};
+  visibility: ${props => (props.hidden ? 'hidden' : 'visible')};
 `
 
 const Pagination = styled.div`
@@ -362,7 +362,15 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
                 <div>
                   <span {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
-                    {column.isSorted ? column.isSortedDesc ? <ArrowSort up={false} /> : <ArrowSort up={true} /> : ''}
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <ArrowSort up={false} />
+                      ) : (
+                        <ArrowSort up={true} />
+                      )
+                    ) : (
+                      <ArrowSort hidden />
+                    )}
                   </span>
                   {column.canFilter && (
                     <FilterIconContainer

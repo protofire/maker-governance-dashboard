@@ -38,12 +38,16 @@ import {
   VotedPollcolumns,
   Executivecolumns,
   TopVotersColumns,
+  ActivenessBreakdownColumns,
   UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
   getMKRActiveness,
   getPollsMKRResponsiveness,
+  getActivenessBreakdown,
+  getMostVotedPolls,
+  getRecentPolls,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -54,6 +58,7 @@ const CardStyled = styled(Card)`
 const TableCardStyled = styled(Card)`
   min-height: ${props => props.theme.defaultCardHeight};
   height: auto;
+  scroll-y: auto;
 `
 
 const Loading = () => (
@@ -85,17 +90,23 @@ function HomeDetail(props: Props) {
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
   const cachedDataPoll = lscache.get('home-polls') || []
+  const cachedMkrSupply = lscache.get('mkr-supply') || undefined
+
   const cachedDataTopVoters = lscache.get('home-topVoters') || []
   const cachedDataPollsResponsiveness = lscache.get('polls-responsiveness') || []
 
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
-  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(undefined)
+  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(cachedMkrSupply)
   const [pollsBalances, setBalances] = useState<any>({})
 
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
   const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
+  const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
+  const [mkrActiveness, setMkrActiveness] = useState<any>([])
+  const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
+  const [recentPolls, setRecentPolls] = useState<any>([])
 
   const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
 
@@ -109,18 +120,32 @@ function HomeDetail(props: Props) {
   }, [polls, cachedDataPoll.length, cachedDataPollsResponsiveness.length])
 
   useEffect(() => {
-    if (cachedDataPoll.length === 0) getMKRSupply().then(supply => setMkrSupply(supply))
-  }, [cachedDataPoll.length])
+    if (!mkrSupply) {
+      getMKRSupply().then(supply => setMkrSupply(supply))
+    }
+  }, [mkrSupply])
 
   const executiveColumns = expanded => Executivecolumns(expanded)
   const topVotersColumns = () => TopVotersColumns()
   const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
+  const activenessBreakdownColumns = () => ActivenessBreakdownColumns()
 
   const executives = data.executives
 
   useEffect(() => {
-    if (cachedDataTopVoters.length === 0) setTopVoters(getTopVoters(executives, polls))
+    if (cachedDataTopVoters.length === 0) {
+      setTopVoters(getTopVoters(executives, polls))
+    }
   }, [executives, polls, cachedDataTopVoters.length])
+
+  useEffect(() => {
+    setMostVotedPolls(getMostVotedPolls(polls))
+    setRecentPolls(getRecentPolls(polls))
+  }, [polls])
+  useEffect(() => {
+    setActivenessBreakdown(getActivenessBreakdown(executives))
+    setMkrActiveness(getMKRActiveness(executives))
+  }, [executives])
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
@@ -135,7 +160,7 @@ function HomeDetail(props: Props) {
   const homeMap = {
     table: {
       polls: {
-        data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
+        data: recentPolls,
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => (
@@ -143,7 +168,7 @@ function HomeDetail(props: Props) {
         ),
       },
       votedPolls: {
-        data: polls.sort((a, b) => Number(b.participation) - Number(a.participation)),
+        data: mostVotedPolls,
         columns: votedPollcolumns,
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
@@ -171,10 +196,17 @@ function HomeDetail(props: Props) {
           <HomeTable
             expanded
             handleRow={getVote}
-            content="Uncasted Executives"
+            content="Uncast Executives"
             component="uncastedExecutives"
             {...props}
           />
+        ),
+      },
+      activenessBreakdown: {
+        data: activenessBreakdown,
+        columns: activenessBreakdownColumns,
+        component: props => (
+          <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
         ),
       },
     },
@@ -225,7 +257,7 @@ function HomeDetail(props: Props) {
         ),
       },
       mkrActiveness: {
-        data: getMKRActiveness(data.executives),
+        data: mkrActiveness,
         component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
       },
       votesVsPolls: {
@@ -403,7 +435,7 @@ function HomeDetail(props: Props) {
   }
 
   useEffect(() => {
-    if (mkrSupply && cachedDataPoll.length === 0) {
+    if (mkrSupply) {
       getPollsData(data.polls).then(result => {
         const polls = result.filter(Boolean)
         setPolls([...polls])
@@ -418,23 +450,21 @@ function HomeDetail(props: Props) {
         })
       })
     }
-  }, [data.polls, cachedDataPoll.length, mkrSupply, pollsBalances])
+  }, [data.polls, mkrSupply, pollsBalances])
 
   useEffect(() => {
+    lscache.set('mkr-supply', mkrSupply, DEFAULT_CACHE_TTL)
     lscache.set('home-polls', polls, DEFAULT_CACHE_TTL)
     lscache.set('home-topVoters', topVoters, DEFAULT_CACHE_TTL)
     lscache.set('polls-responsiveness', pollsResponsiveness, DEFAULT_CACHE_TTL)
-  }, [polls, topVoters, pollsResponsiveness])
+  }, [mkrSupply, polls, topVoters, pollsResponsiveness])
 
   return (
     <>
       <PageTitle>System Statistics</PageTitle>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled></CardStyled>
-        <CardStyled>
-          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
-        </CardStyled>
-      </TwoRowGrid>
+      <CardStyled style={{ marginBottom: '20px' }}>
+        <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
+      </CardStyled>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
@@ -446,9 +476,15 @@ function HomeDetail(props: Props) {
       <PageSubTitle>Voter Behaviour</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
+          {mkrActiveness.length === 0 ? (
+            <Loading />
+          ) : (
+            <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
+          )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}></TableCardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
+        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
@@ -478,7 +514,7 @@ function HomeDetail(props: Props) {
           <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Uncasted Executives" component="uncastedExecutives" />
+          <HomeTable handleRow={getVote} content="Uncast Executives" component="uncastedExecutives" />
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
@@ -495,7 +531,11 @@ function HomeDetail(props: Props) {
       <PageSubTitle>Polls</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
-          {polls.length === 0 ? <Loading /> : <HomeTable content="Most Voted Polls" component="votedPolls" />}
+          {polls.length === 0 || !polls[0].participation ? (
+            <Loading />
+          ) : (
+            <HomeTable content="Most Voted Polls" component="votedPolls" />
+          )}
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
