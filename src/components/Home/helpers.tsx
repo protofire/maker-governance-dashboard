@@ -540,6 +540,7 @@ const getActiveness = (executives, window) => {
         })
       valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
     })
+
   return valuePerDay
 }
 

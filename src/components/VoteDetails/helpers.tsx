@@ -162,7 +162,7 @@ export const getApprovalsByAddress = (votingActions: Array<any>): Array<any> => 
 export const getExecutiveVsHat = (vote, executives, hat) => {
   const data = [
     {
-      mkr: Number(vote.approvals).toFixed(2),
+      mkr: Number(Number(vote.approvals).toFixed(2)),
       isHat: false,
       casted: !!vote.casted,
     },
@@ -175,7 +175,7 @@ export const getExecutiveVsHat = (vote, executives, hat) => {
     return [
       ...data,
       {
-        mkr: Number(nextVote.approvals).toFixed(2),
+        mkr: Number(Number(nextVote.approvals).toFixed(2)),
         isNext: true,
       },
     ]
@@ -184,7 +184,7 @@ export const getExecutiveVsHat = (vote, executives, hat) => {
     return [
       ...data,
       {
-        mkr: Number(hatVote.approvals).toFixed(2),
+        mkr: Number(Number(hatVote.approvals).toFixed(2)),
         isHat: true,
       },
     ]

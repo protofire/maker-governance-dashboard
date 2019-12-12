@@ -13,7 +13,6 @@ import {
   StrippedTableWrapper,
   StrippedTableRow,
   StrippedTableCell,
-  ThreeRowGrid,
   CenteredRowGrid,
   StrippedRowsContainer,
 } from '../common'
@@ -35,6 +34,22 @@ import styled from 'styled-components'
 
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
+`
+
+const PollDetailContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    column-gap: ${props => props.theme.separation.gridSeparation};
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: ${props => props.theme.separation.gridSeparation};
+    grid-template-areas:
+      'col1 col2 col2'
+      'col4 col5 col6';
+  }
 `
 
 type Props = {
@@ -219,8 +234,8 @@ function PollDetails(props: Props) {
 
   return (
     <>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled style={{ padding: 0 }}>
+      <PollDetailContainer>
+        <CardStyled style={{ padding: 0, gridArea: 'col1' }}>
           <StrippedTableWrapper content="Details">
             {mkrDistributionData.length === 0 ? (
               <Loading />
@@ -234,36 +249,31 @@ function PollDetails(props: Props) {
             )}
           </StrippedTableWrapper>
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col2' }}>
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>Cannot fetch poll description.</NoData>
           )}
         </CardStyled>
-        <CardStyled>
-          <TimeLeft content="Time left" component="timeLeft" />
-        </CardStyled>
-      </ThreeRowGrid>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col4' }}>
           <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col5' }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="Voters Per Option" isVoter component="pollPerOptionVoters" />
           )}
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col6' }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="MKR Voter Per Option" component="pollPerOptionMkr" />
           )}
         </CardStyled>
-      </ThreeRowGrid>
+      </PollDetailContainer>
       <CenteredRowGrid>
         <CardStyled>
           {mkrDistributionData.length === 0 ? (

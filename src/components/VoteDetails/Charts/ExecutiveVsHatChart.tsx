@@ -26,7 +26,7 @@ const ExecutiveVsHatChart = props => {
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
       <Chart {...modalProps} legend={renderLegend}>
-        <YAxis />
+        <YAxis type="number" domain={[0, 'dataMax']} />
         <Bar isAnimationActive={modalProps.data ? false : true} dataKey="mkr">
           {modalProps.data.map((entry, index) => (
             <Cell

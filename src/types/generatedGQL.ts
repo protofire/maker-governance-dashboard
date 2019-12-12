@@ -25,6 +25,7 @@ export interface GetGovernanceInfoApp {
 
 export interface GetExecutiveVotesInfo_governanceInfo {
   __typename: 'GovernanceInfo'
+  id: string
   countSpells: any
   hat: any | null
   active: any | null
@@ -684,6 +685,7 @@ export interface GetPollsDataPageVariables {
 
 export interface GetPollsInfo_governanceInfo {
   __typename: 'GovernanceInfo'
+  id: string
   countPolls: any
 }
 
