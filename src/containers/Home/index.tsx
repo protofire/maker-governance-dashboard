@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import lscache from 'lscache'
 import HomeDetail from '../../components/Home/HomeDetail'
 import { getMKRResponsiveness } from '../../components/Home/helpers'
@@ -6,8 +6,9 @@ import { getMKRResponsiveness } from '../../components/Home/helpers'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
-import { ACTIONS_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
+import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY, mergeEventPages } from './queries'
 import { DEFAULT_CACHE_TTL } from '../../constants'
+import { getMkrBurnEvents, getMkrMintEvents } from '../../utils'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -20,7 +21,7 @@ const getHomeVariables = data => {
   }
 }
 
-const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
+const Error = () => <div>ERROR: There was an error trying to fetch the data.</div>
 
 function MakerGovernanceInfo() {
   const cachedDataExecutivesResponsiveness = lscache.get('executives-responsiveness') || []
@@ -30,14 +31,25 @@ function MakerGovernanceInfo() {
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
-  const homeData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+  const { data: homeData, loading, error } = useQuery(HOME_DATA_QUERY, { variables: resultVariables })
+
+  const [mkrEvents, setMkrEvents] = useState({})
+  const [mkrError, setMkrError] = useState(null)
+  const [loadingMkrEvent, setLoadingMkrEvents] = useState(false)
+
+  const data = useMemo(() => {
+    if (homeData) {
+      return mergeEventPages(homeData)
+    }
+  }, [homeData])
 
   useEffect(() => {
-    if (homeData.data && homeData.data.executives) {
-      if (cachedDataExecutivesResponsiveness.length === 0)
-        setExecutivesResponsiveness(getMKRResponsiveness(homeData.data.executives))
+    if (data && data.executives) {
+      if (cachedDataExecutivesResponsiveness.length === 0) {
+        setExecutivesResponsiveness(getMKRResponsiveness(data.executives))
+      }
     }
-  }, [homeData, cachedDataExecutivesResponsiveness.length])
+  }, [data, cachedDataExecutivesResponsiveness.length])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
@@ -47,12 +59,33 @@ function MakerGovernanceInfo() {
     lscache.set('executives-responsiveness', executivesResponsiveness, DEFAULT_CACHE_TTL)
   }, [executivesResponsiveness])
 
-  if (homeData.loading || gResult.loading || executivesResponsiveness.length === 0) return <FullLoading />
-  if (homeData.error || gResult.error) return <Error />
+  useEffect(() => {
+    setLoadingMkrEvents(true)
+
+    Promise.all([getMkrMintEvents(), getMkrBurnEvents()])
+      .then(([mint, burn]) => {
+        setMkrEvents({ mint, burn })
+        setMkrError(null)
+      })
+      .catch(error => {
+        setMkrError(error)
+      })
+      .finally(() => {
+        setLoadingMkrEvents(false)
+      })
+  }, [setMkrEvents])
+
+  if (loading || gResult.loading || loadingMkrEvent || executivesResponsiveness.length === 0) {
+    return <FullLoading />
+  }
+
+  if (error || gResult.error || mkrError) {
+    return <Error />
+  }
 
   return (
     <>
-      <HomeDetail executivesResponsiveness={executivesResponsiveness} gData={gData} data={homeData.data} />
+      <HomeDetail executivesResponsiveness={executivesResponsiveness} gData={gData} data={{ ...data, ...mkrEvents }} />
     </>
   )
 }

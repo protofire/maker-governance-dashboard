@@ -106,7 +106,55 @@ export const POLLS_FIRST_QUERY = gql`
   }
   ${pollsDetailFragment}
 `
-export const ACTIONS_QUERY = gql`
+
+// Since TG returns a maximum of 1000 results per collection then it's necessary to paginate to get all events
+// Note: the max number of events per type supported with this configuration is 10000. Increase pageCount parameter
+// if we need to support more that that value.
+const getAllEvents = (pageCount = 10, pageSize = 1000) => {
+  const pages = Array.from(Array(pageCount).keys()).reverse()
+
+  const ordering = 'orderBy: timestamp, orderDirection: desc'
+
+  return pages.map(pageIndex => {
+    const offset = pageSize * pageIndex
+
+    return `
+    lock_${pageIndex}: actions(where: { type: LOCK }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
+      ...actionsDetail
+      sender
+    }
+
+    free_${pageIndex}: actions(where: { type: FREE }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
+      ...actionsDetail
+      sender
+    }
+
+    vote_${pageIndex}: actions(where: { type: VOTE }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
+      ...actionsDetail
+      sender
+      yays
+    }
+  `
+  })
+}
+
+export const mergeEventPages = (data: object) => {
+  const merged: any = {}
+
+  Object.keys(data).forEach(key => {
+    if (key.includes('_')) {
+      const [name] = key.split('_')
+
+      merged[name] = [...(merged[name] || []), ...data[key].reverse()]
+    } else {
+      merged[key] = data[key]
+    }
+  })
+
+  return merged
+}
+
+export const HOME_DATA_QUERY = gql`
   query getHomeData($voters: Int!, $executives: Int!, $polls: Int!, $lock: Int!, $free: Int!) {
     polls(first: $polls) {
       ...pollsDetail
@@ -117,14 +165,7 @@ export const ACTIONS_QUERY = gql`
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }
-    lock: actions(where: { type: LOCK }, first: $lock) {
-      ...actionsDetail
-      sender
-    }
-    free: actions(where: { type: FREE }, first: $free) {
-      ...actionsDetail
-      sender
-    }
+    ${getAllEvents()}
   }
   ${pollsDetailFragment}
   ${executivesDetailFragment}

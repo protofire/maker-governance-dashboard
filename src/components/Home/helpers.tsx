@@ -63,6 +63,86 @@ export const getMostVotedPolls = polls =>
 
 export const getRecentPolls = polls => polls.sort((a, b) => Number(b.startDate) - Number(a.startDate))
 
+export const getStakedMkrData = (data: any, time: string) => {
+  const periods = periodsMap[time]()
+  const mkrEvents = [data.mint, data.burn]
+  const votingEvents = [data.lock, data.vote, data.free]
+
+  // Calculate total MKR supply before first period
+  let totalSupply = calculateMkrSupply(
+    mkrEvents.map(events => events.filter(({ timestamp }) => timestamp < periods[0].from)),
+  )
+
+  // Calculate total MKR staked/voting before first period
+  let { totalStaked, totalVoting, voters } = calculateVotingMkr(
+    votingEvents.map(events => events.filter(({ timestamp }) => timestamp < periods[0].from)),
+  )
+
+  return periods.map(period => {
+    // Calculate total MKR supply in the period
+    totalSupply = calculateMkrSupply(
+      mkrEvents.map(events => events.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to)),
+      totalSupply,
+    )
+
+    // Calculate total MKR staked/voting in the period
+    ;({ totalStaked, totalVoting, voters } = calculateVotingMkr(
+      votingEvents.map(events => events.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to)),
+      { totalStaked, totalVoting, voters },
+    ))
+
+    return {
+      ...period,
+      totalSupply: totalSupply.toFixed(2),
+      totalStaked: totalStaked.toFixed(2),
+      votingMkr: totalVoting.toFixed(2),
+      nonVotingMkr: totalStaked.minus(totalVoting).toFixed(2),
+    }
+  })
+}
+
+function calculateMkrSupply(mkrEvents: any[], previousValue = new BigNumber(0)): BigNumber {
+  return mkrEvents
+    .map(events => (events.length ? BigNumber.sum(events.map(event => event.amount)) : new BigNumber(0)))
+    .reduce((supply, value, isBurn) => (isBurn ? supply.minus(value) : supply.plus(value)), previousValue)
+}
+
+function calculateVotingMkr(
+  votingEvents: any[],
+  previousValue = { totalStaked: new BigNumber(0), totalVoting: new BigNumber(0), voters: {} },
+): { totalStaked: BigNumber; totalVoting: BigNumber; voters: { [addr: string]: BigNumber } } {
+  return votingEvents
+    .reduce((all, events) => [...all, ...events], [])
+    .sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
+    .reduce(({ totalStaked, totalVoting, voters }, { type, wad, sender, yays }) => {
+      const stake = voters[sender] || new BigNumber(0)
+
+      if (type === 'LOCK') {
+        return {
+          totalStaked: totalStaked.plus(wad),
+          totalVoting: stake.isZero() ? totalVoting : totalVoting.plus(wad),
+          voters: stake.isZero() ? voters : { ...voters, [sender]: stake.plus(wad) },
+        }
+      } else if (type === 'VOTE') {
+        return {
+          totalStaked,
+          totalVoting: stake.isZero()
+            ? yays.length === 0
+              ? totalVoting.minus(wad)
+              : totalVoting.plus(wad)
+            : totalVoting,
+          voters: { ...voters, [sender]: yays.length ? BigNumber.max(new BigNumber(0), stake, wad) : new BigNumber(0) },
+        }
+      } else if (type === 'FREE') {
+        return {
+          totalStaked: totalStaked.minus(wad),
+          totalVoting: stake.isZero() ? totalVoting : totalVoting.minus(wad),
+          voters: stake.isZero() ? voters : { ...voters, [sender]: stake.minus(wad) },
+        }
+      }
+    }, previousValue)
+}
+
 export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
   const periods = periodsMap[time]()
 
@@ -141,6 +221,7 @@ const initializeMkr = (el, data, prev) => {
     .reduce((acum, value) => (value.type === ACTION_FREE ? acum - Number(value.wad) : acum + Number(value.wad)), prev)
 }
 export const defaultFilters = {
+  stakedMkr: LAST_YEAR,
   votersVsMkr: LAST_YEAR,
   votesVsPolls: LAST_YEAR,
   gini: LAST_YEAR,

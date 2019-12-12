@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js'
 import { fromUnixTime, differenceInMonths } from 'date-fns'
 import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
 import {
+  StakedMkrChart,
   VotesVsPollsChart,
   VotersVsMkrChart,
   GiniChart,
@@ -29,6 +30,7 @@ import {
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
+  getStakedMkrData,
   getVotersVsMkrData,
   getVotesVsPollsData,
   getGiniData,
@@ -211,6 +213,10 @@ function HomeDetail(props: Props) {
       },
     },
     chart: {
+      stakedMkr: {
+        data: getStakedMkrData(data, chartFilters.stakedMkr),
+        component: props => <StakedMkr expanded content="Staked MKR" component="stakedMkr" {...props} />,
+      },
       votersVsMkr: {
         data: getVotersVsMkrData(data.voters, [...data.free, ...data.lock], chartFilters.votersVsMkr),
         component: props => (
@@ -321,6 +327,18 @@ function HomeDetail(props: Props) {
       minHeight: '400px',
       data,
     }
+  }
+
+  // StakedMkrPercentage graph data
+  const StakedMkr = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <StakedMkrChart
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
   }
 
   // VotersVsMkr graph data
@@ -462,9 +480,14 @@ function HomeDetail(props: Props) {
   return (
     <>
       <PageTitle>System Statistics</PageTitle>
-      <CardStyled style={{ marginBottom: '20px' }}>
-        <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
-      </CardStyled>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          <StakedMkr content="Staked MKR" component="stakedMkr" />
+        </CardStyled>
+        <CardStyled>
+          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
+        </CardStyled>
+      </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
