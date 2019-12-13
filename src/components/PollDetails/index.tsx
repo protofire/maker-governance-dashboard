@@ -18,12 +18,11 @@ import {
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
+import { PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 import {
   getPollTableData,
   defaultFilters,
   getComponentData,
-  getTimeLeftData,
   getPollPerOptionData,
   getPollVotersHistogramData,
   getPollMakerHistogramData,
@@ -74,8 +73,6 @@ function PollDetails(props: Props) {
   const [mkrDistributionData, setMkrDistributionData] = useState<any>(mkrDistributionCached)
   const [topVoters, setTopVoters] = useState({})
 
-  const timeLeftData = getTimeLeftData(poll.startDate, poll.endDate)
-
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
   useEffect(() => {
@@ -101,10 +98,6 @@ function PollDetails(props: Props) {
       },
     },
     chart: {
-      timeLeft: {
-        data: timeLeftData,
-        component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
-      },
       votersDistribution: {
         data: getPollVotersHistogramData(poll),
         component: props => (
@@ -168,11 +161,6 @@ function PollDetails(props: Props) {
       onChange: e => setFilter(e, component),
       isModalOpen: expanded,
     }
-  }
-
-  //TimeLeft data
-  const TimeLeft = props => {
-    return <TimeLeftChart data={voteMap.chart[props.component].data} />
   }
 
   //Poll voters distribution per option data
