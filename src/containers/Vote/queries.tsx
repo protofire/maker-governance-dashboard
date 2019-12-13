@@ -16,7 +16,7 @@ export const EXECUTIVE_INFO_QUERY = gql`
   }
 `
 export const GOVERNANCE_INFO_QUERY_VOTE = gql`
-  query GetGovernanceInfo {
+  query GetGovernanceInfoVote {
     governanceInfo(id: "0x0") {
       id
       hat
