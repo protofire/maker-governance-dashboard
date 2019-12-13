@@ -91,6 +91,7 @@ export const getStakedMkrData = (data: any, time: string) => {
       { totalStaked, totalVoting, voters },
     ))
 
+    // These values should be Number in order the chart to be scaled on demand.
     return {
       ...period,
       totalSupply: Number(totalSupply.toFixed(2)),
