@@ -93,10 +93,10 @@ export const getStakedMkrData = (data: any, time: string) => {
 
     return {
       ...period,
-      totalSupply: totalSupply.toFixed(2),
-      totalStaked: totalStaked.toFixed(2),
-      votingMkr: totalVoting.toFixed(2),
-      nonVotingMkr: totalStaked.minus(totalVoting).toFixed(2),
+      totalSupply: Number(totalSupply.toFixed(2)),
+      totalStaked: Number(totalStaked.toFixed(2)),
+      votingMkr: Number(totalVoting.toFixed(2)),
+      nonVotingMkr: Number(totalStaked.minus(totalVoting).toFixed(2)),
     }
   })
 }

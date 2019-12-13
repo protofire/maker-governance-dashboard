@@ -3,7 +3,7 @@ import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { fromUnixTime, differenceInMonths } from 'date-fns'
-import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
+import { GetGovernanceInfo } from '../../types/generatedGQL'
 import {
   StakedMkrChart,
   VotesVsPollsChart,
@@ -80,7 +80,7 @@ const getParticipation = (data, mkrSupply) => {
 const TABLE_PREVIEW = 5
 
 type Props = {
-  data: getHomeData
+  data: any
   gData: GetGovernanceInfo
   history?: any
   executivesResponsiveness?: any

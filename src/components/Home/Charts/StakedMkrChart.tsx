@@ -38,7 +38,7 @@ const StakedMkrChart = ({ wrapperProps, modalProps }) => {
   return (
     <ChartWrapper {...wrapperProps}>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} {...modalProps}>
-        <YAxis />
+        <YAxis type="number" domain={[0, 'dataMax']} />
         <Line
           strokeOpacity={opacities['totalSupply']}
           name="Total MKR Supply"

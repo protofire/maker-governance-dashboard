@@ -155,7 +155,7 @@ export const mergeEventPages = (data: object) => {
 }
 
 export const HOME_DATA_QUERY = gql`
-  query getHomeData($voters: Int!, $executives: Int!, $polls: Int!, $lock: Int!, $free: Int!) {
+  query getHomeData($voters: Int!, $executives: Int!, $polls: Int!) {
     polls(first: $polls) {
       ...pollsDetail
     }
