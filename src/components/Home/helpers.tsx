@@ -140,6 +140,11 @@ function calculateVotingMkr(
           voters: stake.isZero() ? voters : { ...voters, [sender]: stake.minus(wad) },
         }
       }
+      return {
+        totalStaked: 0,
+        totalVoting: 0,
+        voters: 0,
+      }
     }, previousValue)
 }
 

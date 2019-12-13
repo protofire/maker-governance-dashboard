@@ -108,6 +108,7 @@ function HomeDetail(props: Props) {
   const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
   const [mkrActiveness, setMkrActiveness] = useState<any>([])
   const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
+  const [stakedMkr, setStakedMkr] = useState<any>([])
   const [recentPolls, setRecentPolls] = useState<any>([])
 
   const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
@@ -133,6 +134,10 @@ function HomeDetail(props: Props) {
   const activenessBreakdownColumns = () => ActivenessBreakdownColumns()
 
   const executives = data.executives
+
+  useEffect(() => {
+    setStakedMkr(getStakedMkrData(data, chartFilters.stakedMkr))
+  }, [data, chartFilters.stakedMkr])
 
   useEffect(() => {
     if (cachedDataTopVoters.length === 0) {
@@ -214,7 +219,7 @@ function HomeDetail(props: Props) {
     },
     chart: {
       stakedMkr: {
-        data: getStakedMkrData(data, chartFilters.stakedMkr),
+        data: stakedMkr,
         component: props => <StakedMkr expanded content="Staked MKR" component="stakedMkr" {...props} />,
       },
       votersVsMkr: {
@@ -482,7 +487,7 @@ function HomeDetail(props: Props) {
       <PageTitle>System Statistics</PageTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          <StakedMkr content="Staked MKR" component="stakedMkr" />
+          {stakedMkr.length === 0 ? <Loading /> : <StakedMkr content="Staked MKR" component="stakedMkr" />}
         </CardStyled>
         <CardStyled>
           <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
