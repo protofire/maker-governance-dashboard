@@ -1,3 +1,4 @@
+import StakedMkrChart from './StakedMkrChart'
 import VotesVsPollsChart from './VotesVsPollsChart'
 import TimeTakenChart from './TimeTakenChart'
 import VotersVsMkrChart from './VotersVsMkrChart'
@@ -8,6 +9,7 @@ import ExecutivesResponsivenessChart from './ExecutivesResponsivenessChart'
 import PollsResponsivenessChart from './PollsResponsivenessChart'
 
 export {
+  StakedMkrChart,
   VotesVsPollsChart,
   VotersVsMkrChart,
   GiniChart,

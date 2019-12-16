@@ -94,6 +94,16 @@ export interface GetExecutivesVotesDataVariables {
 export interface GetGovernanceInfo_governanceInfo {
   __typename: 'GovernanceInfo'
   id: string
+  countProxies: any
+  countAddresses: any
+  countSlates: any
+  countSpells: any
+  countLock: any
+  countFree: any
+  countPolls: any
+  locked: any
+  lastBlock: any
+  lastSynced: any
   hat: any | null
 }
 
@@ -463,56 +473,16 @@ export interface getHomeData_voters {
   type: ActionType
 }
 
-export interface getHomeData_lock {
-  __typename: 'Action'
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Action value (arg)
-   */
-  wad: any | null
-  /**
-   *  Action name (act)
-   */
-  type: ActionType
-  sender: any | null
-}
-
-export interface getHomeData_free {
-  __typename: 'Action'
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Action value (arg)
-   */
-  wad: any | null
-  /**
-   *  Action name (act)
-   */
-  type: ActionType
-  sender: any | null
-}
-
 export interface getHomeData {
   polls: getHomeData_polls[]
   executives: getHomeData_executives[]
   voters: getHomeData_voters[]
-  lock: getHomeData_lock[]
-  free: getHomeData_free[]
 }
 
 export interface getHomeDataVariables {
   voters: number
   executives: number
   polls: number
-  lock: number
-  free: number
 }
 
 /* tslint:disable */
@@ -786,6 +756,24 @@ export interface GetSpell_spells {
 
 export interface GetSpell {
   spells: GetSpell_spells[]
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetGovernanceInfoVote
+// ====================================================
+
+export interface GetGovernanceInfoVote_governanceInfo {
+  __typename: 'GovernanceInfo'
+  id: string
+  hat: any | null
+}
+
+export interface GetGovernanceInfoVote {
+  governanceInfo: GetGovernanceInfoVote_governanceInfo | null
 }
 
 /* tslint:disable */
