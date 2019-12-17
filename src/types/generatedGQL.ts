@@ -98,7 +98,6 @@ export interface GetGovernanceInfo_governanceInfo {
   countAddresses: any
   countSlates: any
   countSpells: any
-  countPolls: any
   countLock: any
   countFree: any
   countPolls: any
