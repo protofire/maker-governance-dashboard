@@ -352,10 +352,10 @@ export const mergeEventPages = (data: object) => {
 // Since TG returns a maximum of 1000 results per collection then it's necessary to paginate to get all events
 // Note: the max number of events per type supported with this configuration is 10000. Increase pageCount parameter
 // if we need to support more that that value.
-export const getAllEvents = (getQuery, pageCount = 10, pageSize = 1000) => {
+export const getAllEvents = (getQuery, orderBy = 'timestamp', pageCount = 10, pageSize = 1000) => {
   const pages = Array.from(Array(pageCount).keys()).reverse()
 
-  const ordering = 'orderBy: timestamp, orderDirection: desc'
+  const ordering = `orderBy: ${orderBy}, orderDirection: desc`
 
   return pages.map(pageIndex => {
     const offset = pageSize * pageIndex

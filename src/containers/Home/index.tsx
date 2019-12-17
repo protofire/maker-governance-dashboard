@@ -41,8 +41,6 @@ function MakerGovernanceInfo() {
     }
   }, [homeData])
 
-  console.log(data)
-
   useEffect(() => {
     if (data && data.executives) {
       if (cachedDataExecutivesResponsiveness.length === 0) {

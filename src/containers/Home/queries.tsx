@@ -36,7 +36,7 @@ const executivesDetailFragment = gql`
     castedWith
     lifted
     liftedWith
-    timeLine(first: 1000) {
+    timeLine {
       id
       timestamp
       transactionHash
@@ -114,6 +114,15 @@ const getPollsData = (pageIndex, pageSize, offset, ordering) => {
   }
   `
 }
+
+const getExecutivesData = (pageIndex, pageSize, offset, ordering) => {
+  return `
+  executives_${pageIndex}: spells(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+    ...executivesDetail
+  }
+  `
+}
+
 const getHomeData = (pageIndex, pageSize, offset, ordering) => {
   return `
     lock_${pageIndex}: actions(where: { type: LOCK }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
@@ -136,13 +145,11 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
 
 export const HOME_DATA_QUERY = gql`
   query getHomeData($voters: Int!, $executives: Int!) {
-    executives: spells(first: $executives) {
-      ...executivesDetail
-    }
+    ${getAllEvents(getPollsData, 'startDate')}
+    ${getAllEvents(getExecutivesData)}
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }
-    ${getAllEvents(getPollsData)}
     ${getAllEvents(getHomeData)}
   }
   ${pollsDetailFragment}
