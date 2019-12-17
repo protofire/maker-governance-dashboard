@@ -19,6 +19,7 @@ const pollsDetailFragment = gql`
 export const GOVERNANCE_INFO_QUERY = gql`
   query GetPollsInfo {
     governanceInfo(id: "0x0") {
+      id
       countPolls
     }
   }

@@ -15,6 +15,7 @@ const executivesDetailFragment = gql`
 export const GOVERNANCE_INFO_QUERY = gql`
   query GetExecutiveVotesInfo {
     governanceInfo(id: "0x0") {
+      id
       countSpells
       hat
       active

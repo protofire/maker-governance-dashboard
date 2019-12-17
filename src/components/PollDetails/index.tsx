@@ -13,18 +13,16 @@ import {
   StrippedTableWrapper,
   StrippedTableRow,
   StrippedTableCell,
-  ThreeRowGrid,
   CenteredRowGrid,
   StrippedRowsContainer,
 } from '../common'
 import { getModalContainer } from '../../utils'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-import { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
+import { PollPerOptionChart, VotersDistributionChart, MakerDistributionChart } from './Charts'
 import {
   getPollTableData,
   defaultFilters,
   getComponentData,
-  getTimeLeftData,
   getPollPerOptionData,
   getPollVotersHistogramData,
   getPollMakerHistogramData,
@@ -35,6 +33,22 @@ import styled from 'styled-components'
 
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
+`
+
+const PollDetailContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  @media (min-width: ${props => props.theme.themeBreakPoints.xl}) {
+    column-gap: ${props => props.theme.separation.gridSeparation};
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: ${props => props.theme.separation.gridSeparation};
+    grid-template-areas:
+      'col1 col2 col2'
+      'col4 col5 col6';
+  }
 `
 
 type Props = {
@@ -58,8 +72,6 @@ function PollDetails(props: Props) {
   const [pollPerOptionData, setPollPerOptionData] = useState<any>(pollPerOptionCached)
   const [mkrDistributionData, setMkrDistributionData] = useState<any>(mkrDistributionCached)
   const [topVoters, setTopVoters] = useState({})
-
-  const timeLeftData = getTimeLeftData(poll.startDate, poll.endDate)
 
   const colors = useMemo(() => randomColor({ count: poll.options.length, seed: poll.id }), [poll.options, poll.id])
 
@@ -86,10 +98,6 @@ function PollDetails(props: Props) {
       },
     },
     chart: {
-      timeLeft: {
-        data: timeLeftData,
-        component: props => <TimeLeft content="Time left" component="timeLeft" {...props} />,
-      },
       votersDistribution: {
         data: getPollVotersHistogramData(poll),
         component: props => (
@@ -155,11 +163,6 @@ function PollDetails(props: Props) {
     }
   }
 
-  //TimeLeft data
-  const TimeLeft = props => {
-    return <TimeLeftChart data={voteMap.chart[props.component].data} />
-  }
-
   //Poll voters distribution per option data
   const VotersDistribution = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
@@ -219,8 +222,8 @@ function PollDetails(props: Props) {
 
   return (
     <>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled style={{ padding: 0 }}>
+      <PollDetailContainer>
+        <CardStyled style={{ padding: 0, gridArea: 'col1' }}>
           <StrippedTableWrapper content="Details">
             {mkrDistributionData.length === 0 ? (
               <Loading />
@@ -234,36 +237,31 @@ function PollDetails(props: Props) {
             )}
           </StrippedTableWrapper>
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col2' }}>
           {poll.content ? (
             <Description content="Description" component="description" />
           ) : (
             <NoData>Cannot fetch poll description.</NoData>
           )}
         </CardStyled>
-        <CardStyled>
-          <TimeLeft content="Time left" component="timeLeft" />
-        </CardStyled>
-      </ThreeRowGrid>
-      <ThreeRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col4' }}>
           <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col5' }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="Voters Per Option" isVoter component="pollPerOptionVoters" />
           )}
         </CardStyled>
-        <CardStyled>
+        <CardStyled style={{ gridArea: 'col6' }}>
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
             <PollPerOption content="MKR Voter Per Option" component="pollPerOptionMkr" />
           )}
         </CardStyled>
-      </ThreeRowGrid>
+      </PollDetailContainer>
       <CenteredRowGrid>
         <CardStyled>
           {mkrDistributionData.length === 0 ? (

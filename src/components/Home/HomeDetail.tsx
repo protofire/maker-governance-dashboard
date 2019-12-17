@@ -3,8 +3,9 @@ import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { fromUnixTime, differenceInMonths } from 'date-fns'
-import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
+import { GetGovernanceInfo } from '../../types/generatedGQL'
 import {
+  StakedMkrChart,
   VotesVsPollsChart,
   VotersVsMkrChart,
   GiniChart,
@@ -29,6 +30,7 @@ import {
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
+  getStakedMkrData,
   getVotersVsMkrData,
   getVotesVsPollsData,
   getGiniData,
@@ -46,6 +48,8 @@ import {
   getMKRActiveness,
   getPollsMKRResponsiveness,
   getActivenessBreakdown,
+  getMostVotedPolls,
+  getRecentPolls,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -76,7 +80,7 @@ const getParticipation = (data, mkrSupply) => {
 const TABLE_PREVIEW = 5
 
 type Props = {
-  data: getHomeData
+  data: any
   gData: GetGovernanceInfo
   history?: any
   executivesResponsiveness?: any
@@ -101,6 +105,11 @@ function HomeDetail(props: Props) {
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
   const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
+  const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
+  const [mkrActiveness, setMkrActiveness] = useState<any>([])
+  const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
+  const [stakedMkr, setStakedMkr] = useState<any>([])
+  const [recentPolls, setRecentPolls] = useState<any>([])
 
   const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
 
@@ -127,10 +136,23 @@ function HomeDetail(props: Props) {
   const executives = data.executives
 
   useEffect(() => {
+    setStakedMkr(getStakedMkrData(data, chartFilters.stakedMkr))
+  }, [data, chartFilters.stakedMkr])
+
+  useEffect(() => {
     if (cachedDataTopVoters.length === 0) {
       setTopVoters(getTopVoters(executives, polls))
     }
   }, [executives, polls, cachedDataTopVoters.length])
+
+  useEffect(() => {
+    setMostVotedPolls(getMostVotedPolls(polls))
+    setRecentPolls(getRecentPolls(polls))
+  }, [polls])
+  useEffect(() => {
+    setActivenessBreakdown(getActivenessBreakdown(executives))
+    setMkrActiveness(getMKRActiveness(executives))
+  }, [executives])
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
@@ -145,7 +167,7 @@ function HomeDetail(props: Props) {
   const homeMap = {
     table: {
       polls: {
-        data: polls.sort((a, b) => Number(b.startDate) - Number(a.startDate)),
+        data: recentPolls,
         columns: expanded => pollcolumns(expanded),
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => (
@@ -153,7 +175,7 @@ function HomeDetail(props: Props) {
         ),
       },
       votedPolls: {
-        data: polls.sort((a, b) => Number(b.participation) - Number(a.participation)),
+        data: mostVotedPolls,
         columns: votedPollcolumns,
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
@@ -188,7 +210,7 @@ function HomeDetail(props: Props) {
         ),
       },
       activenessBreakdown: {
-        data: getActivenessBreakdown(executives),
+        data: activenessBreakdown,
         columns: activenessBreakdownColumns,
         component: props => (
           <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
@@ -196,6 +218,10 @@ function HomeDetail(props: Props) {
       },
     },
     chart: {
+      stakedMkr: {
+        data: stakedMkr,
+        component: props => <StakedMkr expanded content="Staked MKR" component="stakedMkr" {...props} />,
+      },
       votersVsMkr: {
         data: getVotersVsMkrData(data.voters, [...data.free, ...data.lock], chartFilters.votersVsMkr),
         component: props => (
@@ -242,7 +268,7 @@ function HomeDetail(props: Props) {
         ),
       },
       mkrActiveness: {
-        data: getMKRActiveness(data.executives),
+        data: mkrActiveness,
         component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
       },
       votesVsPolls: {
@@ -306,6 +332,18 @@ function HomeDetail(props: Props) {
       minHeight: '400px',
       data,
     }
+  }
+
+  // StakedMkrPercentage graph data
+  const StakedMkr = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <StakedMkrChart
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
   }
 
   // VotersVsMkr graph data
@@ -448,7 +486,9 @@ function HomeDetail(props: Props) {
     <>
       <PageTitle>System Statistics</PageTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled></CardStyled>
+        <CardStyled>
+          {stakedMkr.length === 0 ? <Loading /> : <StakedMkr content="Staked MKR" component="stakedMkr" />}
+        </CardStyled>
         <CardStyled>
           <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
         </CardStyled>
@@ -464,7 +504,11 @@ function HomeDetail(props: Props) {
       <PageSubTitle>Voter Behaviour</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
+          {mkrActiveness.length === 0 ? (
+            <Loading />
+          ) : (
+            <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
+          )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
           <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
