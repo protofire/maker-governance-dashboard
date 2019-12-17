@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { getAllEvents } from '../../utils'
 
 const makerGovernanceDetailFragment = gql`
   fragment makerGovernanceDetail on GovernanceInfo {
@@ -63,30 +64,9 @@ const pollsDetailFragment = gql`
     creator
     url
     pollId
-    votes(first: 1000) {
-      id
-      voter
-      option
-      timestamp
-    }
     startDate
     endDate
     votesCount
-    timeLine(first: 1000) {
-      id
-      timestamp
-      type: __typename
-      ... on VotePollAction {
-        sender
-        timestamp
-      }
-      ... on CreatePollAction {
-        block
-      }
-      ... on WithdrawPollAction {
-        block
-      }
-    }
   }
 `
 export const GOVERNANCE_INFO_QUERY = gql`
@@ -106,19 +86,37 @@ export const POLLS_FIRST_QUERY = gql`
   }
   ${pollsDetailFragment}
 `
+const getPollsData = (pageIndex, pageSize, offset, ordering) => {
+  return `
+  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+    ...pollsDetail
+    votes {
+      id
+      voter
+      option
+      timestamp
+    }
+    timeLine{
+      id
+      timestamp
+      type: __typename
+      ... on VotePollAction {
+        sender
+        timestamp
+      }
+      ... on CreatePollAction {
+        block
+      }
+      ... on WithdrawPollAction {
+        block
+      }
+    }
+  }
 
-// Since TG returns a maximum of 1000 results per collection then it's necessary to paginate to get all events
-// Note: the max number of events per type supported with this configuration is 10000. Increase pageCount parameter
-// if we need to support more that that value.
-const getAllEvents = (pageCount = 10, pageSize = 1000) => {
-  const pages = Array.from(Array(pageCount).keys()).reverse()
-
-  const ordering = 'orderBy: timestamp, orderDirection: desc'
-
-  return pages.map(pageIndex => {
-    const offset = pageSize * pageIndex
-
-    return `
+  `
+}
+const getHomeData = (pageIndex, pageSize, offset, ordering) => {
+  return `
     lock_${pageIndex}: actions(where: { type: LOCK }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
       ...actionsDetail
       sender
@@ -135,37 +133,18 @@ const getAllEvents = (pageCount = 10, pageSize = 1000) => {
       yays
     }
   `
-  })
-}
-
-export const mergeEventPages = (data: object) => {
-  const merged: any = {}
-
-  Object.keys(data).forEach(key => {
-    if (key.includes('_')) {
-      const [name] = key.split('_')
-
-      merged[name] = [...(merged[name] || []), ...data[key].reverse()]
-    } else {
-      merged[key] = data[key]
-    }
-  })
-
-  return merged
 }
 
 export const HOME_DATA_QUERY = gql`
   query getHomeData($voters: Int!, $executives: Int!, $polls: Int!) {
-    polls(first: $polls) {
-      ...pollsDetail
-    }
     executives: spells(first: $executives) {
       ...executivesDetail
     }
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }
-    ${getAllEvents()}
+    ${getAllEvents(getHomeData)}
+    ${getAllEvents(getPollsData)}
   }
   ${pollsDetailFragment}
   ${executivesDetailFragment}

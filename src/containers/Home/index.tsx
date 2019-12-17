@@ -6,9 +6,9 @@ import { getMKRResponsiveness } from '../../components/Home/helpers'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
-import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY, mergeEventPages } from './queries'
+import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-import { getMkrBurnEvents, getMkrMintEvents } from '../../utils'
+import { getMkrBurnEvents, getMkrMintEvents, mergeEventPages } from '../../utils'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
@@ -40,6 +40,8 @@ function MakerGovernanceInfo() {
       return mergeEventPages(homeData)
     }
   }, [homeData])
+
+  console.log(data)
 
   useEffect(() => {
     if (data && data.executives) {

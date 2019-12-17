@@ -332,3 +332,33 @@ export const getTimeOpened = (from, to) => {
   } else if (diffDays <= 0) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'}`
   else return `${diffDays} ${diffDays === 1 ? 'day' : 'days'}`
 }
+
+export const mergeEventPages = (data: object) => {
+  const merged: any = {}
+
+  Object.keys(data).forEach(key => {
+    if (key.includes('_')) {
+      const [name] = key.split('_')
+
+      merged[name] = [...(merged[name] || []), ...data[key].reverse()]
+    } else {
+      merged[key] = data[key]
+    }
+  })
+
+  return merged
+}
+
+// Since TG returns a maximum of 1000 results per collection then it's necessary to paginate to get all events
+// Note: the max number of events per type supported with this configuration is 10000. Increase pageCount parameter
+// if we need to support more that that value.
+export const getAllEvents = (getQuery, pageCount = 10, pageSize = 1000) => {
+  const pages = Array.from(Array(pageCount).keys()).reverse()
+
+  const ordering = 'orderBy: timestamp, orderDirection: desc'
+
+  return pages.map(pageIndex => {
+    const offset = pageSize * pageIndex
+    return getQuery(pageIndex, pageSize, offset, ordering)
+  })
+}
