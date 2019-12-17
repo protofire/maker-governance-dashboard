@@ -1,5 +1,5 @@
 import React from 'react'
-import { Bar, YAxis } from 'recharts'
+import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
 const MKRActivenessChart = props => {
@@ -8,11 +8,14 @@ const MKRActivenessChart = props => {
     <ChartWrapper {...wrapperProps} hideFilters>
       <Chart {...modalProps}>
         <YAxis type="number" domain={[0, 'dataMax']} />
-        <Bar
+        <Line
           isAnimationActive={modalProps.data ? false : true}
-          name={'MKR Activeness'}
+          name={'30-Day Moving Avg DAM'}
           dataKey="activeness"
-          fill="#61b6b0"
+          strokeWidth={2}
+          dot={false}
+          type="monotone"
+          stroke="#61b6b0"
         />
       </Chart>
     </ChartWrapper>
