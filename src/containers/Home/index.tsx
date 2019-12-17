@@ -14,8 +14,6 @@ const getHomeVariables = data => {
   const governance = data.governanceInfo
   return {
     voters: Number(governance.countProxies) + Number(governance.countAddresses) || DEFAULT_FETCH_ROWS,
-    polls: Number(governance.countPolls) || DEFAULT_FETCH_ROWS,
-    executives: Number(governance.countSpells) || DEFAULT_FETCH_ROWS,
   }
 }
 

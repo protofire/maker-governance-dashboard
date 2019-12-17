@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { getAllEvents } from '../../utils'
 
 const pollsDetailFragment = gql`
   fragment pollsDetailTotal on Poll {
@@ -9,13 +10,19 @@ const pollsDetailFragment = gql`
     startDate
     endDate
     votesCount
-    votes(first: 1000) {
+    votes {
       voter
       option
     }
   }
 `
-
+const getPollsData = (pageIndex, pageSize, offset, ordering) => {
+  return `
+  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+    ...pollsDetailTotal
+  }
+  `
+}
 export const GOVERNANCE_INFO_QUERY = gql`
   query GetPollsInfo {
     governanceInfo(id: "0x0") {
@@ -26,10 +33,8 @@ export const GOVERNANCE_INFO_QUERY = gql`
 `
 
 export const POLLS_FIRST_QUERY = gql`
-  query GetPollsData($polls: Int!) {
-    polls(first: $polls) {
-      ...pollsDetailTotal
-    }
+  query GetPollsData {
+    ${getAllEvents(getPollsData, 'startDate')}
   }
   ${pollsDetailFragment}
 `
