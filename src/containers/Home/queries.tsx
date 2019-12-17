@@ -64,9 +64,30 @@ const pollsDetailFragment = gql`
     creator
     url
     pollId
+    votes {
+      id
+      voter
+      option
+      timestamp
+    }
     startDate
     endDate
     votesCount
+    timeLine {
+      id
+      timestamp
+      type: __typename
+      ... on VotePollAction {
+        sender
+        timestamp
+      }
+      ... on CreatePollAction {
+        block
+      }
+      ... on WithdrawPollAction {
+        block
+      }
+    }
   }
 `
 export const GOVERNANCE_INFO_QUERY = gql`
@@ -90,29 +111,7 @@ const getPollsData = (pageIndex, pageSize, offset, ordering) => {
   return `
   polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}) {
     ...pollsDetail
-    votes {
-      id
-      voter
-      option
-      timestamp
-    }
-    timeLine{
-      id
-      timestamp
-      type: __typename
-      ... on VotePollAction {
-        sender
-        timestamp
-      }
-      ... on CreatePollAction {
-        block
-      }
-      ... on WithdrawPollAction {
-        block
-      }
-    }
   }
-
   `
 }
 const getHomeData = (pageIndex, pageSize, offset, ordering) => {
@@ -136,15 +135,15 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
 }
 
 export const HOME_DATA_QUERY = gql`
-  query getHomeData($voters: Int!, $executives: Int!, $polls: Int!) {
+  query getHomeData($voters: Int!, $executives: Int!) {
     executives: spells(first: $executives) {
       ...executivesDetail
     }
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }
-    ${getAllEvents(getHomeData)}
     ${getAllEvents(getPollsData)}
+    ${getAllEvents(getHomeData)}
   }
   ${pollsDetailFragment}
   ${executivesDetailFragment}

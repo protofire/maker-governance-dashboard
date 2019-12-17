@@ -226,101 +226,6 @@ export interface GetPolls {
 // GraphQL query operation: getHomeData
 // ====================================================
 
-export interface getHomeData_polls_votes {
-  __typename: 'PollVote'
-  /**
-   *  Equals to: <Poll ID>-<Voter's Address>
-   */
-  id: string
-  /**
-   *  Voters's Address
-   */
-  voter: any
-  /**
-   *  Selected option
-   */
-  option: any
-  /**
-   *  Vote timestamp as seconds (time)
-   */
-  timestamp: any
-}
-
-export interface getHomeData_polls_timeLine_VotePollAction {
-  __typename: 'VotePollAction'
-  /**
-   *  Equals to: <VOTE>-<transactionHash>-<voter>
-   */
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Voter's Address
-   */
-  sender: any
-}
-
-export interface getHomeData_polls_timeLine_CreatePollAction {
-  __typename: 'CreatePollAction'
-  /**
-   *  Equals to: <CREATE>-<transactionHash>-<creator>
-   */
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Block number
-   */
-  block: any
-}
-
-export interface getHomeData_polls_timeLine_WithdrawPollAction {
-  __typename: 'WithdrawPollAction'
-  /**
-   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
-   */
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Block number
-   */
-  block: any
-}
-
-export type getHomeData_polls_timeLine =
-  | getHomeData_polls_timeLine_VotePollAction
-  | getHomeData_polls_timeLine_CreatePollAction
-  | getHomeData_polls_timeLine_WithdrawPollAction
-
-export interface getHomeData_polls {
-  __typename: 'Poll'
-  /**
-   *  Equals to: <Poll ID>
-   */
-  id: string
-  creator: any | null
-  url: string | null
-  pollId: any
-  votes: getHomeData_polls_votes[] | null
-  startDate: any
-  endDate: any
-  /**
-   *  Number votes
-   */
-  votesCount: any
-  /**
-   *  Poll historical data
-   */
-  timeLine: getHomeData_polls_timeLine[] | null
-}
-
 export interface getHomeData_executives_timeLine_AddAction {
   __typename: 'AddAction'
   /**
@@ -474,7 +379,6 @@ export interface getHomeData_voters {
 }
 
 export interface getHomeData {
-  polls: getHomeData_polls[]
   executives: getHomeData_executives[]
   voters: getHomeData_voters[]
 }
@@ -482,7 +386,6 @@ export interface getHomeData {
 export interface getHomeDataVariables {
   voters: number
   executives: number
-  polls: number
 }
 
 /* tslint:disable */
