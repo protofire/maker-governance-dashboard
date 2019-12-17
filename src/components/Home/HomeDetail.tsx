@@ -269,9 +269,7 @@ function HomeDetail(props: Props) {
       },
       mkrActiveness: {
         data: mkrActiveness,
-        component: props => (
-          <MKRActiveness expanded content="30-Day Moving Avg DAM" component="mkrActiveness" {...props} />
-        ),
+        component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
       },
       votesVsPolls: {
         data: getVotesVsPollsData(data.executives, polls, chartFilters.votesVsPolls),
@@ -509,7 +507,7 @@ function HomeDetail(props: Props) {
           {mkrActiveness.length === 0 ? (
             <Loading />
           ) : (
-            <MKRActiveness content="30-Day Moving Avg DAM" component="mkrActiveness" />
+            <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
