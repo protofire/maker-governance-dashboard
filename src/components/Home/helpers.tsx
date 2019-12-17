@@ -483,7 +483,7 @@ export const getMKRResponsiveness = executives => {
       mkr: diffDays >= bucket.from && diffDays < bucket.to ? bucket.mkr + Number(event.mkr) : bucket.mkr,
     }))
   }, buckets)
-  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+  return periodEvents.map(p => ({ ...p, mkr: Number((p.mkr / executives.length).toFixed(2)) }))
 }
 
 export const getPollsMKRResponsiveness = async polls => {
@@ -541,7 +541,7 @@ export const getPollsMKRResponsiveness = async polls => {
       }))
     }, buckets)
 
-  return periodEvents.map(p => ({ ...p, mkr: Number(p.mkr.toFixed(2)) }))
+  return periodEvents.map(p => ({ ...p, mkr: Number((p.mkr / polls.length).toFixed(2)) }))
 }
 
 export const getTopVoters = (executives, polls) => {
@@ -569,7 +569,7 @@ export const getTopVoters = (executives, polls) => {
   }))
 }
 
-const getActiveness = (executives, window) => {
+const getActiveness = (executives, window, operation) => {
   const DAYS = window * 2
   const date = getUnixTime(subDays(Date.now(), DAYS - 1))
 
@@ -621,35 +621,48 @@ const getActiveness = (executives, window) => {
             const value = groupByAddressDate[window][addr]
               ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
               : 0
+
             hasAddObj[addr] = value
             activenessByWindow[window] += value
           })
         })
-      valuePerDay[day] = getAverage(activenessByWindow) //Get the average of each day.
+      valuePerDay[day] = operation(activenessByWindow) //Get the average of each day.
     })
 
   return valuePerDay
 }
 
 export const getActivenessBreakdown = executives => {
-  const valueLastDay = { period: 'Last Day', activeness: Object.values(getActiveness(executives, 1)).slice(-1)[0] }
-  const valueLastWeek = { period: 'Last Week', activeness: Object.values(getActiveness(executives, 7)).slice(-1)[0] }
-  const valueLastMonth = { period: 'Last Month', activeness: Object.values(getActiveness(executives, 30)).slice(-1)[0] }
+  const valueLastDay = {
+    period: 'Last Day',
+    activeness: Object.values(getActiveness(executives, 1, getSum)).slice(-1)[0],
+  }
+  const valueLastWeek = {
+    period: 'Last Week',
+    activeness: Object.values(getActiveness(executives, 7, getSum)).slice(-1)[0],
+  }
+  const valueLastMonth = {
+    period: 'Last Month',
+    activeness: Object.values(getActiveness(executives, 30, getSum)).slice(-1)[0],
+  }
   const valueLast3Months = {
     period: 'Last 3 Months',
-    activeness: Object.values(getActiveness(executives, 90)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 90, getSum)).slice(-1)[0],
   }
   const valueLast6Months = {
     period: 'Last 6 Months',
-    activeness: Object.values(getActiveness(executives, 180)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 180, getSum)).slice(-1)[0],
   }
-  const valueLastYear = { period: 'Last Year', activeness: Object.values(getActiveness(executives, 365)).slice(-1)[0] }
+  const valueLastYear = {
+    period: 'Last Year',
+    activeness: Object.values(getActiveness(executives, 365, getSum)).slice(-1)[0],
+  }
 
   return [valueLastDay, valueLastWeek, valueLastMonth, valueLast3Months, valueLast6Months, valueLastYear]
 }
 
 export const getMKRActiveness = executives => {
-  const valuePerDay = getActiveness(executives, 30)
+  const valuePerDay = getActiveness(executives, 30, getAverage)
 
   const periods = periodsMap[LAST_MONTH]() //get last month periods
   //for each period, get the right average value
@@ -668,19 +681,16 @@ const getAverage = obj => {
   return result / objArray.length
 }
 
+const getSum = obj => Object.keys(obj).reduce((accum: any, day) => obj[day] + accum, 0)
+
 const getActivenessValue = (events, hasAdd) => {
-  let addValue = hasAdd
   return events.reduce((acc, event) => {
-    if (!hasAdd) {
-      addValue = event.type === VOTING_ACTION_ADD ? Number(event.locked) : 0
-      return addValue
-    }
-    return event.type === VOTING_ACTION_ADD
+    return !hasAdd && event.type === VOTING_ACTION_ADD
       ? Number(event.locked)
       : event.type === VOTING_ACTION_LOCK
       ? acc + Number(event.wad)
       : event.type === VOTING_ACTION_FREE
       ? acc - Number(event.wad)
-      : addValue
+      : 0
   }, hasAdd)
 }
