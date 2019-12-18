@@ -575,7 +575,7 @@ const getActiveness = (executives, window, operation) => {
 
   //Get all votes events equal or greater than date
   const executivesTimeLine = executives
-    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.type !== VOTING_ACTION_REMOVE && tl.sender))))
+    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.sender))))
     .filter(tl => tl.timestamp >= date)
 
   //Group events by date and by address and sort events by timestamp.
@@ -612,6 +612,7 @@ const getActiveness = (executives, window, operation) => {
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
+      let hasRemoveObj = {}
       let activenessByWindow = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
@@ -619,10 +620,11 @@ const getActiveness = (executives, window, operation) => {
           activenessByWindow[window] = 0
           Object.keys(groupByAddressDate[window]).forEach(addr => {
             const value = groupByAddressDate[window][addr]
-              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
+              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0, hasRemoveObj[addr])
               : 0
 
             hasAddObj[addr] = value
+            hasRemoveObj[addr] = groupByAddressDate[window][addr].events.some(ev => ev.type === VOTING_ACTION_REMOVE)
             activenessByWindow[window] += value
           })
         })
@@ -683,14 +685,27 @@ const getAverage = obj => {
 
 const getSum = obj => Object.keys(obj).reduce((accum: any, day) => obj[day] + accum, 0)
 
-const getActivenessValue = (events, hasAdd) => {
+const getActivenessValue = (events, hasAdd, hasRemove) => {
   return events.reduce((acc, event) => {
-    return !hasAdd && event.type === VOTING_ACTION_ADD
+    let addFlag = hasAdd ? true : false
+    let removeFlag = hasRemove ? true : false
+    if (!addFlag && event.type === VOTING_ACTION_ADD) {
+      addFlag = !addFlag
+      return Number(event.locked)
+    }
+    if (!removeFlag && addFlag && event.type === VOTING_ACTION_REMOVE) {
+      removeFlag = !removeFlag
+      return acc - Number(event.locked)
+    }
+
+    return !addFlag && event.type === VOTING_ACTION_ADD
       ? Number(event.locked)
       : event.type === VOTING_ACTION_LOCK
       ? acc + Number(event.wad)
       : event.type === VOTING_ACTION_FREE
       ? acc - Number(event.wad)
+      : !removeFlag && event.type === VOTING_ACTION_REMOVE
+      ? Number(event.locked)
       : 0
   }, hasAdd)
 }
