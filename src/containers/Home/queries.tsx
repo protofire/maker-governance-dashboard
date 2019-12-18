@@ -144,7 +144,7 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
 }
 
 export const HOME_DATA_QUERY = gql`
-  query getHomeData($voters: Int!, $executives: Int!) {
+  query getHomeData($voters: Int!) {
     ${getAllEvents(getPollsData, 'startDate')}
     ${getAllEvents(getExecutivesData)}
     voters: actions(where: { type: VOTER }, first: $voters) {
