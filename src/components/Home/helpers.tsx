@@ -641,27 +641,27 @@ const getActiveness = (executives, window, operation) => {
 export const getActivenessBreakdown = executives => {
   const valueLastDay = {
     period: 'Last Day',
-    activeness: Object.values(getActiveness(executives, 1, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 1, getAverage)).slice(-1)[0],
   }
   const valueLastWeek = {
     period: 'Last Week',
-    activeness: Object.values(getActiveness(executives, 7, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 7, getAverage)).slice(-1)[0],
   }
   const valueLastMonth = {
     period: 'Last Month',
-    activeness: Object.values(getActiveness(executives, 30, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 30, getAverage)).slice(-1)[0],
   }
   const valueLast3Months = {
     period: 'Last 3 Months',
-    activeness: Object.values(getActiveness(executives, 90, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 90, getAverage)).slice(-1)[0],
   }
   const valueLast6Months = {
     period: 'Last 6 Months',
-    activeness: Object.values(getActiveness(executives, 180, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 180, getAverage)).slice(-1)[0],
   }
   const valueLastYear = {
     period: 'Last Year',
-    activeness: Object.values(getActiveness(executives, 365, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 365, getAverage)).slice(-1)[0],
   }
 
   return [valueLastDay, valueLastWeek, valueLastMonth, valueLast3Months, valueLast6Months, valueLastYear]
@@ -687,33 +687,28 @@ const getAverage = obj => {
   return result / objArray.length
 }
 
-const getSum = obj => Object.keys(obj).reduce((accum: any, day) => obj[day] + accum, 0)
-
 const getActivenessValue = (events, hasAdd, countAdd) => {
   let addCount = countAdd
   const response = events.reduce((acc, event) => {
-    let addFlag = hasAdd ? true : false
-
-    if (event.type === VOTING_ACTION_ADD) addCount++
-    if (event.type === VOTING_ACTION_REMOVE && addCount) addCount--
-
-    if (!addFlag && event.type === VOTING_ACTION_ADD) {
-      addFlag = !addFlag
-      return Number(event.locked)
+    let mkr = acc
+    if (event.type === VOTING_ACTION_ADD) {
+      addCount++
+      mkr = Number(event.locked)
     }
-    if (!addCount && addFlag && event.type === VOTING_ACTION_REMOVE) {
-      return acc - Number(event.locked)
+    if (event.type === VOTING_ACTION_REMOVE && addCount) {
+      addCount--
     }
 
-    return !addFlag && event.type === VOTING_ACTION_ADD
-      ? Number(event.locked)
-      : event.type === VOTING_ACTION_LOCK && addFlag
-      ? acc + Number(event.wad)
-      : event.type === VOTING_ACTION_FREE && addFlag
-      ? acc - Number(event.wad)
-      : addFlag && !addCount && event.type === VOTING_ACTION_REMOVE
-      ? Number(event.locked)
-      : 0
+    if (event.type === VOTING_ACTION_REMOVE && !addCount) {
+      mkr = 0
+    }
+    if (event.type === VOTING_ACTION_LOCK && addCount) {
+      mkr = acc + Number(event.wad)
+    }
+    if (event.type === VOTING_ACTION_FREE && addCount) {
+      mkr = acc - Number(event.wad)
+    }
+    return mkr
   }, hasAdd)
   return { value: response, addCount }
 }
