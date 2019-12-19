@@ -562,7 +562,7 @@ function HomeDetail(props: Props) {
           {polls.length === 0 || !polls[0].participation ? (
             <Loading />
           ) : (
-            <HomeTable content="Most Voted Polls" component="votedPolls" />
+            <HomeTable handleRow={getPoll} content="Most Voted Polls" component="votedPolls" />
           )}
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
