@@ -612,20 +612,24 @@ const getActiveness = (executives, window, operation) => {
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
-      let hasRemoveObj = {}
+      let countAddObj = {}
       let activenessByWindow = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
         .forEach(window => {
           activenessByWindow[window] = 0
           Object.keys(groupByAddressDate[window]).forEach(addr => {
-            const value = groupByAddressDate[window][addr]
-              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0, hasRemoveObj[addr])
-              : 0
+            const data = groupByAddressDate[window][addr]
+              ? getActivenessValue(
+                  groupByAddressDate[window][addr].events,
+                  hasAddObj[addr] || 0,
+                  countAddObj[addr] || 0,
+                )
+              : { value: 0, addCount: 0 }
 
-            hasAddObj[addr] = value
-            hasRemoveObj[addr] = groupByAddressDate[window][addr].events.some(ev => ev.type === VOTING_ACTION_REMOVE)
-            activenessByWindow[window] += value
+            hasAddObj[addr] = data.value
+            countAddObj[addr] = data.addCount
+            activenessByWindow[window] += data.value
           })
         })
       valuePerDay[day] = operation(activenessByWindow) //Get the average of each day.
@@ -685,27 +689,31 @@ const getAverage = obj => {
 
 const getSum = obj => Object.keys(obj).reduce((accum: any, day) => obj[day] + accum, 0)
 
-const getActivenessValue = (events, hasAdd, hasRemove) => {
-  return events.reduce((acc, event) => {
+const getActivenessValue = (events, hasAdd, countAdd) => {
+  let addCount = countAdd
+  const response = events.reduce((acc, event) => {
     let addFlag = hasAdd ? true : false
-    let removeFlag = hasRemove ? true : false
+
+    if (event.type === VOTING_ACTION_ADD) addCount++
+    if (event.type === VOTING_ACTION_REMOVE && addCount) addCount--
+
     if (!addFlag && event.type === VOTING_ACTION_ADD) {
       addFlag = !addFlag
       return Number(event.locked)
     }
-    if (!removeFlag && addFlag && event.type === VOTING_ACTION_REMOVE) {
-      removeFlag = !removeFlag
+    if (!addCount && addFlag && event.type === VOTING_ACTION_REMOVE) {
       return acc - Number(event.locked)
     }
 
     return !addFlag && event.type === VOTING_ACTION_ADD
       ? Number(event.locked)
-      : event.type === VOTING_ACTION_LOCK
+      : event.type === VOTING_ACTION_LOCK && addFlag
       ? acc + Number(event.wad)
-      : event.type === VOTING_ACTION_FREE
+      : event.type === VOTING_ACTION_FREE && addFlag
       ? acc - Number(event.wad)
-      : !removeFlag && event.type === VOTING_ACTION_REMOVE
+      : addFlag && !addCount && event.type === VOTING_ACTION_REMOVE
       ? Number(event.locked)
       : 0
   }, hasAdd)
+  return { value: response, addCount }
 }
