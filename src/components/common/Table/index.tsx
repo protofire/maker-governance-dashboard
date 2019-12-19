@@ -175,7 +175,7 @@ const RowsSection = styled.div`
       background-color: ${props => (props.expanded ? 'white' : '#fafafa')};
     }
     &:hover {
-      cursor: pointer;
+      cursor: ${props => (props.mouseActive ? 'pointer' : 'auto')};
       ${props =>
         props.expanded &&
         css`
@@ -248,6 +248,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   const [filters, setFilters] = useState(setInitialFilters(columns))
 
   const handleFn = handleRow ? handleRow : () => {}
+  const mouseActive = !!handleRow
   const pageData = {
     ...(limitPerPage && { limitPerPage }),
     ...(sortBy && { sortBy }),
@@ -388,7 +389,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
             ))}
           </TableSection>
         ))}
-        <RowsSection scrollable={scrollable} expanded={expanded}>
+        <RowsSection mouseActive={mouseActive} scrollable={scrollable} expanded={expanded}>
           {page.map(
             row =>
               prepareRow(row) || (
