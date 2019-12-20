@@ -10,7 +10,7 @@ const MKRActivenessChart = props => {
         <YAxis type="number" domain={[0, 'dataMax']} />
         <Line
           isAnimationActive={modalProps.data ? false : true}
-          name={'MKR Activeness'}
+          name={'30-Day Moving Avg DAM'}
           dataKey="activeness"
           strokeWidth={2}
           dot={false}
