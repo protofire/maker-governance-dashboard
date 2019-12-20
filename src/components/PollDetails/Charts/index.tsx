@@ -1,4 +1,3 @@
-import TimeLeftChart from './TimeLeftChart'
 import PollPerOptionChart from './PollPerOptionChart'
 import VotersDistributionChart from './VotersDistributionChart'
 import MakerDistributionChart from './MakerDistributionChart'
@@ -14,4 +13,4 @@ const defaultColors = [
   '#A47D7C',
   '#B5CA92',
 ]
-export { TimeLeftChart, PollPerOptionChart, VotersDistributionChart, MakerDistributionChart, defaultColors }
+export { PollPerOptionChart, VotersDistributionChart, MakerDistributionChart, defaultColors }

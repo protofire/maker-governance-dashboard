@@ -3,8 +3,9 @@ import lscache from 'lscache'
 import { withRouter } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { fromUnixTime, differenceInMonths } from 'date-fns'
-import { getHomeData, GetGovernanceInfo } from '../../types/generatedGQL'
+import { GetGovernanceInfo } from '../../types/generatedGQL'
 import {
+  StakedMkrChart,
   VotesVsPollsChart,
   VotersVsMkrChart,
   GiniChart,
@@ -29,6 +30,7 @@ import {
 import { getPollsData, getMKRSupply } from '../../utils/makerdao'
 import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
+  getStakedMkrData,
   getVotersVsMkrData,
   getVotesVsPollsData,
   getGiniData,
@@ -78,7 +80,7 @@ const getParticipation = (data, mkrSupply) => {
 const TABLE_PREVIEW = 5
 
 type Props = {
-  data: getHomeData
+  data: any
   gData: GetGovernanceInfo
   history?: any
   executivesResponsiveness?: any
@@ -106,6 +108,7 @@ function HomeDetail(props: Props) {
   const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
   const [mkrActiveness, setMkrActiveness] = useState<any>([])
   const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
+  const [stakedMkr, setStakedMkr] = useState<any>([])
   const [recentPolls, setRecentPolls] = useState<any>([])
 
   const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
@@ -133,6 +136,10 @@ function HomeDetail(props: Props) {
   const executives = data.executives
 
   useEffect(() => {
+    setStakedMkr(getStakedMkrData(data, chartFilters.stakedMkr))
+  }, [data, chartFilters.stakedMkr])
+
+  useEffect(() => {
     if (cachedDataTopVoters.length === 0) {
       setTopVoters(getTopVoters(executives, polls))
     }
@@ -142,8 +149,9 @@ function HomeDetail(props: Props) {
     setMostVotedPolls(getMostVotedPolls(polls))
     setRecentPolls(getRecentPolls(polls))
   }, [polls])
+
   useEffect(() => {
-    setActivenessBreakdown(getActivenessBreakdown(executives))
+    //setActivenessBreakdown(getActivenessBreakdown(executives))
     setMkrActiveness(getMKRActiveness(executives))
   }, [executives])
 
@@ -211,6 +219,10 @@ function HomeDetail(props: Props) {
       },
     },
     chart: {
+      stakedMkr: {
+        data: stakedMkr,
+        component: props => <StakedMkr expanded content="Staked MKR" component="stakedMkr" {...props} />,
+      },
       votersVsMkr: {
         data: getVotersVsMkrData(data.voters, [...data.free, ...data.lock], chartFilters.votersVsMkr),
         component: props => (
@@ -321,6 +333,18 @@ function HomeDetail(props: Props) {
       minHeight: '400px',
       data,
     }
+  }
+
+  // StakedMkrPercentage graph data
+  const StakedMkr = props => {
+    const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
+
+    return (
+      <StakedMkrChart
+        wrapperProps={getWrapperProps(data)}
+        modalProps={getModalProps(data.type, data.component, data.expanded)}
+      />
+    )
   }
 
   // VotersVsMkr graph data
@@ -462,9 +486,14 @@ function HomeDetail(props: Props) {
   return (
     <>
       <PageTitle>System Statistics</PageTitle>
-      <CardStyled style={{ marginBottom: '20px' }}>
-        <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
-      </CardStyled>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <CardStyled>
+          {stakedMkr.length === 0 ? <Loading /> : <StakedMkr content="Staked MKR" component="stakedMkr" />}
+        </CardStyled>
+        <CardStyled>
+          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
+        </CardStyled>
+      </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
@@ -482,11 +511,6 @@ function HomeDetail(props: Props) {
             <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
           )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
-        </TableCardStyled>
-      </TwoRowGrid>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {executivesResponsiveness.length === 0 ? (
             <Loading />
@@ -494,9 +518,6 @@ function HomeDetail(props: Props) {
             <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
           )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
-        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
@@ -506,8 +527,16 @@ function HomeDetail(props: Props) {
             <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
           )}
         </CardStyled>
-        <CardStyled></CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+        </TableCardStyled>
       </TwoRowGrid>
+      {/*<TwoRowGrid style={{ marginBottom: '20px' }}>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
+        </TableCardStyled>
+        <CardStyled></CardStyled>
+          </TwoRowGrid>*/}
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
@@ -534,7 +563,7 @@ function HomeDetail(props: Props) {
           {polls.length === 0 || !polls[0].participation ? (
             <Loading />
           ) : (
-            <HomeTable content="Most Voted Polls" component="votedPolls" />
+            <HomeTable handleRow={getPoll} content="Most Voted Polls" component="votedPolls" />
           )}
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>

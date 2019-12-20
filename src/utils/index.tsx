@@ -39,6 +39,8 @@ import {
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
 
+export * from './mkr-registry'
+
 const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)

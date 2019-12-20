@@ -11,6 +11,7 @@ import Executive from '../Executive'
 import Vote from '../Vote'
 import Poll from '../Poll'
 import VoterHistory from '../VoterHistory'
+import VotingHistory from '../VotingHistory'
 
 import Footer from '../../components/common/Footer'
 import MainWrapper from '../../components/common/MainWrapper'
@@ -24,6 +25,7 @@ const items = [
   { to: '/', label: 'DASHBOARD' },
   { to: '/executive', label: 'EXECUTIVE VOTES' },
   { to: '/polls', label: 'POLLS' },
+  { to: '/voting-history', label: 'VOTING HISTORY' },
 ]
 
 function App() {
@@ -43,6 +45,7 @@ function App() {
               <Route exact path="/polls" component={Polls} />
               <Route exact path="/poll/:id" component={Poll} />
               <Route exact path="/voter/:id" component={VoterHistory} />
+              <Route exact path="/voting-history" component={VotingHistory} />
             </Switch>
             <Footer />
           </MainScroll>

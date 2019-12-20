@@ -6,6 +6,7 @@ const Hash = require('ipfs-only-hash')
 const network = 'mainnet'
 const prod = 'https://cms-gov.makerfoundation.com'
 const path = 'content/governance-dashboard'
+const rawUri = 'https://raw.githubusercontent.com/makerdao/community/master/governance/polls'
 
 const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
 
@@ -107,7 +108,9 @@ export async function getMakerDaoData() {
 
 // Polls data
 const fetchPollFromUrl = async url => {
-  const res = await fetch(url)
+  let customUri = url
+  if (url.includes('github.com')) customUri = `${rawUri}/${url.substring(url.lastIndexOf('/') + 1)}`
+  const res = await fetch(customUri)
   await check(res)
   const contentType = res.headers.get('content-type')
   if (!contentType) return null
