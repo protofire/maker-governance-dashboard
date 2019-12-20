@@ -575,7 +575,7 @@ const getActiveness = (executives, window, operation) => {
 
   //Get all votes events equal or greater than date
   const executivesTimeLine = executives
-    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.type !== VOTING_ACTION_REMOVE && tl.sender))))
+    .flatMap(vote => Array.from(new Set(vote.timeLine.filter(tl => tl.sender))))
     .filter(tl => tl.timestamp >= date)
 
   //Group events by date and by address and sort events by timestamp.
@@ -612,17 +612,24 @@ const getActiveness = (executives, window, operation) => {
     .slice(startPos, DAYS)
     .forEach((day, i) => {
       let hasAddObj = {}
+      let countAddObj = {}
       let activenessByWindow = {}
       Object.keys(groupByAddressDate)
         .slice(i, startPos + i + 1)
         .forEach(window => {
           activenessByWindow[window] = 0
           Object.keys(groupByAddressDate[window]).forEach(addr => {
-            const value = groupByAddressDate[window][addr]
-              ? getActivenessValue(groupByAddressDate[window][addr].events, hasAddObj[addr] || 0)
-              : 0
-            hasAddObj[addr] = value
-            activenessByWindow[window] += value
+            const data = groupByAddressDate[window][addr]
+              ? getActivenessValue(
+                  groupByAddressDate[window][addr].events,
+                  hasAddObj[addr] || 0,
+                  countAddObj[addr] || 0,
+                )
+              : { value: 0, addCount: 0 }
+
+            hasAddObj[addr] = data.value
+            countAddObj[addr] = data.addCount
+            activenessByWindow[window] += data.value
           })
         })
       valuePerDay[day] = operation(activenessByWindow) //Get the average of each day.
@@ -634,27 +641,27 @@ const getActiveness = (executives, window, operation) => {
 export const getActivenessBreakdown = executives => {
   const valueLastDay = {
     period: 'Last Day',
-    activeness: Object.values(getActiveness(executives, 1, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 1, getAverage)).slice(-1)[0],
   }
   const valueLastWeek = {
     period: 'Last Week',
-    activeness: Object.values(getActiveness(executives, 7, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 7, getAverage)).slice(-1)[0],
   }
   const valueLastMonth = {
     period: 'Last Month',
-    activeness: Object.values(getActiveness(executives, 30, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 30, getAverage)).slice(-1)[0],
   }
   const valueLast3Months = {
     period: 'Last 3 Months',
-    activeness: Object.values(getActiveness(executives, 90, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 90, getAverage)).slice(-1)[0],
   }
   const valueLast6Months = {
     period: 'Last 6 Months',
-    activeness: Object.values(getActiveness(executives, 180, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 180, getAverage)).slice(-1)[0],
   }
   const valueLastYear = {
     period: 'Last Year',
-    activeness: Object.values(getActiveness(executives, 365, getSum)).slice(-1)[0],
+    activeness: Object.values(getActiveness(executives, 365, getAverage)).slice(-1)[0],
   }
 
   return [valueLastDay, valueLastWeek, valueLastMonth, valueLast3Months, valueLast6Months, valueLastYear]
@@ -680,21 +687,28 @@ const getAverage = obj => {
   return result / objArray.length
 }
 
-const getSum = obj => Object.keys(obj).reduce((accum: any, day) => obj[day] + accum, 0)
-
-const getActivenessValue = (events, hasAdd) => {
-  let addValue = hasAdd
-  return events.reduce((acc, event) => {
-    if (!hasAdd) {
-      addValue = event.type === VOTING_ACTION_ADD ? Number(event.locked) : 0
-      return addValue
+const getActivenessValue = (events, hasAdd, countAdd) => {
+  let addCount = countAdd
+  const response = events.reduce((acc, event) => {
+    let mkr = acc
+    if (event.type === VOTING_ACTION_ADD) {
+      addCount++
+      mkr = Number(event.locked)
     }
-    return event.type === VOTING_ACTION_ADD
-      ? Number(event.locked)
-      : event.type === VOTING_ACTION_LOCK
-      ? acc + Number(event.wad)
-      : event.type === VOTING_ACTION_FREE
-      ? acc - Number(event.wad)
-      : addValue
+    if (event.type === VOTING_ACTION_REMOVE && addCount) {
+      addCount--
+    }
+
+    if (event.type === VOTING_ACTION_REMOVE && !addCount) {
+      mkr = 0
+    }
+    if (event.type === VOTING_ACTION_LOCK && addCount) {
+      mkr = acc + Number(event.wad)
+    }
+    if (event.type === VOTING_ACTION_FREE && addCount) {
+      mkr = acc - Number(event.wad)
+    }
+    return mkr
   }, hasAdd)
+  return { value: response, addCount }
 }
