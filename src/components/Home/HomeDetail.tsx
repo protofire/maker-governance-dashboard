@@ -149,9 +149,8 @@ function HomeDetail(props: Props) {
     setMostVotedPolls(getMostVotedPolls(polls))
     setRecentPolls(getRecentPolls(polls))
   }, [polls])
-
   useEffect(() => {
-    //setActivenessBreakdown(getActivenessBreakdown(executives))
+    setActivenessBreakdown(getActivenessBreakdown(executives))
     setMkrActiveness(getMKRActiveness(executives))
   }, [executives])
 
@@ -511,6 +510,11 @@ function HomeDetail(props: Props) {
             <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
           )}
         </CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
+        </TableCardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {executivesResponsiveness.length === 0 ? (
             <Loading />
@@ -518,6 +522,9 @@ function HomeDetail(props: Props) {
             <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
           )}
         </CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
@@ -527,16 +534,8 @@ function HomeDetail(props: Props) {
             <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
           )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
-        </TableCardStyled>
-      </TwoRowGrid>
-      {/*<TwoRowGrid style={{ marginBottom: '20px' }}>
-        <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
-        </TableCardStyled>
         <CardStyled></CardStyled>
-          </TwoRowGrid>*/}
+      </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
