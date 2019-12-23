@@ -77,7 +77,7 @@ function VoteDetails(props: Props) {
     chart: {
       mkrStaked: {
         data: getVotersVsMkrData(votingActions, vote),
-        component: props => <VotersVsMkr expanded content="Total MKR Staked" component="mkrStaked" {...props} />,
+        component: props => <VotersVsMkr expanded content="MKR Staked" component="mkrStaked" {...props} />,
       },
       numberOfVoters: {
         data: getVotersVsMkrData(votingActions, vote),

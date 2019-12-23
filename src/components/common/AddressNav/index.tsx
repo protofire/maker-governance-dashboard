@@ -8,6 +8,7 @@ import CopyToClipboard from '../CopyToClipboard'
 type Props = {
   children: React.ReactNode
   address: string
+  voter?: boolean
 }
 
 const IconContainer = styled.span`
@@ -21,12 +22,20 @@ const IconContainer = styled.span`
   }
 `
 
+const Link = styled.a`
+  text-decoration: none;
+  color: #000;
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 function AddressNav(props: Props) {
-  const { children, address } = props
+  const { children, address, voter } = props
   const uri = 'https://etherscan.io'
   return (
     <>
-      {children}
+      {voter ? <Link href={`/voter/${address}`}>{children}</Link> : children}
       <CopyToClipboard>
         {({ copy }) => (
           <IconContainer>

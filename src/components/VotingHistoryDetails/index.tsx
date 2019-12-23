@@ -50,6 +50,11 @@ function VotingHistoryDetails(props: Props) {
   const [found, setFound] = useState(true)
   const [error, setError] = useState(false)
 
+  const enterPressed = e => {
+    const code = e.keyCode || e.which
+    if (code === 13 && value !== '') validateAddress()
+  }
+
   const findParticipations = () => {
     const executiveEvents = executives.flatMap(vote =>
       vote.timeLine
@@ -87,6 +92,7 @@ function VotingHistoryDetails(props: Props) {
           defaultValue={value}
           onChange={e => setValue(e.target.value)}
           placeholder={'Search by address...'}
+          onKeyPress={enterPressed}
         />
         <ButtonSearch disabled={value === ''} onClick={value !== '' ? validateAddress : undefined}>
           Search
