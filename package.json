@@ -16,6 +16,7 @@
     "apollo-link-error": "^1.1.11",
     "apollo-link-http": "^1.5.15",
     "apollo-link-ws": "^1.0.18",
+    "array-flat-polyfill": "^1.0.1",
     "bignumber.js": "^9.0.0",
     "clipboard-copy": "^3.1.0",
     "date-fns": "^2.1.0",
@@ -47,7 +48,7 @@
     "sanitize.css": "^11.0.0",
     "styled-components": "^4.3.2",
     "subscriptions-transport-ws": "^0.9.16",
-    "typescript": "^3.6.2"
+    "typescript": "3.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
