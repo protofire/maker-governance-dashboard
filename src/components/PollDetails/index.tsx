@@ -271,7 +271,16 @@ function PollDetails(props: Props) {
           )}
         </CardStyled>
         <CardStyled style={{ padding: 0 }}>
-          <StrippedTableWrapper content="Top Voters">
+          <StrippedTableWrapper
+            info={
+              'A leaderboard for the top MKR supporters on this poll. Allows easy navigation to those addresses voting history and etherscan address. '
+            }
+            links={[
+              { title: 'MKR Registry', uri: 'asdasd' },
+              { title: 'MakerDao Governance', uri: 'asdasd' },
+            ]}
+            content="Top Voters"
+          >
             <StrippedRowsContainer>
               {Object.keys(topVoters).length === 0 ? (
                 <Loading />

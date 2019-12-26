@@ -4,6 +4,13 @@ import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
+const info =
+  'Being able to see voter participation over time allows us to judge the safety and representativeness of the current set of system parameters.'
+const links = [
+  { title: 'MKR Registry', uri: 'asdasd' },
+  { title: 'MakerDao Governance', uri: 'asdasd' },
+]
+
 const StakedMkrChart = ({ wrapperProps, modalProps }) => {
   const [selectedLines, setSelectedLine] = useState<any>(['totalSupply'])
   const [opacities, setOpacities] = useState({})
@@ -36,7 +43,7 @@ const StakedMkrChart = ({ wrapperProps, modalProps }) => {
   }
 
   return (
-    <ChartWrapper {...wrapperProps}>
+    <ChartWrapper info={info} links={links} {...wrapperProps}>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} {...modalProps}>
         <YAxis type="number" domain={[0, 'dataMax']} />
         <Line

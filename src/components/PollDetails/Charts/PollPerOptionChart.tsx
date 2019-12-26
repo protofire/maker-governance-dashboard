@@ -8,6 +8,19 @@ const PollPerOptionChart = props => {
   const { wrapperProps, modalProps, isVoter, colors } = props
   const chartColors = [...defaultColors, ...colors]
 
+  const info = !isVoter
+    ? 'Shows the current or final distribution of voting addresses across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of addresses.'
+    : ' Shows the current or final distribution of MKR voting across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of MKR.'
+  const links = !isVoter
+    ? [
+        { title: 'MKR Registry', uri: 'asdasd' },
+        { title: 'MakerDao Governance', uri: 'asdasd' },
+      ]
+    : [
+        { title: 'MKR Registry', uri: 'asdasd' },
+        { title: 'MakerDao Governance', uri: 'asdasd' },
+      ]
+
   const renderLegend = props => {
     const { data } = props
     return (
@@ -23,7 +36,7 @@ const PollPerOptionChart = props => {
   }
 
   return (
-    <ChartWrapper hideFilters {...wrapperProps}>
+    <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
       <Chart {...modalProps} legend={renderLegend}>
         {isVoter && <YAxis yAxisId="0" datakey="voter" />}
         {!isVoter && <YAxis yAxisId="1" datakey="mkr" />}

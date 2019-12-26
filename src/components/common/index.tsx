@@ -9,7 +9,7 @@ import Table from './Table'
 import { ChartSelect } from './Chart'
 import AddressNav from './AddressNav'
 import CopyToClipboard from './CopyToClipboard'
-import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon } from './Icon'
+import { CloseIcon, ExpandIcon, NextIcon, PreviousIcon, ArrowIcon, InfoIcon } from './Icon'
 
 import {
   Card,
@@ -45,6 +45,7 @@ export {
   CopyToClipboard,
   ChartWrapper,
   CloseIcon,
+  InfoIcon,
   DescriptionBox,
   DescriptionWrapper,
   ExpandIcon,

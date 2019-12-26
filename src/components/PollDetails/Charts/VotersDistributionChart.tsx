@@ -4,6 +4,13 @@ import { defaultColors } from './'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
+const info =
+  'Shows the historical number of addresses voting for each option in this poll. This helps track swings in opinion over time, as well as allowing comparison between the ‘MKR Count By Option’ metric.'
+const links = [
+  { title: 'MKR Registry', uri: 'asdasd' },
+  { title: 'MakerDao Governance', uri: 'asdasd' },
+]
+
 const VotersDistributionChart = props => {
   const [selectedLines, setSelectedLine] = useState<any>([])
   const [opacities, setOpacities] = useState({})
@@ -39,7 +46,7 @@ const VotersDistributionChart = props => {
   }
 
   return (
-    <ChartWrapper {...wrapperProps} hideFilters>
+    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} scale="point" {...modalProps}>
         <YAxis />
         {options.map((option, i) => (
