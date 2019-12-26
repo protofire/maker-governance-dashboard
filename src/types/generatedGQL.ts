@@ -98,12 +98,7 @@ export interface GetGovernanceInfo_governanceInfo {
   countAddresses: any
   countSlates: any
   countSpells: any
-  countLock: any
-  countFree: any
   countPolls: any
-  locked: any
-  lastBlock: any
-  lastSynced: any
   hat: any | null
 }
 
@@ -266,12 +261,7 @@ export interface GovernanceInfo_governanceInfo {
   countAddresses: any
   countSlates: any
   countSpells: any
-  countLock: any
-  countFree: any
   countPolls: any
-  locked: any
-  lastBlock: any
-  lastSynced: any
   hat: any | null
 }
 
@@ -629,6 +619,548 @@ export interface GetVotingActionsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetGovernanceInfoVoterHistory
+// ====================================================
+
+export interface GetGovernanceInfoVoterHistory_governanceInfo {
+  __typename: 'GovernanceInfo'
+  id: string
+  countProxies: any
+  countAddresses: any
+  countSlates: any
+  countSpells: any
+  countPolls: any
+  hat: any | null
+}
+
+export interface GetGovernanceInfoVoterHistory {
+  governanceInfo: GetGovernanceInfoVoterHistory_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getVoterHistoryData
+// ====================================================
+
+export interface getVoterHistoryData_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
+}
+
+export interface getVoterHistoryData_polls_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+}
+
+export interface getVoterHistoryData_polls_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface getVoterHistoryData_polls_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type getVoterHistoryData_polls_timeLine =
+  | getVoterHistoryData_polls_timeLine_VotePollAction
+  | getVoterHistoryData_polls_timeLine_CreatePollAction
+  | getVoterHistoryData_polls_timeLine_WithdrawPollAction
+
+export interface getVoterHistoryData_polls {
+  __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  votes: getVoterHistoryData_polls_votes[] | null
+  startDate: any
+  endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+  /**
+   *  Poll historical data
+   */
+  timeLine: getVoterHistoryData_polls_timeLine[] | null
+}
+
+export interface getVoterHistoryData_executives_timeLine_AddAction {
+  __typename: 'AddAction'
+  /**
+   *  Equals to: <ADD | ADD-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getVoterHistoryData_executives_timeLine_RemoveAction {
+  __typename: 'RemoveAction'
+  /**
+   *  Equals to: <REMOVE | REMOVE-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getVoterHistoryData_executives_timeLine_LockAction {
+  __typename: 'LockAction'
+  /**
+   *  Equals to: <LOCK>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export interface getVoterHistoryData_executives_timeLine_FreeAction {
+  __typename: 'FreeAction'
+  /**
+   *  Equals to: <FREE>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export type getVoterHistoryData_executives_timeLine =
+  | getVoterHistoryData_executives_timeLine_AddAction
+  | getVoterHistoryData_executives_timeLine_RemoveAction
+  | getVoterHistoryData_executives_timeLine_LockAction
+  | getVoterHistoryData_executives_timeLine_FreeAction
+
+export interface getVoterHistoryData_executives {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell was voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+  timeLine: getVoterHistoryData_executives_timeLine[] | null
+}
+
+export interface getVoterHistoryData {
+  polls: getVoterHistoryData_polls[]
+  executives: getVoterHistoryData_executives[]
+}
+
+export interface getVoterHistoryDataVariables {
+  executives: number
+  polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetGovernanceInfoHistory
+// ====================================================
+
+export interface GetGovernanceInfoHistory_governanceInfo {
+  __typename: 'GovernanceInfo'
+  id: string
+  countProxies: any
+  countAddresses: any
+  countSlates: any
+  countSpells: any
+  countPolls: any
+  hat: any | null
+}
+
+export interface GetGovernanceInfoHistory {
+  governanceInfo: GetGovernanceInfoHistory_governanceInfo | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getHistoryData
+// ====================================================
+
+export interface getHistoryData_polls_votes {
+  __typename: 'PollVote'
+  /**
+   *  Equals to: <Poll ID>-<Voter's Address>
+   */
+  id: string
+  /**
+   *  Voters's Address
+   */
+  voter: any
+  /**
+   *  Selected option
+   */
+  option: any
+  /**
+   *  Vote timestamp as seconds (time)
+   */
+  timestamp: any
+}
+
+export interface getHistoryData_polls_timeLine_VotePollAction {
+  __typename: 'VotePollAction'
+  /**
+   *  Equals to: <VOTE>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+}
+
+export interface getHistoryData_polls_timeLine_CreatePollAction {
+  __typename: 'CreatePollAction'
+  /**
+   *  Equals to: <CREATE>-<transactionHash>-<creator>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export interface getHistoryData_polls_timeLine_WithdrawPollAction {
+  __typename: 'WithdrawPollAction'
+  /**
+   *  Equals to: <WITHDRAW>-<transactionHash>-<voter>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Block number
+   */
+  block: any
+}
+
+export type getHistoryData_polls_timeLine =
+  | getHistoryData_polls_timeLine_VotePollAction
+  | getHistoryData_polls_timeLine_CreatePollAction
+  | getHistoryData_polls_timeLine_WithdrawPollAction
+
+export interface getHistoryData_polls {
+  __typename: 'Poll'
+  /**
+   *  Equals to: <Poll ID>
+   */
+  id: string
+  creator: any | null
+  url: string | null
+  pollId: any
+  votes: getHistoryData_polls_votes[] | null
+  startDate: any
+  endDate: any
+  /**
+   *  Number votes
+   */
+  votesCount: any
+  /**
+   *  Poll historical data
+   */
+  timeLine: getHistoryData_polls_timeLine[] | null
+}
+
+export interface getHistoryData_executives_timeLine_AddAction {
+  __typename: 'AddAction'
+  /**
+   *  Equals to: <ADD | ADD-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getHistoryData_executives_timeLine_RemoveAction {
+  __typename: 'RemoveAction'
+  /**
+   *  Equals to: <REMOVE | REMOVE-ARRAY>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of loked MKR the sender had at the moment this action is performed
+   */
+  locked: any
+}
+
+export interface getHistoryData_executives_timeLine_LockAction {
+  __typename: 'LockAction'
+  /**
+   *  Equals to: <LOCK>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export interface getHistoryData_executives_timeLine_FreeAction {
+  __typename: 'FreeAction'
+  /**
+   *  Equals to: <FREE>-<transactionHash>-<logIndex>
+   */
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Transaction hash (tx)
+   */
+  transactionHash: any
+  /**
+   *  Voter's Address
+   */
+  sender: any
+  /**
+   *  Amount of MKR locked or withdrawn
+   */
+  wad: any
+}
+
+export type getHistoryData_executives_timeLine =
+  | getHistoryData_executives_timeLine_AddAction
+  | getHistoryData_executives_timeLine_RemoveAction
+  | getHistoryData_executives_timeLine_LockAction
+  | getHistoryData_executives_timeLine_FreeAction
+
+export interface getHistoryData_executives {
+  __typename: 'Spell'
+  /**
+   *  ID represent the contract address
+   */
+  id: string
+  /**
+   *  Timestamp when the spell was voted by the first time
+   */
+  timestamp: any
+  /**
+   *  Total MKR supporting this spell
+   */
+  approvals: any
+  /**
+   *  Timestamp when the spell is casted
+   */
+  casted: any | null
+  /**
+   *  How much MKR it has when the spell is casted
+   */
+  castedWith: any | null
+  /**
+   *  Timestamp when the spell is casted
+   */
+  lifted: any | null
+  /**
+   *  How much MKR it has when the spell is lifted to hat
+   */
+  liftedWith: any | null
+  timeLine: getHistoryData_executives_timeLine[] | null
+}
+
+export interface getHistoryData {
+  polls: getHistoryData_polls[]
+  executives: getHistoryData_executives[]
+}
+
+export interface getHistoryDataVariables {
+  executives: number
+  polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL fragment: executivesDetailPage
 // ====================================================
 
@@ -679,12 +1211,7 @@ export interface makerGovernanceDetail {
   countAddresses: any
   countSlates: any
   countSpells: any
-  countLock: any
-  countFree: any
   countPolls: any
-  locked: any
-  lastBlock: any
-  lastSynced: any
   hat: any | null
 }
 
@@ -1102,6 +1629,25 @@ export interface pollsDetailTotal {
    */
   votesCount: any
   votes: pollsDetailTotal_votes[] | null
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: makerGovernanceDetailHistory
+// ====================================================
+
+export interface makerGovernanceDetailHistory {
+  __typename: 'GovernanceInfo'
+  id: string
+  countProxies: any
+  countAddresses: any
+  countSlates: any
+  countSpells: any
+  countPolls: any
+  hat: any | null
 }
 
 /* tslint:disable */

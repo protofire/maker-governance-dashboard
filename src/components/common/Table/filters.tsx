@@ -46,7 +46,7 @@ const InputContainer = styled(FilterWrapper)`
   width: 300px;
 `
 
-const SearchField = styled.input`
+export const SearchField = styled.input`
   border-radius: 2px;
   border: solid 1px ${props => props.theme.borders.borderColor};
   box-sizing: border-box;
@@ -62,7 +62,7 @@ const SearchField = styled.input`
   }
 `
 
-const ButtonsContainer = styled.div`
+export const ButtonsContainer = styled.div`
   column-gap: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -86,7 +86,7 @@ const ButtonCancel = styled(Button)`
   background-color: rgba(83, 105, 121, 0.8);
 `
 
-const ButtonSearch = styled(Button)`
+export const ButtonSearch = styled(Button)`
   background-color: ${props => props.theme.colors.primary};
 `
 
