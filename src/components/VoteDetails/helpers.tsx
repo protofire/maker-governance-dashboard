@@ -41,7 +41,11 @@ export const getVoteTableData = vote => {
 export const getTopSupportersTableData = (supporters, vote) => {
   const total = vote.approvals ? Number(vote.approvals).toFixed(2) : vote.end_approvals
   const data = Object.entries(supporters).map((el: any) => ({
-    s: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
+    s: (
+      <AddressNav voter address={el[0]}>
+        {shortenAccount(el[0])}
+      </AddressNav>
+    ),
     sender: shortenAccount(el[0]),
     supports: ((el[1].mkr * 100) / total).toFixed(1),
   }))

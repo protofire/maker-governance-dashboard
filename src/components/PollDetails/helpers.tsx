@@ -282,7 +282,12 @@ export const getPollMakerHistogramData = async poll => {
 export const getTopVotersTableData = topVoters => {
   const total: any = Object.values(topVoters).reduce((a: any, b: any) => Number(a) + Number(b), 0)
   const data = Object.entries(topVoters).map((el: any) => ({
-    sender: <AddressNav address={el[0]}>{shortenAccount(el[0])}</AddressNav>,
+    sender: (
+      <AddressNav voter address={el[0]}>
+        {shortenAccount(el[0])}
+      </AddressNav>
+    ),
+    key: shortenAccount(el[0]),
     supports: ((Number(el[1]) * 100) / total).toFixed(1),
   }))
 

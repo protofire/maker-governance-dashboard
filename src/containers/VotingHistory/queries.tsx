@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 const makerGovernanceDetailFragment = gql`
-  fragment makerGovernanceDetail on GovernanceInfo {
+  fragment makerGovernanceDetailHistory on GovernanceInfo {
     id
     countProxies
     countAddresses
@@ -79,7 +79,7 @@ const pollsDetailFragment = gql`
 export const GOVERNANCE_INFO_QUERY = gql`
   query GetGovernanceInfoHistory {
     governanceInfo(id: "0x0") {
-      ...makerGovernanceDetail
+      ...makerGovernanceDetailHistory
     }
   }
   ${makerGovernanceDetailFragment}

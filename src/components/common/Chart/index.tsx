@@ -77,7 +77,7 @@ const ChartComponent = React.memo(function Chart(props: any) {
   return (
     <>
       <ChartContainer {...modalStyles}>
-        <ComposedChart width={width} height={height} data={data}>
+        <ComposedChart barGap={-20} width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey={xLabel || 'label'}
