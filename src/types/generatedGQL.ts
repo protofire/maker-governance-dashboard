@@ -98,7 +98,12 @@ export interface GetGovernanceInfo_governanceInfo {
   countAddresses: any
   countSlates: any
   countSpells: any
+  countLock: any
+  countFree: any
   countPolls: any
+  locked: any
+  lastBlock: any
+  lastSynced: any
   hat: any | null
 }
 
@@ -261,7 +266,12 @@ export interface GovernanceInfo_governanceInfo {
   countAddresses: any
   countSlates: any
   countSpells: any
+  countLock: any
+  countFree: any
   countPolls: any
+  locked: any
+  lastBlock: any
+  lastSynced: any
   hat: any | null
 }
 
@@ -1211,7 +1221,12 @@ export interface makerGovernanceDetail {
   countAddresses: any
   countSlates: any
   countSpells: any
+  countLock: any
+  countFree: any
   countPolls: any
+  locked: any
+  lastBlock: any
+  lastSynced: any
   hat: any | null
 }
 

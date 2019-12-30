@@ -5,7 +5,7 @@ export const LegendLi = styled.li`
   display: inline-block;
   text-decoration: ${props => (props.disabledValue ? 'line-through' : 'none')};
   margin-right: 10px;
-  cursor: pointer;
+  cursor: ${props => (props.noPointer ? 'default' : 'pointer')};
   opacity: ${props => (props.disabledValue ? '0.6' : '1')};
 `
 

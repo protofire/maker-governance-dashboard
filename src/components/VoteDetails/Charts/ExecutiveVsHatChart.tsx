@@ -9,11 +9,11 @@ const renderLegend = props => {
   const isNext = !!data.find(el => el.isNext)
   return (
     <ul className="recharts-default-legend" style={{ listStyleType: 'none', paddingLeft: 0 }}>
-      <LegendLi>
+      <LegendLi noPointer>
         <CustomSvg color={casted ? '#27a02c' : '#ffc353'} />
         <span>Executive vote</span>
       </LegendLi>
-      <LegendLi>
+      <LegendLi noPointer>
         <CustomSvg color={'#a04827'} />
         <span>{isNext ? 'Next Highest Executive' : 'Current Hat'}</span>
       </LegendLi>
