@@ -19,9 +19,15 @@ const InfoIconContainer = styled.div`
   cursor: pointer;
 `
 const LinksContainer = styled.div`
-  color: #444;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
+  a {
+    &:visited,
+    &:active {
+      color: #444;
+    }
+  }
 `
 
 type Props = {
@@ -80,7 +86,7 @@ function ChartWrapper(props: Props) {
             <LinksContainer>
               {links &&
                 links.map(link => (
-                  <a key={link.title} href={link.uri}>
+                  <a target="_blank" rel="noopener noreferrer" key={link.title} href={link.uri}>
                     {link.title}
                   </a>
                 ))}

@@ -111,13 +111,18 @@ function PollDetails(props: Props) {
         ),
       },
       pollPerOptionVoters: {
-        data: pollPerOptionData,
+        data: pollPerOptionData.map(el => ({
+          label: el.label,
+          [el.label]: el.voter,
+        })),
         component: props => (
           <PollPerOption isVoter expanded content="Voters Per Option" component="pollPerOptionVoters" {...props} />
         ),
       },
       pollPerOptionMkr: {
-        data: pollPerOptionData,
+        data: pollPerOptionData.map(el => ({
+          [el.label]: el.mkr,
+        })),
         component: props => (
           <PollPerOption expanded content="MKR Voter Per Option" component="pollPerOptionMkr" {...props} />
         ),
@@ -194,11 +199,12 @@ function PollDetails(props: Props) {
   //Poll per option data
   const PollPerOption = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
-
+    const modalProps = getModalProps(data.type, data.component, data.expanded)
     return (
       <PollPerOptionChart
         colors={colors}
-        modalProps={getModalProps(data.type, data.component, data.expanded)}
+        modalProps={modalProps}
+        options={modalProps.data.flatMap(el => Object.keys(el)).filter(e => e !== 'label')}
         wrapperProps={getWrapperProps(data)}
         isVoter={props.isVoter}
       />
@@ -276,8 +282,14 @@ function PollDetails(props: Props) {
               'A leaderboard for the top MKR supporters on this poll. Allows easy navigation to those addresses voting history and etherscan address. '
             }
             links={[
-              { title: 'MKR Registry', uri: 'asdasd' },
-              { title: 'MakerDao Governance', uri: 'asdasd' },
+              {
+                title: 'MakerDao Governance Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+              },
+              {
+                title: 'MKR Registry Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+              },
             ]}
             content="Top Voters"
           >
@@ -288,7 +300,7 @@ function PollDetails(props: Props) {
                 getTopVotersTableData(topVoters)
                   .slice(0, 8)
                   .map(el => (
-                    <StrippedTableRow key={el.sender}>
+                    <StrippedTableRow key={el.key}>
                       <StrippedTableCell>{el.supports}%</StrippedTableCell>
                       <StrippedTableCell>{el.sender}</StrippedTableCell>
                     </StrippedTableRow>

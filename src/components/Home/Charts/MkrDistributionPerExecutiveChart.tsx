@@ -6,8 +6,14 @@ import { CustomSvg } from '../../common/Icon'
 const info =
   'This metric helps to inform governance of the distribution of MKR within the governance system and which executive has the current hat and the amount of MKR staked on the current hat.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph - Executives',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+  },
+  {
+    title: 'MakerDao Governance Graph - Governance Info',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Governance%20Info',
+  },
 ]
 
 const renderLegend = props => {

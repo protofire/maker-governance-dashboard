@@ -5,8 +5,10 @@ import { Chart, ChartWrapper } from '../../common'
 const info =
   'Gives users an idea of how well represented different ‘sizes’ of MKR holder were in this vote. Note that this metric is not sybil safe. '
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+  },
 ]
 
 const ApprovalsByAddressChart = props => {

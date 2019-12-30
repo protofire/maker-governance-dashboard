@@ -77,7 +77,7 @@ function VoteDetails(props: Props) {
     chart: {
       mkrStaked: {
         data: getVotersVsMkrData(votingActions, vote),
-        component: props => <VotersVsMkr expanded content="Total MKR Staked" component="mkrStaked" {...props} />,
+        component: props => <VotersVsMkr expanded content="MKR Staked" component="mkrStaked" {...props} />,
       },
       numberOfVoters: {
         data: getVotersVsMkrData(votingActions, vote),
@@ -219,8 +219,10 @@ function VoteDetails(props: Props) {
               'A leaderboard for the top MKR supporters on this executive. Allows easy navigation to those addresses voting history and etherscan address.'
             }
             links={[
-              { title: 'MKR Registry', uri: 'asdasd' },
-              { title: 'MakerDao Governance', uri: 'asdasd' },
+              {
+                title: 'MakerDao Governance Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+              },
             ]}
             content="Top Supporters"
           >

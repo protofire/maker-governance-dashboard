@@ -6,8 +6,10 @@ import { CustomSvg } from '../../common/Icon'
 const info =
   'Shows this executive in comparison to the current hat, giving users a clear picture of how much more MKR is required for the hat to be assigned either to or from this executive vote.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+  },
 ]
 
 const renderLegend = props => {
@@ -16,11 +18,11 @@ const renderLegend = props => {
   const isNext = !!data.find(el => el.isNext)
   return (
     <ul className="recharts-default-legend" style={{ listStyleType: 'none', paddingLeft: 0 }}>
-      <LegendLi>
+      <LegendLi noPointer>
         <CustomSvg color={casted ? '#27a02c' : '#ffc353'} />
         <span>Executive vote</span>
       </LegendLi>
-      <LegendLi>
+      <LegendLi noPointer>
         <CustomSvg color={'#a04827'} />
         <span>{isNext ? 'Next Highest Executive' : 'Current Hat'}</span>
       </LegendLi>

@@ -1,11 +1,20 @@
-import React from 'react'
-import { Bar, XAxis, YAxis, Cell } from 'recharts'
+import React, { useState } from 'react'
+import { Bar, YAxis } from 'recharts'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 import { defaultColors } from './'
 
 const PollPerOptionChart = props => {
-  const { wrapperProps, modalProps, isVoter, colors } = props
+  const [selectedLines, setSelectedLine] = useState<any>([])
+  const [opacities, setOpacities] = useState({})
+  const getOpacities = opacities => setOpacities(opacities)
+  const selectLine = e => {
+    let selected = selectedLines.includes(e.value)
+      ? selectedLines.filter(line => line !== e.value)
+      : [...selectedLines, e.value.trim()]
+    setSelectedLine(selected)
+  }
+  const { wrapperProps, modalProps, colors, options, isVoter } = props
   const chartColors = [...defaultColors, ...colors]
 
   const info = !isVoter
@@ -13,22 +22,41 @@ const PollPerOptionChart = props => {
     : ' Shows the current or final distribution of MKR voting across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of MKR.'
   const links = !isVoter
     ? [
-        { title: 'MKR Registry', uri: 'asdasd' },
-        { title: 'MakerDao Governance', uri: 'asdasd' },
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+        },
+        {
+          title: 'MKR Registry Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+        },
       ]
     : [
-        { title: 'MKR Registry', uri: 'asdasd' },
-        { title: 'MakerDao Governance', uri: 'asdasd' },
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+        },
+        {
+          title: 'MKR Registry Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+        },
       ]
 
   const renderLegend = props => {
-    const { data } = props
+    const { payload, onMouseEnter, onMouseLeave, onClick } = props
     return (
       <ul className="recharts-default-legend" style={{ listStyleType: 'none' }}>
-        {data.map((entry, index) => (
-          <LegendLi key={`item-${index}`}>
-            <CustomSvg color={chartColors[index]} />
-            <span>{entry.label}</span>
+        {payload.map((entry, index) => (
+          <LegendLi
+            onMouseEnter={() => onMouseEnter(entry)}
+            onMouseLeave={() => onMouseLeave(entry)}
+            onClick={() => onClick(entry)}
+            disabledValue={selectedLines.includes(entry.value)}
+            className={`recharts-legend-item legend-item-${index}`}
+            key={`item-${index}`}
+          >
+            <CustomSvg color={entry.color} />
+            <span>{entry.value}</span>
           </LegendLi>
         ))}
       </ul>
@@ -37,36 +65,18 @@ const PollPerOptionChart = props => {
 
   return (
     <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
-      <Chart {...modalProps} legend={renderLegend}>
-        {isVoter && <YAxis yAxisId="0" datakey="voter" />}
-        {!isVoter && <YAxis yAxisId="1" datakey="mkr" />}
-        <XAxis dataKey="label" />
-        {isVoter && (
+      <Chart {...modalProps} legend={renderLegend} setOpacity={getOpacities} handleLegend={selectLine}>
+        <YAxis />
+        {options.map((entry, index) => (
           <Bar
+            strokeOpacity={opacities[`${entry}`]}
             isAnimationActive={modalProps.data ? false : true}
-            name={'Voters'}
-            yAxisId="0"
-            fill="#61b6b0"
-            dataKey="voter"
-          >
-            {modalProps.data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={chartColors[index]} />
-            ))}
-          </Bar>
-        )}
-        {!isVoter && (
-          <Bar
-            isAnimationActive={modalProps.data ? false : true}
-            name={'MKR Staked Per Option'}
-            yAxisId="1"
-            dataKey="mkr"
-            stackId="a"
-          >
-            {modalProps.data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={chartColors[index]} />
-            ))}
-          </Bar>
-        )}
+            key={entry}
+            name={`${entry}`}
+            fill={chartColors[index]}
+            dataKey={selectedLines.length === 0 || !selectedLines.includes(`${entry}`) ? `${entry}` : ''}
+          />
+        ))}
       </Chart>
     </ChartWrapper>
   )

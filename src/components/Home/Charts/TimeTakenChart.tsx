@@ -4,8 +4,10 @@ import { Chart, ChartWrapper } from '../../common'
 
 const info = 'This distribution gives users an idea of how long a given executive takes to pass. '
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+  },
 ]
 
 const TimeTakenChart = props => {

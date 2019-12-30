@@ -4,8 +4,11 @@ import { Chart, ChartWrapper } from '../../common'
 
 const info = 'Gives a general overview of the state of the system in terms of both token and address engagement.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MKR Registry Graph',
+    uri:
+      'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%2C%20Free%20and%20Voters%20Actions',
+  },
 ]
 
 const VotersVsMkrChart = props => {

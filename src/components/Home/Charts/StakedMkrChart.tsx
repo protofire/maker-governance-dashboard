@@ -7,8 +7,15 @@ import { CustomSvg } from '../../common/Icon'
 const info =
   'Being able to see voter participation over time allows us to judge the safety and representativeness of the current set of system parameters.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph',
+    uri:
+      'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%2C%20Free%20and%20Vote%20Actions',
+  },
+  {
+    title: 'MKR Registry Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Burn%20and%20Mint%20Events',
+  },
 ]
 
 const StakedMkrChart = ({ wrapperProps, modalProps }) => {

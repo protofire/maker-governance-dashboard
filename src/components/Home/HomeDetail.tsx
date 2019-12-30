@@ -149,9 +149,8 @@ function HomeDetail(props: Props) {
     setMostVotedPolls(getMostVotedPolls(polls))
     setRecentPolls(getRecentPolls(polls))
   }, [polls])
-
   useEffect(() => {
-    //setActivenessBreakdown(getActivenessBreakdown(executives))
+    setActivenessBreakdown(getActivenessBreakdown(executives))
     setMkrActiveness(getMKRActiveness(executives))
   }, [executives])
 
@@ -173,8 +172,10 @@ function HomeDetail(props: Props) {
         info:
           'This gives governance a brief overview of the most recent polls, and serves as a navigation aid for users to explore further.',
         links: [
-          { title: 'MKR Registry', uri: 'asdasd' },
-          { title: 'MakerDao Governance', uri: 'asdasd' },
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
         ],
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => (
@@ -187,8 +188,10 @@ function HomeDetail(props: Props) {
         info:
           'This allows governance to get an idea of the most popular decisions made in the history of MKR Governance. It also provides a baseline expectation of participation.',
         links: [
-          { title: 'MKR Registry', uri: 'asdasd' },
-          { title: 'MakerDao Governance', uri: 'asdasd' },
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
         ],
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
@@ -200,12 +203,14 @@ function HomeDetail(props: Props) {
         info:
           'Lets users see how MKR is currently distributed over executive votes, giving some idea of the value of the current hat, and where ‘idle’ MKR is sitting in the system.',
         links: [
-          { title: 'MKR Registry', uri: 'asdasd' },
-          { title: 'MakerDao Governance', uri: 'asdasd' },
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
         ],
         sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
         component: props => (
-          <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
+          <HomeTable expanded handleRow={getVote} content="Top Executives" component="executives" {...props} />
         ),
       },
       topVoters: {
@@ -221,8 +226,10 @@ function HomeDetail(props: Props) {
         info:
           'This metric helps to inform governance of potentially malicious MKR being moved to old uncast executive votes.',
         links: [
-          { title: 'MKR Registry', uri: 'asdasd' },
-          { title: 'MakerDao Governance', uri: 'asdasd' },
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
         ],
         component: props => (
           <HomeTable
@@ -237,6 +244,14 @@ function HomeDetail(props: Props) {
       activenessBreakdown: {
         data: activenessBreakdown,
         columns: activenessBreakdownColumns,
+        info:
+          'The MKR Activeness gives a good picture of the health of governance, the more tokens that are frequently active, the safer the system is. ',
+        links: [
+          {
+            title: 'Maker Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+        ],
         component: props => (
           <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
         ),
@@ -535,6 +550,16 @@ function HomeDetail(props: Props) {
             <MKRActiveness content="MKR Activeness" component="mkrActiveness" />
           )}
         </CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          <HomeTable
+            info={homeMap.table.activenessBreakdown.info}
+            links={homeMap.table.activenessBreakdown.links}
+            content="MKR Activeness Breakdown"
+            component="activenessBreakdown"
+          />
+        </TableCardStyled>
+      </TwoRowGrid>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {executivesResponsiveness.length === 0 ? (
             <Loading />
@@ -542,6 +567,9 @@ function HomeDetail(props: Props) {
             <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
           )}
         </CardStyled>
+        <TableCardStyled style={{ padding: 0 }}>
+          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+        </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
@@ -551,16 +579,8 @@ function HomeDetail(props: Props) {
             <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
           )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
-        </TableCardStyled>
-      </TwoRowGrid>
-      {/*<TwoRowGrid style={{ marginBottom: '20px' }}>
-        <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
-        </TableCardStyled>
         <CardStyled></CardStyled>
-          </TwoRowGrid>*/}
+      </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>

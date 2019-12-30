@@ -10,12 +10,16 @@ const VotersVsMkrChart = props => {
     : 'Informs governance as to the current and historical number of voting addresses on this executive vote.'
   const links = !voters
     ? [
-        { title: 'MKR Registry', uri: 'asdasd' },
-        { title: 'MakerDao Governance', uri: 'asdasd' },
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+        },
       ]
     : [
-        { title: 'MKR Registry', uri: 'asdasd' },
-        { title: 'MakerDao Governance', uri: 'asdasd' },
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+        },
       ]
 
   return (

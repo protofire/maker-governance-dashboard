@@ -5,8 +5,10 @@ import { Chart, ChartWrapper } from '../../common'
 const info =
   'Being able to see the rate of change of votes and polls over time lets us judge the demand on governance over time.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20Votes%20and%20Polls',
+  },
 ]
 
 const VotesVsPollsChart = props => {

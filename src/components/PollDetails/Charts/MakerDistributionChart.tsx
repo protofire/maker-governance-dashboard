@@ -7,8 +7,14 @@ import { CustomSvg } from '../../common/Icon'
 const info =
   'Shows the historical amount of MKR voting for each option in this poll. This helps track swings in opinion over time, as well as allowing comparison between the ‘Vote Count By Option’ metric.'
 const links = [
-  { title: 'MKR Registry', uri: 'asdasd' },
-  { title: 'MakerDao Governance', uri: 'asdasd' },
+  {
+    title: 'MKR Registry Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+  },
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+  },
 ]
 
 const MakerDistributionChart = props => {
