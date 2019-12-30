@@ -27,7 +27,7 @@ const MkrDistributionPerExecutiveChart = props => {
   return (
     <ChartWrapper {...wrapperProps} hideFilters>
       <Chart {...modalProps} showXaxis={3} legend={renderLegend}>
-        <YAxis style={{ fontSize: '13px' }} type="number" domain={[0, maxValue]} />
+        <YAxis style={{ fontSize: '12px' }} type="number" domain={[0, maxValue]} />
         <Bar isAnimationActive={modalProps.data ? false : true} name={'Executive vote'} dataKey="mkr">
           {modalProps.data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.isHat ? '#000000' : '#a04827'} />
