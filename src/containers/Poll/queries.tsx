@@ -10,12 +10,12 @@ const pollsDetailFragmentPage = gql`
     timeLineCount
     endDate
     votesCount
-    votes(first: 1000) {
+    votes {
       id
       voter
       option
     }
-    timeLine(first: 1000) {
+    timeLine {
       id
       timestamp
       type: __typename
@@ -40,7 +40,6 @@ export const GOVERNANCE_INFO_QUERY = gql`
     }
   }
 `
-
 export const POLL_QUERY_BY_ID = gql`
   query GetPollsDataPage($id: ID!) {
     poll(id: $id) {

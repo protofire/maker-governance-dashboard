@@ -6,16 +6,14 @@ import { getMKRResponsiveness } from '../../components/Home/helpers'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
-import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY, mergeEventPages } from './queries'
+import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
 import { DEFAULT_CACHE_TTL } from '../../constants'
-import { getMkrBurnEvents, getMkrMintEvents } from '../../utils'
+import { getMkrBurnEvents, getMkrMintEvents, mergeEventPages } from '../../utils'
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
   return {
     voters: Number(governance.countProxies) + Number(governance.countAddresses) || DEFAULT_FETCH_ROWS,
-    polls: Number(governance.countPolls) || DEFAULT_FETCH_ROWS,
-    executives: Number(governance.countSpells) || DEFAULT_FETCH_ROWS,
   }
 }
 

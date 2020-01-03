@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import lscache from 'lscache'
 import BigNumber from 'bignumber.js'
 import List from '../../components/List'
-import { getPollData, getPollsBalances } from '../../utils'
+import { getPollData, getPollsBalances, mergeEventPages } from '../../utils'
 import { Pollcolumns } from '../../components/List/helpers'
 import { DEFAULT_FETCH_ROWS, DEFAULT_CACHE_TTL } from '../../constants'
 import { FullLoading, PageTitle } from '../../components/common'
@@ -31,7 +31,6 @@ function PollsInfo(props) {
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const pollsData = useQuery(POLLS_FIRST_QUERY, { variables: resultVariables })
-
   const getPoll = row => {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
@@ -57,6 +56,12 @@ function PollsInfo(props) {
   }
 
   useEffect(() => {
+    if (pollsData.data && cachedData.length === 0) {
+      setData([...mergeEventPages(pollsData.data).polls])
+    }
+  }, [pollsData.data, cachedData.length])
+
+  useEffect(() => {
     if (cachedData.length === 0) getPollsBalances(data).then(balances => setBalances(balances))
   }, [data, cachedData.length])
 
@@ -73,8 +78,8 @@ function PollsInfo(props) {
   }, [gData])
 
   useEffect(() => {
-    if (pollsData.data && pollsData.data.polls && mkrSupply && cachedData.length === 0) {
-      getPollsData(pollsData.data.polls).then(result => {
+    if (data.length > 0 && mkrSupply && cachedData.length === 0) {
+      getPollsData(data).then(result => {
         const polls = result.filter(Boolean)
         setData([...polls])
         Promise.all(
@@ -88,7 +93,7 @@ function PollsInfo(props) {
         })
       })
     }
-  }, [pollsData.data, mkrSupply, pollsBalances, cachedData.length])
+  }, [data, mkrSupply, pollsBalances, cachedData.length])
   if (pollsData.loading || gResult.loading || data.length === 0) return <FullLoading />
   if (pollsData.error || gResult.error) return <ErrorEl />
 
