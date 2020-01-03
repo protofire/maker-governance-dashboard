@@ -14,8 +14,33 @@ const PollPerOptionChart = props => {
       : [...selectedLines, e.value.trim()]
     setSelectedLine(selected)
   }
-  const { wrapperProps, modalProps, colors, options } = props
+  const { wrapperProps, modalProps, colors, options, isVoter } = props
   const chartColors = [...defaultColors, ...colors]
+
+  const info = !isVoter
+    ? 'Shows the current or final distribution of voting addresses across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of addresses.'
+    : ' Shows the current or final distribution of MKR voting across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of MKR.'
+  const links = !isVoter
+    ? [
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+        },
+        {
+          title: 'MKR Registry Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+        },
+      ]
+    : [
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+        },
+        {
+          title: 'MKR Registry Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+        },
+      ]
 
   const renderLegend = props => {
     const { payload, onMouseEnter, onMouseLeave, onClick } = props
@@ -39,7 +64,7 @@ const PollPerOptionChart = props => {
   }
 
   return (
-    <ChartWrapper hideFilters {...wrapperProps}>
+    <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
       <Chart {...modalProps} legend={renderLegend} setOpacity={getOpacities} handleLegend={selectLine}>
         <YAxis />
         {options.map((entry, index) => (

@@ -3,6 +3,15 @@ import { Bar, Cell, YAxis } from 'recharts'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
+const info =
+  'Shows this executive in comparison to the current hat, giving users a clear picture of how much more MKR is required for the hat to be assigned either to or from this executive vote.'
+const links = [
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+  },
+]
+
 const renderLegend = props => {
   const { data } = props
   const casted = !!data.find(el => el.casted)
@@ -24,7 +33,7 @@ const renderLegend = props => {
 const ExecutiveVsHatChart = props => {
   const { wrapperProps, modalProps } = props
   return (
-    <ChartWrapper {...wrapperProps} hideFilters>
+    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
       <Chart {...modalProps} legend={renderLegend}>
         <YAxis type="number" domain={[0, 'dataMax']} />
         <Bar isAnimationActive={modalProps.data ? false : true} dataKey="mkr">

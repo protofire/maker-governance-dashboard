@@ -2,12 +2,21 @@ import React, { useState } from 'react'
 import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
+const info = 'Gives a general overview of the state of the system in terms of both token and address engagement.'
+const links = [
+  {
+    title: 'MKR Registry Graph',
+    uri:
+      'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%2C%20Free%20and%20Voters%20Actions',
+  },
+]
+
 const VotersVsMkrChart = props => {
   const [opacities, setOpacities] = useState({ count: 1, mkr: 1 })
   const { wrapperProps, modalProps } = props
   const getOpacities = opacities => setOpacities(opacities)
   return (
-    <ChartWrapper {...wrapperProps}>
+    <ChartWrapper info={info} links={links} {...wrapperProps}>
       <Chart getOpacity={getOpacities} {...modalProps}>
         <YAxis yAxisId="0" datakey="count" />
         <YAxis yAxisId="1" datakey="mkr" orientation="right" />

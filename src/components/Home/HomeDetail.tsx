@@ -169,6 +169,14 @@ function HomeDetail(props: Props) {
       polls: {
         data: recentPolls,
         columns: expanded => pollcolumns(expanded),
+        info:
+          'This gives governance a brief overview of the most recent polls, and serves as a navigation aid for users to explore further.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
+        ],
         sortBy: useMemo(() => [{ id: 'startDate', desc: true }], []),
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Recent Polls" component="polls" {...props} />
@@ -177,6 +185,14 @@ function HomeDetail(props: Props) {
       votedPolls: {
         data: mostVotedPolls,
         columns: votedPollcolumns,
+        info:
+          'This allows governance to get an idea of the most popular decisions made in the history of MKR Governance. It also provides a baseline expectation of participation.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
+        ],
         component: props => (
           <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
         ),
@@ -184,13 +200,33 @@ function HomeDetail(props: Props) {
       executives: {
         data: data.executives.sort((a, b) => Number(b.approvals) - Number(a.approvals)),
         columns: expanded => executiveColumns(expanded),
+        info:
+          'Lets users see how MKR is currently distributed over executive votes, giving some idea of the value of the current hat, and where ‘idle’ MKR is sitting in the system.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+        ],
         sortBy: useMemo(() => [{ id: 'approvals', desc: true }], []),
         component: props => (
-          <HomeTable expanded handleRow={getVote} content="Top executives" component="executives" {...props} />
+          <HomeTable expanded handleRow={getVote} content="Top Executives" component="executives" {...props} />
         ),
       },
       topVoters: {
         data: topVoters.sort((a, b) => Number(b.count) - Number(a.count)),
+        info:
+          'A list of the addresses that have voted the most in the MKR governance system. Having a ‘leaderboard’ will hopefully lead to more active and consistent participants in the voting ecosystem.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph - Executives',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+          {
+            title: 'MakerDao Governance Graph - Polls',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
+        ],
         columns: topVotersColumns,
         component: props => <HomeTable expanded content="Top Voters" component="topVoters" {...props} />,
       },
@@ -199,6 +235,14 @@ function HomeDetail(props: Props) {
           .filter(vote => !vote.casted && differenceInMonths(new Date(), fromUnixTime(vote.timestamp)) < 12)
           .sort((a, b) => Number(b.approvals) - Number(a.approvals)),
         columns: uncastedExecutiveColumns,
+        info:
+          'This metric helps to inform governance of potentially malicious MKR being moved to old uncast executive votes.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+        ],
         component: props => (
           <HomeTable
             expanded
@@ -212,6 +256,14 @@ function HomeDetail(props: Props) {
       activenessBreakdown: {
         data: activenessBreakdown,
         columns: activenessBreakdownColumns,
+        info:
+          'The MKR Activeness gives a good picture of the health of governance, the more tokens that are frequently active, the safer the system is. ',
+        links: [
+          {
+            title: 'Maker Governance Graph',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+        ],
         component: props => (
           <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
         ),
@@ -445,7 +497,7 @@ function HomeDetail(props: Props) {
     const data = getComponentData('table', props.component, props.content, props.expanded)
 
     return (
-      <StrippedTableWrapper {...getWrapperProps(data)}>
+      <StrippedTableWrapper info={props.info} links={props.links} {...getWrapperProps(data)}>
         <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
       </StrippedTableWrapper>
     )
@@ -511,7 +563,12 @@ function HomeDetail(props: Props) {
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
+          <HomeTable
+            info={homeMap.table.activenessBreakdown.info}
+            links={homeMap.table.activenessBreakdown.links}
+            content="MKR Activeness Breakdown"
+            component="activenessBreakdown"
+          />
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
@@ -523,7 +580,16 @@ function HomeDetail(props: Props) {
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+          {topVoters.length === 0 ? (
+            <Loading />
+          ) : (
+            <HomeTable
+              info={homeMap.table.topVoters.info}
+              links={homeMap.table.topVoters.links}
+              content="Top Voters"
+              component="topVoters"
+            />
+          )}
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
@@ -539,10 +605,22 @@ function HomeDetail(props: Props) {
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Top Executives" component="executives" />
+          <HomeTable
+            info={homeMap.table.executives.info}
+            links={homeMap.table.executives.links}
+            handleRow={getVote}
+            content="Top Executives"
+            component="executives"
+          />
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable handleRow={getVote} content="Uncast Executives" component="uncastedExecutives" />
+          <HomeTable
+            info={homeMap.table.uncastedExecutives.info}
+            links={homeMap.table.uncastedExecutives.links}
+            handleRow={getVote}
+            content="Uncast Executives"
+            component="uncastedExecutives"
+          />
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
@@ -562,14 +640,26 @@ function HomeDetail(props: Props) {
           {polls.length === 0 || !polls[0].participation ? (
             <Loading />
           ) : (
-            <HomeTable handleRow={getPoll} content="Most Voted Polls" component="votedPolls" />
+            <HomeTable
+              info={homeMap.table.votedPolls.info}
+              links={homeMap.table.votedPolls.links}
+              handleRow={getPoll}
+              content="Most Voted Polls"
+              component="votedPolls"
+            />
           )}
         </TableCardStyled>
         <TableCardStyled style={{ padding: 0 }}>
           {polls.length === 0 ? (
             <Loading />
           ) : (
-            <HomeTable handleRow={getPoll} content="Recent Polls" component="polls" />
+            <HomeTable
+              info={homeMap.table.polls.info}
+              links={homeMap.table.polls.links}
+              handleRow={getPoll}
+              content="Recent Polls"
+              component="polls"
+            />
           )}
         </TableCardStyled>
       </TwoRowGrid>

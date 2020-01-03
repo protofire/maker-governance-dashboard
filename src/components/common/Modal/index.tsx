@@ -9,10 +9,11 @@ type Props = {
   isChart?: Boolean
   closeModal: Function
   children: React.ReactNode
+  styles?: object
 }
 
 function Modal(props: Props) {
-  const { isOpen, closeModal, children } = props
+  const { isOpen, closeModal, children, styles } = props
 
   return (
     <>
@@ -20,7 +21,7 @@ function Modal(props: Props) {
         isOpen={isOpen}
         onRequestClose={closeModal}
         shouldCloseOnOverlayClick={false}
-        style={theme.modalStyle}
+        style={styles ? { ...theme.modalStyle, ...styles } : theme.modalStyle}
       >
         {children}
       </ReactModal>

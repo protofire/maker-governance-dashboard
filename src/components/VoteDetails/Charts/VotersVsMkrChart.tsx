@@ -5,8 +5,25 @@ import { Chart, ChartWrapper } from '../../common'
 const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps, voters } = props
 
+  const info = !voters
+    ? 'Informs governance as to the current and historical amount of MKR staked on this executive vote.'
+    : 'Informs governance as to the current and historical number of voting addresses on this executive vote.'
+  const links = !voters
+    ? [
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+        },
+      ]
+    : [
+        {
+          title: 'MakerDao Governance Graph',
+          uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+        },
+      ]
+
   return (
-    <ChartWrapper hideFilters {...wrapperProps}>
+    <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
       <Chart {...modalProps}>
         {voters ? <YAxis yAxisId="0" datakey="count" /> : <YAxis yAxisId="1" datakey="mkr" orientation="right" />}
         {voters ? (

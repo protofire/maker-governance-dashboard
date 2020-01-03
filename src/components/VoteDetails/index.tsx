@@ -214,7 +214,18 @@ function VoteDetails(props: Props) {
           <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
         </CardStyled>
         <CardStyled style={{ padding: 0 }}>
-          <StrippedTableWrapper content="Top Supporters">
+          <StrippedTableWrapper
+            info={
+              'A leaderboard for the top MKR supporters on this executive. Allows easy navigation to those addresses voting history and etherscan address.'
+            }
+            links={[
+              {
+                title: 'MakerDao Governance Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+              },
+            ]}
+            content="Top Supporters"
+          >
             <StrippedRowsContainer>
               {getTopSupportersTableData(topSupporters, vote)
                 .slice(0, 8)
