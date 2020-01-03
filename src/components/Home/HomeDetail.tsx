@@ -215,6 +215,18 @@ function HomeDetail(props: Props) {
       },
       topVoters: {
         data: topVoters.sort((a, b) => Number(b.count) - Number(a.count)),
+        info:
+          'A list of the addresses that have voted the most in the MKR governance system. Having a ‘leaderboard’ will hopefully lead to more active and consistent participants in the voting ecosystem.',
+        links: [
+          {
+            title: 'MakerDao Governance Graph - Executives',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+          },
+          {
+            title: 'MakerDao Governance Graph - Polls',
+            uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+          },
+        ],
         columns: topVotersColumns,
         component: props => <HomeTable expanded content="Top Voters" component="topVoters" {...props} />,
       },
@@ -568,7 +580,16 @@ function HomeDetail(props: Props) {
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? <Loading /> : <HomeTable content="Top Voters" component="topVoters" />}
+          {topVoters.length === 0 ? (
+            <Loading />
+          ) : (
+            <HomeTable
+              info={homeMap.table.topVoters.info}
+              links={homeMap.table.topVoters.links}
+              content="Top Voters"
+              component="topVoters"
+            />
+          )}
         </TableCardStyled>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
