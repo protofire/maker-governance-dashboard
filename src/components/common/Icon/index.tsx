@@ -7,6 +7,7 @@ import { ReactComponent as ArrowIcon } from './arrow.svg'
 import { ReactComponent as HatIcon } from './hat.svg'
 import { ReactComponent as ExternalIcon } from './external.svg'
 import { ReactComponent as CopyIcon } from './copy.svg'
+import { ReactComponent as InfoIcon } from './info.svg'
 
 const FilterIcon = (props: any) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="10.9" height="10" viewBox="0 0 10.9 10">
@@ -51,4 +52,5 @@ export {
   CustomSvg,
   ExternalIcon,
   CopyIcon,
+  InfoIcon,
 }

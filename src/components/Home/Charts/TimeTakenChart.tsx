@@ -2,11 +2,19 @@ import React from 'react'
 import { Bar, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
+const info = 'This distribution gives users an idea of how long a given executive takes to pass. '
+const links = [
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
+  },
+]
+
 const TimeTakenChart = props => {
   const { wrapperProps, modalProps } = props
 
   return (
-    <ChartWrapper {...wrapperProps} hideFilters>
+    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
       <Chart {...modalProps}>
         <YAxis />
         <Bar
