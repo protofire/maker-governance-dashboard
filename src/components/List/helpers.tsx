@@ -33,8 +33,7 @@ export const Pollcolumns = () => {
     {
       Header: 'Name',
       separator: true,
-      accessor: 'title',
-      filter: 'fuzzyText',
+      accessor: row => row.title,
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
@@ -69,6 +68,7 @@ export const Pollcolumns = () => {
     {
       Header: 'MKR Participation',
       accessor: 'participation',
+      sortType: (a, b) => a.original.participation - b.original.participation,
       separator: true,
       disableFilters: true,
       Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : <Loading />),
@@ -163,7 +163,6 @@ export const Executivecolumns = () => {
           )}
         </>
       ),
-      filter: 'fuzzyText',
     },
     {
       Header: 'MKR in support',
