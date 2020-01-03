@@ -258,9 +258,7 @@ export const TopVotersColumns = () => {
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
           <AddressNav voter address={row.original.sender}>
-            <Link>
-              <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
-            </Link>
+            <span data-tip={row.original.sender}>{shortenAccount(row.original.sender)}</span>
           </AddressNav>
         </>
       ),

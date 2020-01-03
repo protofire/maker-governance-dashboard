@@ -2,10 +2,19 @@ import React from 'react'
 import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
+const info =
+  'Allows us to keep track of how ‘fair’ the distribution of voting tokens is in the MKR governance ecosystem.'
+const links = [
+  {
+    title: 'MakerDao Governance Graph',
+    uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%20and%20Free%20Actions',
+  },
+]
+
 const GiniChart = props => {
   const { wrapperProps, modalProps } = props
   return (
-    <ChartWrapper {...wrapperProps}>
+    <ChartWrapper info={info} links={links} {...wrapperProps}>
       <Chart {...modalProps}>
         <YAxis />
         <Line

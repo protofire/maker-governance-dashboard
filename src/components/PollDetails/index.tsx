@@ -277,7 +277,22 @@ function PollDetails(props: Props) {
           )}
         </CardStyled>
         <CardStyled style={{ padding: 0 }}>
-          <StrippedTableWrapper content="Top Voters">
+          <StrippedTableWrapper
+            info={
+              'A leaderboard for the top MKR supporters on this poll. Allows easy navigation to those addresses voting history and etherscan address. '
+            }
+            links={[
+              {
+                title: 'MakerDao Governance Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+              },
+              {
+                title: 'MKR Registry Graph',
+                uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+              },
+            ]}
+            content="Top Voters"
+          >
             <StrippedRowsContainer>
               {Object.keys(topVoters).length === 0 ? (
                 <Loading />
