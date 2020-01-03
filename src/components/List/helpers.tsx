@@ -163,7 +163,6 @@ export const Executivecolumns = () => {
           )}
         </>
       ),
-      filter: 'fuzzyText',
     },
     {
       Header: 'MKR in support',
