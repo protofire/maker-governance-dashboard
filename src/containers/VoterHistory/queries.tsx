@@ -13,7 +13,7 @@ const makerGovernanceDetailFragment = gql`
 `
 
 const executivesDetailFragment = gql`
-  fragment executivesDetail on Spell {
+  fragment executivesDetailVoter on Spell {
     id
     timestamp
     approvals
@@ -44,7 +44,7 @@ const executivesDetailFragment = gql`
 `
 
 const pollsDetailFragment = gql`
-  fragment pollsDetail on Poll {
+  fragment pollsDetailVoter on Poll {
     id
     creator
     url
@@ -88,10 +88,10 @@ export const GOVERNANCE_INFO_QUERY = gql`
 export const ACTIONS_QUERY = gql`
   query getVoterHistoryData($executives: Int!, $polls: Int!) {
     polls(first: $polls) {
-      ...pollsDetail
+      ...pollsDetailVoter
     }
     executives: spells(first: $executives) {
-      ...executivesDetail
+      ...executivesDetailVoter
     }
   }
   ${pollsDetailFragment}

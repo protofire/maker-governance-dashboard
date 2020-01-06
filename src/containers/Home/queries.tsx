@@ -28,7 +28,7 @@ const actionsDetailFragment = gql`
 `
 
 const executivesDetailFragment = gql`
-  fragment executivesDetail on Spell {
+  fragment executivesDetailHome on Spell {
     id
     timestamp
     approvals
@@ -118,7 +118,7 @@ const getPollsData = (pageIndex, pageSize, offset, ordering) => {
 const getExecutivesData = (pageIndex, pageSize, offset, ordering) => {
   return `
   executives_${pageIndex}: spells(first: ${pageSize}, skip: ${offset}, ${ordering}) {
-    ...executivesDetail
+    ...executivesDetailHome
   }
   `
 }
