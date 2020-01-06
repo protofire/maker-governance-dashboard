@@ -56,10 +56,10 @@ function PollsInfo(props) {
   }
 
   useEffect(() => {
-    if (pollsData.data && cachedData.length === 0) {
+    if (pollsData.data) {
       setData([...mergeEventPages(pollsData.data).polls])
     }
-  }, [pollsData.data, cachedData.length])
+  }, [pollsData.data])
 
   useEffect(() => {
     if (cachedData.length === 0) getPollsBalances(data).then(balances => setBalances(balances))
@@ -78,10 +78,9 @@ function PollsInfo(props) {
   }, [gData])
 
   useEffect(() => {
-    if (mkrSupply && cachedData.length && !cachedData[0].participation) {
+    if (data.length > 0 && mkrSupply) {
       getPollsData(data).then(result => {
         const polls = result.filter(Boolean)
-        setData([...polls])
         Promise.all(
           polls.map(poll => {
             return getPollData(poll, pollsBalances).then(data => {
@@ -93,7 +92,7 @@ function PollsInfo(props) {
         })
       })
     }
-  }, [data, mkrSupply, pollsBalances, cachedData, cachedData.length])
+  }, [data, mkrSupply, pollsBalances])
   if (pollsData.loading || gResult.loading || data.length === 0) return <FullLoading />
   if (pollsData.error || gResult.error) return <ErrorEl />
 
