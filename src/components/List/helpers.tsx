@@ -37,7 +37,7 @@ export const Pollcolumns = () => {
       Cell: ({ row }) => (
         <>
           <ReactTooltip place="top" type="dark" effect="solid" />
-          <span data-tip={row.original.title}>{row.original.title}</span>
+          <span data-tip={row.original.title}>{row.original.title || <Loading />}</span>
         </>
       ),
     },
