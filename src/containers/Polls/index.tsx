@@ -78,7 +78,7 @@ function PollsInfo(props) {
   }, [gData])
 
   useEffect(() => {
-    if (mkrSupply) {
+    if (mkrSupply && cachedData.length && !cachedData[0].participation) {
       getPollsData(data).then(result => {
         const polls = result.filter(Boolean)
         setData([...polls])
@@ -93,7 +93,7 @@ function PollsInfo(props) {
         })
       })
     }
-  }, [data, mkrSupply, pollsBalances])
+  }, [data, mkrSupply, pollsBalances, cachedData, cachedData.length])
   if (pollsData.loading || gResult.loading || data.length === 0) return <FullLoading />
   if (pollsData.error || gResult.error) return <ErrorEl />
 
