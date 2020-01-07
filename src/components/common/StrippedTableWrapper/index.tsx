@@ -34,7 +34,6 @@ const InfoIconContainer = styled.div`
 const LinksContainer = styled.div`
   margin-top: 10px;
   display: flex;
-  flex-direction: column;
   a {
     &:visited,
     &:active {

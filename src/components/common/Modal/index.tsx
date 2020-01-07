@@ -20,7 +20,7 @@ function Modal(props: Props) {
       <ReactModal
         isOpen={isOpen}
         onRequestClose={closeModal}
-        shouldCloseOnOverlayClick={false}
+        shouldCloseOnOverlayClick={true}
         style={styles ? { ...theme.modalStyle, ...styles } : theme.modalStyle}
       >
         {children}

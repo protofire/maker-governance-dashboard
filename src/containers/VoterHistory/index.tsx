@@ -124,7 +124,7 @@ function VoterHistory(props: Props) {
   if (historyData.error || gResult.error) return <Error />
   return (
     <>
-      <PageTitle>Voter History</PageTitle>
+      <PageTitle>{`Voter History - ${voterId}`}</PageTitle>
       <List handleRow={getItem} data={[...executives, ...polls]} columns={historyColumns} />
     </>
   )

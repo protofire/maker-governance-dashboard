@@ -59,7 +59,14 @@ export const getVotesVsPollsData = (votes: Array<any>, polls: Array<any>, time: 
 }
 
 export const getMostVotedPolls = polls =>
-  polls[0].participation ? polls.sort((a, b) => Number(b.participation) - Number(a.participation)) : []
+  polls[0].participation
+    ? polls
+        .map(p => ({
+          ...p,
+          participationNumber: Number(p.participation).toFixed(2),
+        }))
+        .sort((a, b) => b.participationNumber - a.participationNumber)
+    : []
 
 export const getRecentPolls = polls => polls.sort((a, b) => Number(b.startDate) - Number(a.startDate))
 
@@ -342,6 +349,7 @@ export const VotedPollcolumns = () => {
     {
       Header: 'MKR participation',
       accessor: 'participation',
+      sortType: (a, b) => Number(a.original.participation) - Number(b.original.participation),
       disableFilters: true,
       Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
     },
