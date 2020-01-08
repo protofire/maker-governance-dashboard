@@ -24,7 +24,7 @@ const items = [
   { to: '/', label: 'DASHBOARD' },
   { to: '/executive', label: 'EXECUTIVE VOTES' },
   { to: '/polls', label: 'POLLS' },
-  { to: '/voting-history', label: 'VOTING HISTORY' },
+  //{ to: '/voting-history', label: 'VOTING HISTORY' },
 ]
 
 function App() {
