@@ -248,7 +248,7 @@ export const VoterHistoryColumns = () => {
       width: 100,
     },
     {
-      Header: 'Winning Option',
+      Header: 'Voted Option',
       accessor: 'win-option',
       separator: true,
       disableFilters: true,

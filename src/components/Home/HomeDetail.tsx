@@ -193,8 +193,16 @@ function HomeDetail(props: Props) {
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
           },
         ],
+        sortBy: React.useMemo(() => [{ id: 'participation', desc: true }], []),
         component: props => (
-          <HomeTable handleRow={getPoll} expanded content="Most Voted Polls" component="votedPolls" {...props} />
+          <HomeTable
+            handleRow={getPoll}
+            sortBy={{ id: 'participation', desc: true }}
+            expanded
+            content="Most Voted Polls"
+            component="votedPolls"
+            {...props}
+          />
         ),
       },
       executives: {
@@ -498,7 +506,7 @@ function HomeDetail(props: Props) {
 
     return (
       <StrippedTableWrapper info={props.info} links={props.links} {...getWrapperProps(data)}>
-        <Table {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
+        <Table sortBy={props.sortBy} {...getModalProps(data.type, data.component, data.expanded, props.handleRow)} />
       </StrippedTableWrapper>
     )
   }
@@ -571,12 +579,19 @@ function HomeDetail(props: Props) {
           />
         </TableCardStyled>
       </TwoRowGrid>
+      <CardStyled style={{ marginBottom: '20px' }}>
+        {executivesResponsiveness.length === 0 ? (
+          <Loading />
+        ) : (
+          <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
+        )}
+      </CardStyled>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          {executivesResponsiveness.length === 0 ? (
+          {pollsResponsiveness.length === 0 ? (
             <Loading />
           ) : (
-            <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
+            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
@@ -591,16 +606,6 @@ function HomeDetail(props: Props) {
             />
           )}
         </TableCardStyled>
-      </TwoRowGrid>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          {pollsResponsiveness.length === 0 ? (
-            <Loading />
-          ) : (
-            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
-          )}
-        </CardStyled>
-        <CardStyled></CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>

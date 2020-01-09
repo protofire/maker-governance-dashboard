@@ -13,6 +13,8 @@ type Props = {
   history?: any
 }
 
+const NoResult = () => <div>This address has no participations. </div>
+
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 const getHomeVariables = data => {
@@ -30,12 +32,33 @@ function VoterHistory(props: Props) {
   const [executives, setExecutives] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
   const [pollsBalances, setBalances] = useState<any>({})
+  const [participations, setParticipations] = useState<any>(true)
 
   const historyColumns = React.useMemo(() => VoterHistoryColumns(), [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
   const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+
+  useEffect(() => {
+    if (!historyData || !historyData.data) return
+    const findParticipations = () => {
+      const executiveEvents = executives.flatMap(vote =>
+        vote.timeLine
+          .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
+          .map(v => ({
+            ...v,
+            voter: v.sender,
+          })),
+      )
+      const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
+      return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
+    }
+    const hasParticipations = findParticipations()
+    setParticipations(hasParticipations)
+  }, [executives, polls, voterId, historyData])
+
+  const hasParticipations = participations
 
   const getItem = row => {
     if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
@@ -53,9 +76,9 @@ function VoterHistory(props: Props) {
   }
 
   useEffect(() => {
-    if (!historyData || !historyData.data) return
+    if (!historyData || !historyData.data || !hasParticipations) return
     getPollsBalances(historyData.data.polls).then(balances => setBalances(balances))
-  }, [historyData])
+  }, [historyData, hasParticipations])
 
   useEffect(() => {
     if (historyData.data && historyData.data.polls) {
@@ -73,12 +96,13 @@ function VoterHistory(props: Props) {
         })
       })
     }
-  }, [historyData.data, pollsBalances])
+  }, [historyData.data, pollsBalances, hasParticipations])
 
   useEffect(() => {
     const getData = () => {
       if (!historyData || !historyData.data) return
       const executives = historyData.data.executives
+
         .map(vote =>
           vote.timeLine.filter(
             tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId,
@@ -94,7 +118,7 @@ function VoterHistory(props: Props) {
       setPolls(polls)
     }
     getData()
-  }, [historyData, voterId])
+  }, [historyData, voterId, hasParticipations])
 
   useEffect(() => {
     if (historyData.data && historyData.data.executives) {
@@ -114,17 +138,18 @@ function VoterHistory(props: Props) {
           console.log(error)
         })
     }
-  }, [historyData])
+  }, [historyData, hasParticipations])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
 
-  if (historyData.loading || gResult.loading) return <FullLoading />
+  if ((historyData.loading || gResult.loading) && hasParticipations) return <FullLoading />
+  if (!hasParticipations) return <NoResult />
   if (historyData.error || gResult.error) return <Error />
   return (
     <>
-      <PageTitle>Voter History</PageTitle>
+      <PageTitle>{`Voter History - ${voterId}`}</PageTitle>
       <List handleRow={getItem} data={[...executives, ...polls]} columns={historyColumns} />
     </>
   )
