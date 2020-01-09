@@ -579,12 +579,19 @@ function HomeDetail(props: Props) {
           />
         </TableCardStyled>
       </TwoRowGrid>
+      <CardStyled style={{ marginBottom: '20px' }}>
+        {executivesResponsiveness.length === 0 ? (
+          <Loading />
+        ) : (
+          <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
+        )}
+      </CardStyled>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
-          {executivesResponsiveness.length === 0 ? (
+          {pollsResponsiveness.length === 0 ? (
             <Loading />
           ) : (
-            <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
+            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
           )}
         </CardStyled>
         <TableCardStyled style={{ padding: 0 }}>
@@ -599,16 +606,6 @@ function HomeDetail(props: Props) {
             />
           )}
         </TableCardStyled>
-      </TwoRowGrid>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          {pollsResponsiveness.length === 0 ? (
-            <Loading />
-          ) : (
-            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
-          )}
-        </CardStyled>
-        <CardStyled></CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
