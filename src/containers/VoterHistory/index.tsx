@@ -13,6 +13,8 @@ type Props = {
   history?: any
 }
 
+const NoResult = () => <div>This address has no participations. </div>
+
 const Error = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 const getHomeVariables = data => {
@@ -31,11 +33,26 @@ function VoterHistory(props: Props) {
   const [polls, setPolls] = useState<any[]>([])
   const [pollsBalances, setBalances] = useState<any>({})
 
+  const findParticipations = () => {
+    const executiveEvents = executives.flatMap(vote =>
+      vote.timeLine
+        .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
+        .map(v => ({
+          ...v,
+          voter: v.sender,
+        })),
+    )
+    const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
+    return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
+  }
+
   const historyColumns = React.useMemo(() => VoterHistoryColumns(), [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
   const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+
+  const hasParticipations = findParticipations()
 
   const getItem = row => {
     if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
@@ -53,11 +70,12 @@ function VoterHistory(props: Props) {
   }
 
   useEffect(() => {
-    if (!historyData || !historyData.data) return
+    if (!historyData || !historyData.data || !hasParticipations) return
     getPollsBalances(historyData.data.polls).then(balances => setBalances(balances))
-  }, [historyData])
+  }, [historyData, hasParticipations])
 
   useEffect(() => {
+    if (!hasParticipations) return
     if (historyData.data && historyData.data.polls) {
       getPollsData(historyData.data.polls).then(result => {
         const polls = result.filter(Boolean)
@@ -73,9 +91,10 @@ function VoterHistory(props: Props) {
         })
       })
     }
-  }, [historyData.data, pollsBalances])
+  }, [historyData.data, pollsBalances, hasParticipations])
 
   useEffect(() => {
+    if (!hasParticipations) return
     const getData = () => {
       if (!historyData || !historyData.data) return
       const executives = historyData.data.executives
@@ -94,9 +113,10 @@ function VoterHistory(props: Props) {
       setPolls(polls)
     }
     getData()
-  }, [historyData, voterId])
+  }, [historyData, voterId, hasParticipations])
 
   useEffect(() => {
+    if (!hasParticipations) return
     if (historyData.data && historyData.data.executives) {
       getMakerDaoData()
         .then(({ executiveVotes }) => {
@@ -114,13 +134,14 @@ function VoterHistory(props: Props) {
           console.log(error)
         })
     }
-  }, [historyData])
+  }, [historyData, hasParticipations])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
   }, [gData])
 
-  if (historyData.loading || gResult.loading) return <FullLoading />
+  if ((historyData.loading || gResult.loading) && hasParticipations) return <FullLoading />
+  if (!hasParticipations) return <NoResult />
   if (historyData.error || gResult.error) return <Error />
   return (
     <>
