@@ -45,9 +45,9 @@ import {
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
-  getMKRActiveness,
+  //getMKRActiveness,
   getPollsMKRResponsiveness,
-  getActivenessBreakdown,
+  //getActivenessBreakdown,
   getMostVotedPolls,
   getRecentPolls,
 } from './helpers'
@@ -105,8 +105,8 @@ function HomeDetail(props: Props) {
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
   const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
-  const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
-  const [mkrActiveness, setMkrActiveness] = useState<any>([])
+  //const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
+  //const [mkrActiveness, setMkrActiveness] = useState<any>([])
   const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
   const [stakedMkr, setStakedMkr] = useState<any>([])
   const [recentPolls, setRecentPolls] = useState<any>([])
@@ -150,8 +150,8 @@ function HomeDetail(props: Props) {
     setRecentPolls(getRecentPolls(polls))
   }, [polls])
   useEffect(() => {
-    setActivenessBreakdown(getActivenessBreakdown(executives))
-    setMkrActiveness(getMKRActiveness(executives))
+    //setActivenessBreakdown(getActivenessBreakdown(executives))
+    //setMkrActiveness(getMKRActiveness(executives))
   }, [executives])
 
   const getPoll = row => {
@@ -210,7 +210,7 @@ function HomeDetail(props: Props) {
         ),
       },
       activenessBreakdown: {
-        data: activenessBreakdown,
+        //data: activenessBreakdown,
         columns: activenessBreakdownColumns,
         component: props => (
           <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
@@ -268,7 +268,7 @@ function HomeDetail(props: Props) {
         ),
       },
       mkrActiveness: {
-        data: mkrActiveness,
+        //data: mkrActiveness,
         component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
       },
       votesVsPolls: {
@@ -502,7 +502,7 @@ function HomeDetail(props: Props) {
         </CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Voter Behaviour</PageSubTitle>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
+      {/*<TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {mkrActiveness.length === 0 ? (
             <Loading />
@@ -513,7 +513,7 @@ function HomeDetail(props: Props) {
         <TableCardStyled style={{ padding: 0 }}>
           <HomeTable content="MKR Activeness Breakdown" component="activenessBreakdown" />
         </TableCardStyled>
-      </TwoRowGrid>
+          </TwoRowGrid>*/}
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {executivesResponsiveness.length === 0 ? (
