@@ -32,19 +32,7 @@ function VoterHistory(props: Props) {
   const [executives, setExecutives] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
   const [pollsBalances, setBalances] = useState<any>({})
-
-  const findParticipations = () => {
-    const executiveEvents = executives.flatMap(vote =>
-      vote.timeLine
-        .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
-        .map(v => ({
-          ...v,
-          voter: v.sender,
-        })),
-    )
-    const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
-    return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
-  }
+  const [participations, setParticipations] = useState<any>(true)
 
   const historyColumns = React.useMemo(() => VoterHistoryColumns(), [])
 
@@ -52,7 +40,25 @@ function VoterHistory(props: Props) {
 
   const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
 
-  const hasParticipations = findParticipations()
+  useEffect(() => {
+    if (!historyData || !historyData.data) return
+    const findParticipations = () => {
+      const executiveEvents = executives.flatMap(vote =>
+        vote.timeLine
+          .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
+          .map(v => ({
+            ...v,
+            voter: v.sender,
+          })),
+      )
+      const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
+      return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
+    }
+    const hasParticipations = findParticipations()
+    setParticipations(hasParticipations)
+  }, [executives, polls, voterId, historyData])
+
+  const hasParticipations = participations
 
   const getItem = row => {
     if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
@@ -75,7 +81,6 @@ function VoterHistory(props: Props) {
   }, [historyData, hasParticipations])
 
   useEffect(() => {
-    if (!hasParticipations) return
     if (historyData.data && historyData.data.polls) {
       getPollsData(historyData.data.polls).then(result => {
         const polls = result.filter(Boolean)
@@ -94,10 +99,10 @@ function VoterHistory(props: Props) {
   }, [historyData.data, pollsBalances, hasParticipations])
 
   useEffect(() => {
-    if (!hasParticipations) return
     const getData = () => {
       if (!historyData || !historyData.data) return
       const executives = historyData.data.executives
+
         .map(vote =>
           vote.timeLine.filter(
             tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId,
@@ -116,7 +121,6 @@ function VoterHistory(props: Props) {
   }, [historyData, voterId, hasParticipations])
 
   useEffect(() => {
-    if (!hasParticipations) return
     if (historyData.data && historyData.data.executives) {
       getMakerDaoData()
         .then(({ executiveVotes }) => {
