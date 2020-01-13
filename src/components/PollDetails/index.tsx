@@ -124,7 +124,7 @@ function PollDetails(props: Props) {
           [el.label]: el.mkr,
         })),
         component: props => (
-          <PollPerOption expanded content="MKR Voter Per Option" component="pollPerOptionMkr" {...props} />
+          <PollPerOption expanded content="MKR Votes Per Option" component="pollPerOptionMkr" {...props} />
         ),
       },
     },
@@ -264,7 +264,7 @@ function PollDetails(props: Props) {
           {pollPerOptionData.length === 0 ? (
             <Loading />
           ) : (
-            <PollPerOption content="MKR Voter Per Option" component="pollPerOptionMkr" />
+            <PollPerOption content="MKR Votes Per Option" component="pollPerOptionMkr" />
           )}
         </CardStyled>
       </PollDetailContainer>
@@ -283,7 +283,7 @@ function PollDetails(props: Props) {
             }
             links={[
               {
-                title: 'MakerDao Governance Graph',
+                title: 'MakerDAO Governance Graph',
                 uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
               },
               {

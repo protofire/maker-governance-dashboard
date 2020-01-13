@@ -8,7 +8,7 @@ const info =
   'Being able to see voter participation over time allows us to judge the safety and representativeness of the current set of system parameters.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri:
       'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%2C%20Free%20and%20Vote%20Actions',
   },

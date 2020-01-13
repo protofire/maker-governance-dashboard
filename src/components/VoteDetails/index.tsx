@@ -220,7 +220,7 @@ function VoteDetails(props: Props) {
             }
             links={[
               {
-                title: 'MakerDao Governance Graph',
+                title: 'MakerDAO Governance Graph',
                 uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
               },
             ]}

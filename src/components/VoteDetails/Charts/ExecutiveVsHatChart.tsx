@@ -7,7 +7,7 @@ const info =
   'Shows this executive in comparison to the current hat, giving users a clear picture of how much more MKR is required for the hat to be assigned either to or from this executive vote.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
   },
 ]

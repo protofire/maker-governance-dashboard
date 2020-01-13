@@ -6,7 +6,7 @@ const info =
   'The more responsive MKR tokens are, the safer the system is. It gives a good ballpark estimate for how much MKR we can expect to see voting in executive votes and how quickly that MKR will vote.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
   },
 ]

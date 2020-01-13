@@ -11,13 +11,13 @@ const VotersVsMkrChart = props => {
   const links = !voters
     ? [
         {
-          title: 'MakerDao Governance Graph',
+          title: 'MakerDAO Governance Graph',
           uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
         },
       ]
     : [
         {
-          title: 'MakerDao Governance Graph',
+          title: 'MakerDAO Governance Graph',
           uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
         },
       ]

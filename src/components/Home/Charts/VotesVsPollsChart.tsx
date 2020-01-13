@@ -6,7 +6,7 @@ const info =
   'Being able to see the rate of change of votes and polls over time lets us judge the demand on governance over time.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20Votes%20and%20Polls',
   },
 ]
