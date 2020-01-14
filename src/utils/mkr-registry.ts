@@ -39,7 +39,7 @@ export async function getMkrBurnEvents(pageSize = 1000) {
   const pages = Math.ceil(data.burnEventCount / pageSize)
   const events = await fetchPages(BURN_EVENT_QUERY, pages, pageSize)
 
-  return events.reduce((result, { mintEvents }) => [...result, ...mintEvents], [])
+  return events.reduce((result, { burnEvents }) => [...result, ...burnEvents], [])
 }
 
 export async function getMkrMintEvents(pageSize = 1000) {
