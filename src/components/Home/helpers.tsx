@@ -91,6 +91,7 @@ export const getStakedMkrData = (data: any, time: string) => {
       mkrEvents.map(events => events.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to)),
       totalSupply,
     )
+    //console.log(period, totalSupply)
 
     // Calculate total MKR staked/voting in the period
     ;({ totalStaked, totalVoting, voters } = calculateVotingMkr(
@@ -111,7 +112,11 @@ export const getStakedMkrData = (data: any, time: string) => {
 
 function calculateMkrSupply(mkrEvents: any[], previousValue = new BigNumber(0)): BigNumber {
   return mkrEvents
-    .map(events => (events.length ? BigNumber.sum(events.map(event => event.amount)) : new BigNumber(0)))
+    .map(events =>
+      events.length
+        ? BigNumber.sum(events.reduce((accum, event) => Number(event.amount) + accum, 0))
+        : new BigNumber(0),
+    )
     .reduce((supply, value, isBurn) => (isBurn ? supply.minus(value) : supply.plus(value)), previousValue)
 }
 
