@@ -281,6 +281,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
   const {
     getTableProps,
     headerGroups,
+    rows,
     prepareRow,
     page, // Instead of using 'rows', we'll use page,
     // which has only the rows for the active page
@@ -418,7 +419,7 @@ function Table({ columns, data, expanded, limitPerPage, scrollable, handleRow, s
               ))}
             </PageSelect>
             <Pager>
-              {pageIndex + 1}-{pageSize} of {data ? data.length : 0}
+              {pageIndex + 1}-{pageSize} of {rows ? rows.length : 0}
             </Pager>
             <PageIconContainer onClick={() => previousPage()} disabled={!canPreviousPage}>
               <PreviousIcon />

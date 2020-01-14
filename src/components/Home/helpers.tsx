@@ -284,6 +284,7 @@ export const ActivenessBreakdownColumns = () => {
     {
       Header: 'Period',
       accessor: 'period',
+      disableFilters: true,
     },
     {
       Header: 'MKR',
@@ -351,7 +352,7 @@ export const VotedPollcolumns = () => {
       accessor: 'participation',
       sortType: (a, b) => Number(a.original.participation) - Number(b.original.participation),
       disableFilters: true,
-      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
+      Cell: ({ row }) => (row.original.participation ? `${Number(row.original.participation).toFixed(6)}%` : '-'),
     },
   ]
 }
