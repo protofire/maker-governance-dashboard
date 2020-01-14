@@ -345,7 +345,7 @@ export const VotedPollcolumns = () => {
       Header: 'MKR participation',
       accessor: 'participation',
       disableFilters: true,
-      Cell: ({ row }) => (row.original.participation ? `${row.original.participation}%` : '-'),
+      Cell: ({ row }) => (row.original.participation ? `${Number(row.original.participation).toFixed(6)}%` : '-'),
     },
   ]
 }
