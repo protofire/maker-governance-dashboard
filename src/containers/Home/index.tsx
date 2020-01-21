@@ -74,9 +74,6 @@ function MakerGovernanceInfo() {
   if (loading || gResult.loading || loadingMkrEvent || executivesResponsiveness.length === 0) {
     return <FullLoading />
   }
-  console.log(error, 'error')
-  console.log(gResult.error, 'gResult')
-  console.log(mkrError, 'mkrError')
 
   if (error || gResult.error || mkrError) {
     return <Error />
