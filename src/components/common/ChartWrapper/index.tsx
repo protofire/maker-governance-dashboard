@@ -21,6 +21,7 @@ const InfoIconContainer = styled.div`
 const LinksContainer = styled.div`
   margin-top: 10px;
   display: flex;
+  justify-content: space-between;
   a {
     &:visited,
     &:active {
@@ -79,7 +80,7 @@ function ChartWrapper(props: Props) {
           <CloseIcon />
         </InfoContainer>
         <div>
-          <CardTitle content={`${content} Info`} />
+          <CardTitle content={`${content} ${versus ? 'vs' : ''} ${versus || ''} Info`} />
           <DescriptionBox>
             {info}
             <LinksContainer>

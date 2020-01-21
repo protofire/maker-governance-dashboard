@@ -6,7 +6,7 @@ const info =
   'Allows us to keep track of how ‘fair’ the distribution of voting tokens is in the MKR governance ecosystem.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Lock%20and%20Free%20Actions',
   },
 ]

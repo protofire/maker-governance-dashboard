@@ -173,7 +173,7 @@ function HomeDetail(props: Props) {
           'This gives governance a brief overview of the most recent polls, and serves as a navigation aid for users to explore further.',
         links: [
           {
-            title: 'MakerDao Governance Graph',
+            title: 'MakerDAO Governance Graph',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
           },
         ],
@@ -189,7 +189,7 @@ function HomeDetail(props: Props) {
           'This allows governance to get an idea of the most popular decisions made in the history of MKR Governance. It also provides a baseline expectation of participation.',
         links: [
           {
-            title: 'MakerDao Governance Graph',
+            title: 'MakerDAO Governance Graph',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
           },
         ],
@@ -212,7 +212,7 @@ function HomeDetail(props: Props) {
           'Lets users see how MKR is currently distributed over executive votes, giving some idea of the value of the current hat, and where ‘idle’ MKR is sitting in the system.',
         links: [
           {
-            title: 'MakerDao Governance Graph',
+            title: 'MakerDAO Governance Graph',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
           },
         ],
@@ -227,11 +227,11 @@ function HomeDetail(props: Props) {
           'A list of the addresses that have voted the most in the MKR governance system. Having a ‘leaderboard’ will hopefully lead to more active and consistent participants in the voting ecosystem.',
         links: [
           {
-            title: 'MakerDao Governance Graph - Executives',
+            title: 'MakerDAO Governance Graph - Executives',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
           },
           {
-            title: 'MakerDao Governance Graph - Polls',
+            title: 'MakerDAO Governance Graph - Polls',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
           },
         ],
@@ -247,7 +247,7 @@ function HomeDetail(props: Props) {
           'This metric helps to inform governance of potentially malicious MKR being moved to old uncast executive votes.',
         links: [
           {
-            title: 'MakerDao Governance Graph',
+            title: 'MakerDAO Governance Graph',
             uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20votes',
           },
         ],

@@ -17,13 +17,13 @@ const PollPerOptionChart = props => {
   const { wrapperProps, modalProps, colors, options, isVoter } = props
   const chartColors = [...defaultColors, ...colors]
 
-  const info = !isVoter
+  const info = isVoter
     ? 'Shows the current or final distribution of voting addresses across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of addresses.'
     : ' Shows the current or final distribution of MKR voting across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of MKR.'
   const links = !isVoter
     ? [
         {
-          title: 'MakerDao Governance Graph',
+          title: 'MakerDAO Governance Graph',
           uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
         },
         {
@@ -33,7 +33,7 @@ const PollPerOptionChart = props => {
       ]
     : [
         {
-          title: 'MakerDao Governance Graph',
+          title: 'MakerDAO Governance Graph',
           uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
         },
         {

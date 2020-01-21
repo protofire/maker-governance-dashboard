@@ -12,7 +12,7 @@ const links = [
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
   },
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
   },
 ]

@@ -8,7 +8,7 @@ const info =
   'Shows the historical number of addresses voting for each option in this poll. This helps track swings in opinion over time, as well as allowing comparison between the ‘MKR Count By Option’ metric.'
 const links = [
   {
-    title: 'MakerDao Governance Graph',
+    title: 'MakerDAO Governance Graph',
     uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
   },
   {

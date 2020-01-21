@@ -289,6 +289,7 @@ export const ActivenessBreakdownColumns = () => {
     {
       Header: 'Period',
       accessor: 'period',
+      disableFilters: true,
     },
     {
       Header: 'MKR',
