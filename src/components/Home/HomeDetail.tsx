@@ -11,7 +11,7 @@ import {
   GiniChart,
   TimeTakenChart,
   MkrDistributionPerExecutiveChart,
-  MKRActivenessChart,
+  //MKRActivenessChart,
   ExecutivesResponsivenessChart,
   PollsResponsivenessChart,
 } from './Charts'
@@ -40,14 +40,14 @@ import {
   VotedPollcolumns,
   Executivecolumns,
   TopVotersColumns,
-  ActivenessBreakdownColumns,
+  //ActivenessBreakdownColumns,
   UncastedExecutivecolumns,
   getTimeTakenForExecutives,
   getMkrDistributionPerExecutive,
   getTopVoters,
-  getMKRActiveness,
+  //getMKRActiveness,
   getPollsMKRResponsiveness,
-  getActivenessBreakdown,
+  //getActivenessBreakdown,
   getMostVotedPolls,
   getRecentPolls,
 } from './helpers'
@@ -105,8 +105,8 @@ function HomeDetail(props: Props) {
   const [modalData, setModalData] = useState({ type: '', component: '' })
   const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
   const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
-  const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
-  const [mkrActiveness, setMkrActiveness] = useState<any>([])
+  //const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
+  // const [mkrActiveness, setMkrActiveness] = useState<any>([])
   const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
   const [stakedMkr, setStakedMkr] = useState<any>([])
   const [recentPolls, setRecentPolls] = useState<any>([])
@@ -131,7 +131,7 @@ function HomeDetail(props: Props) {
   const executiveColumns = expanded => Executivecolumns(expanded)
   const topVotersColumns = () => TopVotersColumns()
   const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
-  const activenessBreakdownColumns = () => ActivenessBreakdownColumns()
+  //const activenessBreakdownColumns = () => ActivenessBreakdownColumns()
 
   const executives = data.executives
 
@@ -150,8 +150,8 @@ function HomeDetail(props: Props) {
     setRecentPolls(getRecentPolls(polls))
   }, [polls])
   useEffect(() => {
-    setActivenessBreakdown(getActivenessBreakdown(executives))
-    setMkrActiveness(getMKRActiveness(executives))
+    //setActivenessBreakdown(getActivenessBreakdown(executives))
+    //setMkrActiveness(getMKRActiveness(executives))
   }, [executives])
 
   const getPoll = row => {
@@ -261,6 +261,7 @@ function HomeDetail(props: Props) {
           />
         ),
       },
+      /*
       activenessBreakdown: {
         data: activenessBreakdown,
         columns: activenessBreakdownColumns,
@@ -276,6 +277,7 @@ function HomeDetail(props: Props) {
           <HomeTable expanded content="MKR Activeness Breakdown" component="activenessBreakdown" {...props} />
         ),
       },
+      */
     },
     chart: {
       stakedMkr: {
@@ -327,10 +329,12 @@ function HomeDetail(props: Props) {
           />
         ),
       },
+      /*
       mkrActiveness: {
         data: mkrActiveness,
         component: props => <MKRActiveness expanded content="MKR Activeness" component="mkrActiveness" {...props} />,
       },
+      */
       votesVsPolls: {
         data: getVotesVsPollsData(data.executives, polls, chartFilters.votesVsPolls),
         component: props => <VotesVsPolls expanded content="Total Votes" component="votesVsPolls" {...props} />,
@@ -430,6 +434,7 @@ function HomeDetail(props: Props) {
     )
   }
 
+  /*
   // MKR activeness graph data
   const MKRActiveness = props => {
     const data = getComponentData('chart', props.component, props.content, props.expanded, props.versus)
@@ -441,6 +446,7 @@ function HomeDetail(props: Props) {
       />
     )
   }
+  */
 
   // MkrDistributionPerExecutive graph data
   const MkrDistributionPerExecutive = props => {
@@ -562,6 +568,7 @@ function HomeDetail(props: Props) {
         </CardStyled>
       </TwoRowGrid>
       <PageSubTitle>Voter Behaviour</PageSubTitle>
+      {/*
       <TwoRowGrid style={{ marginBottom: '20px' }}>
         <CardStyled>
           {mkrActiveness.length === 0 ? (
@@ -579,6 +586,7 @@ function HomeDetail(props: Props) {
           />
         </TableCardStyled>
       </TwoRowGrid>
+          */}
       <CardStyled style={{ marginBottom: '20px' }}>
         {executivesResponsiveness.length === 0 ? (
           <Loading />
