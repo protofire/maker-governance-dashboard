@@ -4,8 +4,7 @@ import { defaultColors } from './'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
-const info =
-  'Shows the historical amount of MKR voting for each option in this poll. This helps track swings in opinion over time, as well as allowing comparison between the ‘Vote Count By Option’ metric.'
+const info = `This tile shows the current and historical amount of MKR voting for each option in this poll. This allows governance to track swings in opinion over time, as well as allowing comparison between the ‘Vote Count By Option’ tile. <br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. We keep track of the MKR balance of each voting address over the time of the poll, and for each emitted Voted event apply it to the voted option. These summed values are then displayed.`
 const links = [
   {
     title: 'MKR Registry Graph',
@@ -51,7 +50,7 @@ const MakerDistributionChart = props => {
     )
   }
   return (
-    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
+    <ChartWrapper markdown info={info} links={links} {...wrapperProps} hideFilters>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} scale="point" {...modalProps}>
         <YAxis type="number" domain={[0, 'dataMax']} />
         {options.map((option, i) => (

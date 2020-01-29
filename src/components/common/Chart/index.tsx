@@ -44,7 +44,6 @@ const ChartComponent = React.memo(function Chart(props: any) {
     showXaxis,
     legend,
     scale,
-    barGap,
     handleLegend,
     getOpacity,
   } = props
@@ -77,10 +76,8 @@ const ChartComponent = React.memo(function Chart(props: any) {
   }
   return (
     <>
-      {console.log('asepxia', barGap)}
-
       <ChartContainer {...modalStyles}>
-        <ComposedChart barGap={barGap || -20} width={width} height={height} data={data}>
+        <ComposedChart barGap={-20} width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey={xLabel || 'label'}

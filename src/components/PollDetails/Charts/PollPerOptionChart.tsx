@@ -65,14 +65,7 @@ const PollPerOptionChart = props => {
 
   return (
     <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
-      {console.log(options.length)}
-      <Chart
-        {...modalProps}
-        barGap={options.length <= 2 ? -100 : -20}
-        legend={renderLegend}
-        setOpacity={getOpacities}
-        handleLegend={selectLine}
-      >
+      <Chart {...modalProps} legend={renderLegend} setOpacity={getOpacities} handleLegend={selectLine}>
         <YAxis />
         {options.map((entry, index) => (
           <Bar

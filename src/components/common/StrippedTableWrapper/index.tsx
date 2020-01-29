@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import styled from 'styled-components'
 
 import { StrippedRowsContainer, CardTitle, ViewAll, Modal, InfoIcon, CloseIcon, DescriptionBox } from '..'
@@ -49,11 +50,12 @@ type Props = {
   handleModal?: () => void
   isModalOpen?: boolean
   info?: string
+  markdown?: boolean
   links?: Array<any>
 }
 
 function StrippedTableWrapper(props: Props) {
-  const { handleModal, children, content, isModalOpen, info, links } = props
+  const { handleModal, children, content, isModalOpen, info, links, markdown } = props
   const [isInfoModalOpen, setInfoModalOpen] = useState(false)
 
   return (
@@ -78,7 +80,8 @@ function StrippedTableWrapper(props: Props) {
         <div>
           <CardTitle content={`${content} Info`} />
           <DescriptionBox>
-            {info}
+            {!markdown ? info : <ReactMarkdown escapeHtml={false} source={info} />}
+
             <LinksContainer>
               {links &&
                 links.map(link => (
