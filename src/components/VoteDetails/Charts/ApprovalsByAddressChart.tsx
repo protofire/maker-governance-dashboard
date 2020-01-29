@@ -2,8 +2,7 @@ import React from 'react'
 import { Bar, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
-const info =
-  'Gives users an idea of how well represented different ‘sizes’ of MKR holder were in this vote. Note that this metric is not sybil safe. '
+const info = `Gives users an idea of how well represented different ‘sizes’ of MKR holder were in this vote.<strong> Note that this metric is not sybil safe.</strong> `
 const links = [
   {
     title: 'MakerDAO Governance Graph',
@@ -14,7 +13,7 @@ const links = [
 const ApprovalsByAddressChart = props => {
   const { wrapperProps, modalProps } = props
   return (
-    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
+    <ChartWrapper info={info} markdown links={links} {...wrapperProps} hideFilters>
       <Chart {...modalProps}>
         <YAxis />
         <Bar
