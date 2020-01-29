@@ -65,7 +65,6 @@ const PollPerOptionChart = props => {
 
   return (
     <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
-      {console.log(options.length)}
       <Chart
         {...modalProps}
         barGap={options.length <= 2 ? -100 : -20}
