@@ -4,8 +4,7 @@ import { defaultColors } from './'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
-const info =
-  'Shows the historical number of addresses voting for each option in this poll. This helps track swings in opinion over time, as well as allowing comparison between the ‘MKR Count By Option’ metric.'
+const info = `This tile shows the current and historical number of addresses voting for each option in this poll. This allows governance to track swings in opinion over time, as well as allowing comparison between the ‘MKR Count By Option’ tile. <br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. For each emitted event, we track the voting address and the voted option. For each data point, we then count the number of addresses that have voted for each option. These counts are then displayed.`
 const links = [
   {
     title: 'MakerDAO Governance Graph',
@@ -52,7 +51,7 @@ const VotersDistributionChart = props => {
   }
 
   return (
-    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
+    <ChartWrapper markdown info={info} links={links} {...wrapperProps} hideFilters>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} scale="point" {...modalProps}>
         <YAxis />
         {options.map((option, i) => (

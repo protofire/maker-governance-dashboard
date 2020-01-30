@@ -18,8 +18,8 @@ const PollPerOptionChart = props => {
   const chartColors = [...defaultColors, ...colors]
 
   const info = isVoter
-    ? 'Shows the current or final distribution of voting addresses across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of addresses.'
-    : ' Shows the current or final distribution of MKR voting across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of MKR.'
+    ? `This tile shows the current or final distribution of voting addresses across the options available in this poll. This gives an intuitive visual depiction of the current or final vote results in terms of addresses.`
+    : `This metric is generated using the Voted event emitted by the PollingEmitter governance contract. The most recent Voted event for each unique address is placed into a bucket based on the option for which it voted. The address count for each option bucket is then displayed.`
   const links = !isVoter
     ? [
         {
