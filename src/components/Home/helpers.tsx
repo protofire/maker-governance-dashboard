@@ -510,6 +510,7 @@ export const getMKRResponsiveness = executives => {
 
 export const getPollsMKRResponsiveness = async polls => {
   const countedEvents = {}
+  const voteEvents = {}
   const days = Math.max(
     ...polls.map(poll => {
       const start = poll.startDate >= 1e12 ? (poll.startDate / 1e3).toFixed(0) : poll.startDate
@@ -533,11 +534,14 @@ export const getPollsMKRResponsiveness = async polls => {
       voters: poll.timeLine
         .filter(v => v.type === POLL_VOTE_ACTION)
         .reduce((accum, v) => {
-          if (countedEvents[v.id])
+          const voteId = `${v.id}-${v.sender}`
+          if (countedEvents[v.id] || voteEvents[voteId])
             return {
               ...accum,
             }
-          else countedEvents[v.id] = true
+          countedEvents[v.id] = true
+          countedEvents[voteId] = true
+
           return {
             ...accum,
             [v.sender]:
