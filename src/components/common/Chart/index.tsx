@@ -77,8 +77,6 @@ const ChartComponent = React.memo(function Chart(props: any) {
   }
   return (
     <>
-      {console.log('asepxia', barGap)}
-
       <ChartContainer {...modalStyles}>
         <ComposedChart barGap={barGap || -20} width={width} height={height} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
