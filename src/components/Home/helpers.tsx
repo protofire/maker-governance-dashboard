@@ -472,14 +472,19 @@ export const getTimeTakenForExecutives = executives => {
 }
 
 export const getMKRResponsiveness = executives => {
+  const countedEvents = {}
   const events = executives.flatMap(vote =>
     vote.timeLine
       .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
-      .map(v => ({
-        ...v,
-        vote_date: vote.timestamp,
-        mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
-      })),
+      .map(v => {
+        if (countedEvents[v.id]) return []
+        else countedEvents[v.id] = true
+        return {
+          ...v,
+          vote_date: vote.timestamp,
+          mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
+        }
+      }),
   )
   const buckets = Array.from({ length: 30 }, (v, i) => i).map(num => ({
     from: num,
