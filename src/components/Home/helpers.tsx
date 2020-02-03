@@ -472,14 +472,24 @@ export const getTimeTakenForExecutives = executives => {
 }
 
 export const getMKRResponsiveness = executives => {
+  const countedEvents = {}
+  const addEvents = {}
   const events = executives.flatMap(vote =>
     vote.timeLine
       .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
-      .map(v => ({
-        ...v,
-        vote_date: vote.timestamp,
-        mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
-      })),
+      .map(v => {
+        const addId = `${vote.id}-${v.sender}`
+
+        if (countedEvents[v.id] || addEvents[addId]) return []
+        if (v.type === VOTING_ACTION_ADD) addEvents[addId] = true
+        countedEvents[v.id] = true
+
+        return {
+          ...v,
+          vote_date: vote.timestamp,
+          mkr: v.type === VOTING_ACTION_ADD ? v.locked : v.wad,
+        }
+      }),
   )
   const buckets = Array.from({ length: 30 }, (v, i) => i).map(num => ({
     from: num,
@@ -499,6 +509,8 @@ export const getMKRResponsiveness = executives => {
 }
 
 export const getPollsMKRResponsiveness = async polls => {
+  const countedEvents = {}
+  const voteEvents = {}
   const days = Math.max(
     ...polls.map(poll => {
       const start = poll.startDate >= 1e12 ? (poll.startDate / 1e3).toFixed(0) : poll.startDate
@@ -521,16 +533,23 @@ export const getPollsMKRResponsiveness = async polls => {
     return {
       voters: poll.timeLine
         .filter(v => v.type === POLL_VOTE_ACTION)
-        .reduce(
-          (accum, v) => ({
+        .reduce((accum, v) => {
+          const voteId = `${v.id}-${v.sender}`
+          if (countedEvents[v.id] || voteEvents[voteId])
+            return {
+              ...accum,
+            }
+          countedEvents[v.id] = true
+          countedEvents[voteId] = true
+
+          return {
             ...accum,
             [v.sender]:
               accum[v.sender] && accum[v.sender].timestamp < v.timestamp
                 ? accum[v.sender]
                 : { ...v, poll_startDate: poll.startDate, poll_endDate: poll.endDate, poll_id: poll.id },
-          }),
-          {},
-        ),
+          }
+        }, {}),
     }
   })
 
