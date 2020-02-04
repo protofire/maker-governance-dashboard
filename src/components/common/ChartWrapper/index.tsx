@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { CardTitle, ExpandIcon, ChartSelect, Modal, InfoIcon, CloseIcon, DescriptionBox } from '../../common'
 import { filters, getIconContainer } from '../../../utils'
 import { IconContainer } from '../../common/styled'
@@ -37,6 +38,7 @@ type Props = {
   hideFilters: boolean
   hideIcon: boolean
   isModalOpen: boolean
+  markdown?: boolean
   onChange: (e: any) => void
   styles: any
   value: string
@@ -48,6 +50,7 @@ type Props = {
 function ChartWrapper(props: Props) {
   const {
     value,
+    markdown,
     onChange,
     handleModal,
     children,
@@ -82,7 +85,7 @@ function ChartWrapper(props: Props) {
         <div>
           <CardTitle content={`${content} ${versus ? 'vs' : ''} ${versus || ''} Info`} />
           <DescriptionBox>
-            {info}
+            {!markdown ? info : <ReactMarkdown escapeHtml={false} source={info} />}
             <LinksContainer>
               {links &&
                 links.map(link => (
