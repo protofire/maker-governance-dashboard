@@ -6,8 +6,8 @@ const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps, voters } = props
 
   const info = !voters
-    ? 'Informs governance as to the current and historical amount of MKR staked on this executive vote.'
-    : 'Informs governance as to the current and historical number of voting addresses on this executive vote.'
+    ? `This tile shows the current and historical amount of MKR staked on this executive proposal. This allows governance to see how MKR has moved in and out of this executive proposal during its history. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the amount of MKR Locked into and Freed from this executive proposal is kept and the values are displayed with hourly resolution.`
+    : 'This tile shows the current and historical number of addresses voting on this executive proposal. This allows governance to see how voters have voted for or against this executive proposal during its history. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the count of lock and free actions is kept and the values are displayed with hourly resolution.'
   const links = !voters
     ? [
         {
@@ -23,7 +23,7 @@ const VotersVsMkrChart = props => {
       ]
 
   return (
-    <ChartWrapper info={info} links={links} hideFilters {...wrapperProps}>
+    <ChartWrapper markdown info={info} links={links} hideFilters {...wrapperProps}>
       <Chart {...modalProps}>
         {voters ? <YAxis yAxisId="0" datakey="count" /> : <YAxis yAxisId="1" datakey="mkr" orientation="right" />}
         {voters ? (

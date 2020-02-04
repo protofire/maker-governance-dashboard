@@ -3,8 +3,7 @@ import { Bar, Cell, YAxis } from 'recharts'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
-const info =
-  'Shows this executive in comparison to the current hat, giving users a clear picture of how much more MKR is required for the hat to be assigned either to or from this executive vote.'
+const info = `This tile shows the MKR staked on this proposal in comparison to the current hat (or the closest contender if the currently viewed proposal has the hat), giving governance a clear picture of how much more MKR is required for the hat to be assigned either to or from this executive proposal. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal, and either the ‘Hat’ proposal or the next closest proposal (if the currently viewed proposal has the ‘Hat’). The total MKR locked into both proposals is tallied and displayed.`
 const links = [
   {
     title: 'MakerDAO Governance Graph',
@@ -33,7 +32,7 @@ const renderLegend = props => {
 const ExecutiveVsHatChart = props => {
   const { wrapperProps, modalProps } = props
   return (
-    <ChartWrapper info={info} links={links} {...wrapperProps} hideFilters>
+    <ChartWrapper markdown info={info} links={links} {...wrapperProps} hideFilters>
       <Chart {...modalProps} legend={renderLegend}>
         <YAxis type="number" domain={[0, 'dataMax']} />
         <Bar isAnimationActive={modalProps.data ? false : true} dataKey="mkr">

@@ -4,8 +4,7 @@ import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper, LegendLi } from '../../common'
 import { CustomSvg } from '../../common/Icon'
 
-const info =
-  'Being able to see voter participation over time allows us to judge the safety and representativeness of the current set of system parameters.'
+const info = `This tile shows MKR participation in voting over time. This allows governance to judge the current and historic safety of the system and the representativeness of the current set of system parameters. <br> Total MKR is calculated by summing all mint and burn events for the MKR token and displaying the summed value at each date on the graph. <br> Staked MKR is calculated by summing the MKR locked in the DSChief governance contract (denoted by the emitted Lock event) and subtracting the MKR unlocked from the DSChief governance contract (denoted by the emitted Free event). <br> Voting MKR is calculated by looping over each Vote event and summing the MKR if it is a positive vote, and subtracting it if it is a vote for ‘no proposal’. MKR removed from the Chief (denoted by Free events) is deducted from this total.<br> Non-Voting MKR is calculated by subtracting the value for Voting MKR from the value for Staked MKR.`
 const links = [
   {
     title: 'MakerDAO Governance Graph',
@@ -50,7 +49,7 @@ const StakedMkrChart = ({ wrapperProps, modalProps }) => {
   }
 
   return (
-    <ChartWrapper info={info} links={links} {...wrapperProps}>
+    <ChartWrapper markdown info={info} links={links} {...wrapperProps}>
       <Chart legend={renderLegend} getOpacity={getOpacities} handleLegend={selectLine} {...modalProps}>
         <YAxis type="number" domain={[0, 'dataMax']} />
         <Line
