@@ -279,7 +279,7 @@ function PollDetails(props: Props) {
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper
             markdown
-            info={`This tile shows a leaderboard for the largest MKR holders that have voted in this poll. This is primarily a navigational tool that provides access to each address’s voting history and etherscan address. <br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. The total MKR held by each address voting in this poll is counted and added to this list. This MKR value is then converted into a percentage of the total MKR voting in this poll. This list is then sorted large to small and displayed.`}
+            info={`This tile shows a leaderboard for the largest MKR holders that have voted in this poll. This is primarily a navigational tool that provides access to each address’s voting history and etherscan address. <br><br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. The total MKR held by each address voting in this poll is counted and added to this list. This MKR value is then converted into a percentage of the total MKR voting in this poll. This list is then sorted large to small and displayed.`}
             links={[
               {
                 title: 'MakerDAO Governance Graph',

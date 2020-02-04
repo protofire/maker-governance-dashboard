@@ -216,7 +216,7 @@ function VoteDetails(props: Props) {
         <CardStyled style={{ padding: 0 }}>
           <StrippedTableWrapper
             markdown
-            info={`This tile shows a leaderboard for the top MKR wallets that have voted for this executive. This is primarily a navigational aid, allowing access to each address’s voting history and etherscan page. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. This MKR value is then converted into a percentage of the total MKR locked in this executive proposal. This list is then sorted large to small and the addresses are displayed.`}
+            info={`This tile shows a leaderboard for the top MKR wallets that have voted for this executive. This is primarily a navigational aid, allowing access to each address’s voting history and etherscan page. <br><br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. This MKR value is then converted into a percentage of the total MKR locked in this executive proposal. This list is then sorted large to small and the addresses are displayed.`}
             links={[
               {
                 title: 'MakerDAO Governance Graph',
