@@ -124,7 +124,7 @@ const getPollPeriods = poll => {
     let to = endOfHour(period)
 
     return {
-      label: format(from, 'dd MMM Ho'),
+      label: format(from, 'dd MMM H:mm'),
       from,
       to,
       endDate: getUnixTime(to),
