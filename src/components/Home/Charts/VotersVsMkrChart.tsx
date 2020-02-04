@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Line, YAxis } from 'recharts'
 import { Chart, ChartWrapper } from '../../common'
 
-const info = `This tile shows participation in MKR governance over time. This gives governance a general overview of the state of the system in terms of both MKR and address engagement.<br> Total MKR Staked is calculated by summing the MKR locked in the DSChief governance contract (denoted by the emitted Lock event) and subtracting the MKR unlocked from the DSChief governance contract (denoted by the emitted Free event.) <br> Number of voters is calculated by summing all uniques voting addresses in DSChief and displaying the summed value at each date on the graph. <br> <strong>Note that this tile does not track decreases as voting addresses withdraw their MKR from DSChief.</strong>`
+const info = `This tile shows participation in MKR governance over time. This gives governance a general overview of the state of the system in terms of both MKR and address engagement.<br><br> Total MKR Staked is calculated by summing the MKR locked in the DSChief governance contract (denoted by the emitted Lock event) and subtracting the MKR unlocked from the DSChief governance contract (denoted by the emitted Free event.) <br><br> Number of voters is calculated by summing all uniques voting addresses in DSChief and displaying the summed value at each date on the graph. <br><br> <strong>Note that this tile does not track decreases as voting addresses withdraw their MKR from DSChief.</strong>`
 const links = [
   {
     title: 'MKR Registry Graph',

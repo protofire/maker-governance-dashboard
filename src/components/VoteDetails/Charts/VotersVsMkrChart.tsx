@@ -6,8 +6,8 @@ const VotersVsMkrChart = props => {
   const { wrapperProps, modalProps, voters } = props
 
   const info = !voters
-    ? `This tile shows the current and historical amount of MKR staked on this executive proposal. This allows governance to see how MKR has moved in and out of this executive proposal during its history. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the amount of MKR Locked into and Freed from this executive proposal is kept and the values are displayed with hourly resolution.`
-    : 'This tile shows the current and historical number of addresses voting on this executive proposal. This allows governance to see how voters have voted for or against this executive proposal during its history. <br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the count of lock and free actions is kept and the values are displayed with hourly resolution.'
+    ? `This tile shows the current and historical amount of MKR staked on this executive proposal. This allows governance to see how MKR has moved in and out of this executive proposal during its history. <br><br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the amount of MKR Locked into and Freed from this executive proposal is kept and the values are displayed with hourly resolution.`
+    : 'This tile shows the current and historical number of addresses voting on this executive proposal. This allows governance to see how voters have voted for or against this executive proposal during its history. <br><br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. A running tally of the count of lock and free actions is kept and the values are displayed with hourly resolution.'
   const links = !voters
     ? [
         {
