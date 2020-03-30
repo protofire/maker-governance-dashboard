@@ -20,8 +20,8 @@ const getHomeVariables = data => {
 const ErrorEl = () => <div>ERROR: There was an error trying to fetch the data. </div>
 
 function PollsInfo(props) {
-  const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
-  const cachedData = lscache.get('polls') || []
+  const [cachedData, setCachedData] = useState<any>(lscache.get('polls') || [])
+  const [dataFetched, setDataFetched] = useState(false)
   const [data, setData] = useState<any[]>(cachedData)
   const [pollsBalances, setBalances] = useState<any>({})
 
@@ -30,7 +30,11 @@ function PollsInfo(props) {
   const initialSort = React.useMemo(() => [{ id: 'date', desc: true }], [])
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
-  const pollsData = useQuery(POLLS_FIRST_QUERY, { variables: resultVariables })
+
+  const pollsData = useQuery(POLLS_FIRST_QUERY, {
+    variables: gData && getHomeVariables(gData),
+    skip: !gData || cachedData.length > 0,
+  })
   const getPoll = row => {
     if (row.id) props.history.push(`/poll/${row.id}`)
   }
@@ -71,18 +75,19 @@ function PollsInfo(props) {
 
   useEffect(() => {
     lscache.set('polls', data, DEFAULT_CACHE_TTL)
+    setCachedData(data)
   }, [data])
 
   useEffect(() => {
-    if (gData) setResultVariables(getHomeVariables(gData))
-  }, [gData])
-
-  useEffect(() => {
-    if (data.length > 0 && mkrSupply) {
+    if (data.length > 0 && mkrSupply && !dataFetched) {
+      setDataFetched(true)
       getPollsData(data).then(result => {
         const polls = result.filter(Boolean)
         Promise.all(
-          polls.map(poll => {
+          polls.map((poll: any) => {
+            if (poll.plurality && poll.participation) {
+              return Promise.resolve(poll)
+            }
             return getPollData(poll, pollsBalances).then(data => {
               return { ...poll, plurality: setPlurality(data), participation: getParticipation(data, mkrSupply) }
             })
