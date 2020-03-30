@@ -18,7 +18,7 @@ const pollsDetailFragment = gql`
 `
 const getPollsData = (pageIndex, pageSize, offset, ordering) => {
   return `
-  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}, where: {id_not_in: [9,8,11,6]}) {
     ...pollsDetailTotal
   }
   `

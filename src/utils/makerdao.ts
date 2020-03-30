@@ -168,12 +168,15 @@ export function getPollsData(polls) {
   return Promise.all(
     polls.map(async poll => {
       try {
+        if (poll.fetched) {
+          return poll
+        }
         // Poll black list
         if (!['https://url.com'].includes(poll.url)) {
           const pollDocument = await fetchPollFromUrl(poll.url)
           if (pollDocument) {
             const documentData = await formatYamlToJson(pollDocument)
-            const pollData = { ...poll, ...documentData }
+            const pollData = { ...poll, ...documentData, fetched: true }
             pollData.active = isPollActive(pollData.startDate, pollData.endDate)
             pollData.source = POLLING_EMITTER
 
