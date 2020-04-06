@@ -143,6 +143,11 @@ export const getPollDataWithoutBalances = async poll => {
     {},
   )
 
+  console.log(
+    'mkrVoter',
+    Object.keys(mkrVoter).map(e => [e, mkrVoter[e].toString()]),
+  )
+
   const votersPerOption = getPollVotersPerOption(poll)
   const mkrOptions = Object.keys(votersPerOption).reduce((acc, op) => {
     const voters = votersPerOption[op]
