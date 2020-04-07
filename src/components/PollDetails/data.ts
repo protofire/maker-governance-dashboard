@@ -47,7 +47,10 @@ export const getVoterRegistries = async (addresses, endDate) => {
     endDate,
   })
 
-  return [...result.cold, ...result.hot]
+  // When cold and hot are the same the registry cames twice, so we keep only one of them
+  const registriesById = new Map([...result.cold, ...result.hot].map(reg => [reg.id, reg]))
+
+  return Array.from(registriesById.values())
 }
 
 export const getVoterAddresses = poll => {
@@ -257,7 +260,7 @@ export const totalStaked = (poll, lookup, balances, stakedProxies) => {
 
       if (!addedColHotByVoter[voter]) {
         const hotBalance = balances[hot] || ZERO
-        const coldBalance = balances[cold] || ZERO
+        const coldBalance = hot !== cold ? balances[cold] || ZERO : ZERO
 
         addedColHotByVoter[voter] = true
         return acc.plus(proxyAmount.plus(hotBalance).plus(coldBalance))
