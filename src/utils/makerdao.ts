@@ -5,7 +5,8 @@ const Hash = require('ipfs-only-hash')
 
 const network = 'mainnet'
 const prod = 'https://cms-gov.makerfoundation.com'
-const path = 'content/governance-dashboard'
+const topicsPath = 'content/governance-dashboard'
+const spellsPath = 'content/all-spells'
 const rawUri = 'https://raw.githubusercontent.com/makerdao/community/master/governance/polls'
 
 const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
@@ -13,9 +14,9 @@ const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
 const MKR_SUPPLY_API = 'https://api.etherscan.io/api'
 const PRECISION = new BigNumber('10').exponentiatedBy(18)
 
-const check = async res => {
+const check = async (res, resource) => {
   if (!res.ok) {
-    throw new Error(`unable to fetch topics: ${res.status} - ${await res.text()}`)
+    throw new Error(`unable to fetch ${resource}: ${res.status} - ${await res.text()}`)
   }
 }
 
@@ -39,14 +40,18 @@ export const promiseRetry = ({ times = 3, fn, delay = 500, args = [] }) => {
   )
 }
 
-const fetchNetwork = async (url, network = 'mainnet') => {
+const fetchNetwork = async (url, resource, path, network = 'mainnet') => {
   const res = await fetch(`${url}/${path}?network=${network}`)
-  await check(res)
+  await check(res, resource)
   return await res.json()
 }
 
 const fetchTopics = async network => {
-  return fetchNetwork(prod, network)
+  return fetchNetwork(prod, 'topics', topicsPath, network)
+}
+
+const fetchSpells = async network => {
+  return fetchNetwork(prod, 'spells', spellsPath, network)
 }
 
 function extractProposals(topics, network) {
@@ -100,10 +105,22 @@ export async function getMakerDaoData() {
     delay: 1,
   })
 
+  const allSpells = await promiseRetry({
+    fn: fetchSpells,
+    times: 4,
+    delay: 1,
+  })
+
   const executiveVotes = extractProposals(topics, network)
   const historicalPolls = formatHistoricalPolls(topics)
+  const spellsInfo = allSpells.map(({ source, title, proposal_blurb, about }) => ({
+    source,
+    title,
+    proposal_blurb,
+    about,
+  }))
 
-  return { executiveVotes, historicalPolls }
+  return { executiveVotes, historicalPolls, spellsInfo }
 }
 
 // Polls data
@@ -111,7 +128,7 @@ const fetchPollFromUrl = async url => {
   let customUri = url
   if (url.includes('github.com')) customUri = `${rawUri}/${url.substring(url.lastIndexOf('/') + 1)}`
   const res = await fetch(customUri)
-  await check(res)
+  await check(res, 'topics')
   const contentType = res.headers.get('content-type')
   if (!contentType) return null
   if (contentType.indexOf('application/json') !== -1) {
