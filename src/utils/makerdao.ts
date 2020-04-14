@@ -54,20 +54,20 @@ const fetchSpells = async network => {
   return fetchNetwork(prod, 'spells', spellsPath, network)
 }
 
-function extractProposals(topics, network) {
-  const executiveTopics = topics.filter(t => t.govVote === false)
-  return executiveTopics.reduce((acc, topic) => {
-    const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
-      ...otherProps,
-      source: source.startsWith('{') ? JSON.parse(source)[network] : source,
-      active: topic.active,
-      govVote: topic.govVote,
-      topicKey: topic.key,
-      topicTitle: topic.topic,
-    }))
-    return acc.concat(proposals)
-  }, [])
-}
+// function extractProposals(topics, network) {
+//   const executiveTopics = topics.filter(t => t.govVote === false)
+//   return executiveTopics.reduce((acc, topic) => {
+//     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
+//       ...otherProps,
+//       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
+//       active: topic.active,
+//       govVote: topic.govVote,
+//       topicKey: topic.key,
+//       topicTitle: topic.topic,
+//     }))
+//     return acc.concat(proposals)
+//   }, [])
+// }
 
 export const formatHistoricalPolls = topics => {
   const govTopics = topics.filter(t => t.govVote === true)
@@ -111,7 +111,7 @@ export async function getMakerDaoData() {
     delay: 1,
   })
 
-  const executiveVotes = extractProposals(topics, network)
+  //const executiveVotes = extractProposals(topics, network)
   const historicalPolls = formatHistoricalPolls(topics)
   const spellsInfo = allSpells.map(({ source, title, proposal_blurb, about }) => ({
     source,
@@ -120,7 +120,7 @@ export async function getMakerDaoData() {
     about,
   }))
 
-  return { executiveVotes, historicalPolls, spellsInfo }
+  return { /*executiveVotes,*/ historicalPolls, spellsInfo }
 }
 
 // Polls data
