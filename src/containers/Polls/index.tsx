@@ -56,6 +56,7 @@ function PollsInfo(props) {
     return totalMkr
       .times(100)
       .div(mkrSupply)
+      .dp(4)
       .toString()
   }
 
@@ -86,7 +87,8 @@ function PollsInfo(props) {
         Promise.all(
           polls.map((poll: any) => {
             if (poll.plurality && poll.participation) {
-              return Promise.resolve(poll)
+              const participation = new BigNumber(poll.participation)
+              return Promise.resolve({ ...poll, participation: participation.dp(4).toString() })
             }
             return getPollData(poll, pollsBalances).then(data => {
               return { ...poll, plurality: setPlurality(data), participation: getParticipation(data, mkrSupply) }
