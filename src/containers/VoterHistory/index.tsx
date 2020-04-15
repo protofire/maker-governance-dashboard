@@ -25,6 +25,8 @@ const getHomeVariables = data => {
   }
 }
 
+const descendantTimestampSort = (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
+
 function VoterHistory(props: Props) {
   const { match, history } = props
   const voterId = match.params.id
@@ -102,17 +104,20 @@ function VoterHistory(props: Props) {
     const getData = () => {
       if (!historyData || !historyData.data) return
       const executives = historyData.data.executives
+        .map(vote => {
+          const participation = vote.timeLine
+            .filter(tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId)
+            .sort(descendantTimestampSort)
 
-        .map(vote =>
-          vote.timeLine.filter(
-            tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId,
-          ).length > 0
-            ? { ...vote }
-            : undefined,
-        )
+          return participation.length > 0 ? { ...vote, lastParticipation: participation[0] } : undefined
+        })
         .filter(Boolean)
       const polls = historyData.data.polls
-        .map(poll => (poll.votes.filter(vote => vote.voter === voterId).length > 0 ? { ...poll } : undefined))
+        .map(poll => {
+          const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
+
+          return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
+        })
         .filter(Boolean)
       setExecutives(executives)
       setPolls(polls)
