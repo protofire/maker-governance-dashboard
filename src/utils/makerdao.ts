@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
 const Hash = require('ipfs-only-hash')
 
-const network = 'mainnet'
+// const network = 'mainnet'
 const prod = 'https://cms-gov.makerfoundation.com'
 const topicsPath = 'content/governance-dashboard'
 const spellsPath = 'content/all-spells'
