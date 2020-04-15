@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
 const Hash = require('ipfs-only-hash')
 
-// const network = 'mainnet'
 const prod = 'https://cms-gov.makerfoundation.com'
 const topicsPath = 'content/governance-dashboard'
 const spellsPath = 'content/all-spells'
@@ -53,21 +52,6 @@ const fetchTopics = async network => {
 const fetchSpells = async network => {
   return fetchNetwork(prod, 'spells', spellsPath, network)
 }
-
-// function extractProposals(topics, network) {
-//   const executiveTopics = topics.filter(t => t.govVote === false)
-//   return executiveTopics.reduce((acc, topic) => {
-//     const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
-//       ...otherProps,
-//       source: source.startsWith('{') ? JSON.parse(source)[network] : source,
-//       active: topic.active,
-//       govVote: topic.govVote,
-//       topicKey: topic.key,
-//       topicTitle: topic.topic,
-//     }))
-//     return acc.concat(proposals)
-//   }, [])
-// }
 
 export const formatHistoricalPolls = topics => {
   const govTopics = topics.filter(t => t.govVote === true)
@@ -120,7 +104,7 @@ export async function getMakerDaoData() {
     about,
   }))
 
-  return { /*executiveVotes,*/ historicalPolls, spellsInfo }
+  return { historicalPolls, spellsInfo }
 }
 
 // Polls data
