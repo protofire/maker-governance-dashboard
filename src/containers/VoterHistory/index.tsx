@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import List from '../../components/List'
-import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
+import { getMakerDaoData, getPollsMetaData } from '../../utils/makerdao'
 import { getPollData, getPollsBalances } from '../../utils'
 import { PageTitle, FullLoading } from '../../components/common'
 import { VoterHistoryColumns } from '../../components/List/helpers'
@@ -38,7 +38,7 @@ function VoterHistory(props: Props) {
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
-  const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+  const historyData = useQuery(ACTIONS_QUERY, { variables: gData && getHomeVariables(gData), skip: !gData })
 
   useEffect(() => {
     if (!historyData || !historyData.data) return
@@ -82,7 +82,7 @@ function VoterHistory(props: Props) {
 
   useEffect(() => {
     if (historyData.data && historyData.data.polls) {
-      getPollsData(historyData.data.polls).then(result => {
+      getPollsMetaData(historyData.data.polls).then(result => {
         const polls = result.filter(Boolean)
         setPolls([...polls])
         Promise.all(

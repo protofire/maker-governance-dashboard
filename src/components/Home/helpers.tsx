@@ -15,6 +15,7 @@ import {
   timeLeft,
   getPollsBalances,
   getVotersBalance,
+  msToSeconds,
 } from '../../utils'
 import {
   LAST_YEAR,
@@ -91,7 +92,6 @@ export const getStakedMkrData = (data: any, time: string) => {
       mkrEvents.map(events => events.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to)),
       totalSupply,
     )
-    //console.log(period, totalSupply)
 
     // Calculate total MKR staked/voting in the period
     ;({ totalStaked, totalVoting, voters } = calculateVotingMkr(
@@ -513,8 +513,8 @@ export const getPollsMKRResponsiveness = async polls => {
   const voteEvents = {}
   const days = Math.max(
     ...polls.map(poll => {
-      const start = poll.startDate >= 1e12 ? (poll.startDate / 1e3).toFixed(0) : poll.startDate
-      const end = poll.endDate >= 1e12 ? (poll.endDate / 1e3).toFixed(0) : poll.endDate
+      const start = msToSeconds(poll.startDate)
+      const end = msToSeconds(poll.endDate)
       const diffDays = differenceInDays(fromUnixTime(end), fromUnixTime(start))
 
       return diffDays

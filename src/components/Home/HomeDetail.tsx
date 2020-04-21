@@ -27,7 +27,7 @@ import {
   PageTitle,
   PageSubTitle,
 } from '../common'
-import { getPollsData, getMKRSupply } from '../../utils/makerdao'
+import { getPollsMetaData } from '../../utils/makerdao'
 import { getModalContainer, getPollData, getPollsBalances } from '../../utils'
 import {
   getStakedMkrData,
@@ -50,6 +50,7 @@ import {
   //getActivenessBreakdown,
   getMostVotedPolls,
   getRecentPolls,
+  getMKRResponsiveness,
 } from './helpers'
 import styled from 'styled-components'
 
@@ -71,6 +72,7 @@ const Loading = () => (
 
 const getParticipation = (data, mkrSupply) => {
   const totalMkr: BigNumber = data.reduce((acc, value) => acc.plus(new BigNumber(value.mkr)), new BigNumber('0'))
+
   return totalMkr
     .times(100)
     .div(mkrSupply)
@@ -88,71 +90,75 @@ type Props = {
 }
 
 function HomeDetail(props: Props) {
-  const { data, gData, history, executivesResponsiveness } = props
+  const { data, gData, history } = props
   const { governanceInfo } = gData
   const [isModalOpen, setModalOpen] = useState(false)
-  const cachedDataPoll = lscache.get('home-polls') || []
-  const cachedMkrSupply = lscache.get('mkr-supply') || undefined
-
-  const cachedDataTopVoters = lscache.get('home-topVoters') || []
-  const cachedDataPollsResponsiveness = lscache.get('polls-responsiveness') || []
 
   const [isModalChart, setModalChart] = useState(false)
   const [chartFilters, setChartFilters] = useState(defaultFilters)
-  const [mkrSupply, setMkrSupply] = useState<BigNumber | undefined>(cachedMkrSupply)
-  const [pollsBalances, setBalances] = useState<any>({})
 
   const [modalData, setModalData] = useState({ type: '', component: '' })
-  const [topVoters, setTopVoters] = useState<any[]>(cachedDataTopVoters)
-  const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>(cachedDataPollsResponsiveness)
-  //const [activenessBreakdown, setActivenessBreakdown] = useState<any>([])
-  // const [mkrActiveness, setMkrActiveness] = useState<any>([])
+
+  const [pollsResponsiveness, setPollsResponsiveness] = useState<any[]>([])
+  const [topVoters, setTopVoters] = useState<any[]>([])
+  const [polls, setPolls] = useState<any[]>([])
   const [mostVotedPolls, setMostVotedPolls] = useState<any>([])
-  const [stakedMkr, setStakedMkr] = useState<any>([])
   const [recentPolls, setRecentPolls] = useState<any>([])
 
-  const [polls, setPolls] = useState<any[]>(cachedDataPoll.length === 0 ? data.polls : cachedDataPoll)
-
   const pollcolumns = expanded => Pollcolumns(expanded)
-  const votedPollcolumns = () => VotedPollcolumns()
-
-  useEffect(() => {
-    if (cachedDataPoll.length === 0) getPollsBalances(polls).then(balances => setBalances(balances))
-    if (cachedDataPollsResponsiveness.length === 0)
-      getPollsMKRResponsiveness(polls).then(responsiveness => setPollsResponsiveness(responsiveness))
-  }, [polls, cachedDataPoll.length, cachedDataPollsResponsiveness.length])
-
-  useEffect(() => {
-    if (!mkrSupply) {
-      getMKRSupply().then(supply => setMkrSupply(supply))
-    }
-  }, [mkrSupply])
-
   const executiveColumns = expanded => Executivecolumns(expanded)
   const topVotersColumns = () => TopVotersColumns()
+  const votedPollcolumns = () => VotedPollcolumns()
   const uncastedExecutiveColumns = () => UncastedExecutivecolumns()
-  //const activenessBreakdownColumns = () => ActivenessBreakdownColumns()
 
-  const executives = data.executives
+  useEffect(() => {
+    if (data && data.polls.length && data.executives.length && data.mkrSupply) {
+      getPollsBalances(data.polls).then(votersSnapshots => {
+        // TODO - improve function naming (snapshots of acctual voting addresses)
+        getPollsMetaData(data.polls).then(polls => {
+          Promise.all(
+            polls.map(poll => {
+              return getPollData(poll, votersSnapshots).then(pollData => {
+                return { ...poll, participation: getParticipation(pollData, data.mkrSupply) }
+              })
+            }),
+          ).then(pollsWithPluralityAndParticipation => {
+            getPollsMKRResponsiveness(polls).then(responsiveness => {
+              // TODO - are all this state needed?
+              setPollsResponsiveness(responsiveness)
+              setPolls(pollsWithPluralityAndParticipation)
+              setTopVoters(getTopVoters(data.executives, pollsWithPluralityAndParticipation))
+              setMostVotedPolls(getMostVotedPolls(pollsWithPluralityAndParticipation))
+              setRecentPolls(getRecentPolls(pollsWithPluralityAndParticipation))
+            })
+          })
+        })
+      })
+    }
+  }, [data])
 
+  //////////////////
+  const [stakedMkr, setStakedMkr] = useState<any>([])
   useEffect(() => {
     setStakedMkr(getStakedMkrData(data, chartFilters.stakedMkr))
   }, [data, chartFilters.stakedMkr])
 
-  useEffect(() => {
-    if (cachedDataTopVoters.length === 0) {
-      setTopVoters(getTopVoters(executives, polls))
-    }
-  }, [executives, polls, cachedDataTopVoters.length])
+  const giniData = useMemo(() => getGiniData([...data.free, ...data.lock], chartFilters.gini), [
+    data,
+    chartFilters.gini,
+  ])
 
+  const cachedDataExecutivesResponsiveness = lscache.get('executives-responsiveness') || []
+  const [executivesResponsiveness, setExecutivesResponsiveness] = useState<any>(cachedDataExecutivesResponsiveness)
   useEffect(() => {
-    setMostVotedPolls(getMostVotedPolls(polls))
-    setRecentPolls(getRecentPolls(polls))
-  }, [polls])
-  useEffect(() => {
-    //setActivenessBreakdown(getActivenessBreakdown(executives))
-    //setMkrActiveness(getMKRActiveness(executives))
-  }, [executives])
+    if (data && data.executives && cachedDataExecutivesResponsiveness.length === 0) {
+      const responsiveness = getMKRResponsiveness(data.executives)
+      lscache.set('executives-responsiveness', responsiveness, DEFAULT_CACHE_TTL)
+      setExecutivesResponsiveness(responsiveness)
+    }
+  }, [data, cachedDataExecutivesResponsiveness.length])
+
+  /////////////////
 
   const getPoll = row => {
     if (row.id) history.push(`/poll/${row.id}`)
@@ -162,8 +168,6 @@ function HomeDetail(props: Props) {
     if (row.id) history.push(`/executive/${row.id}`)
   }
 
-  // Data map for building this page
-  const giniData = getGiniData([...data.free, ...data.lock], chartFilters.gini)
   const homeMap = {
     table: {
       polls: {
@@ -314,7 +318,7 @@ function HomeDetail(props: Props) {
         ),
       },
       mkrDistributionPerExecutive: {
-        data: getMkrDistributionPerExecutive(executives, governanceInfo ? governanceInfo.hat : null),
+        data: getMkrDistributionPerExecutive(data.executives, governanceInfo ? governanceInfo.hat : null),
         component: props => (
           <MkrDistributionPerExecutive
             expanded
@@ -517,31 +521,6 @@ function HomeDetail(props: Props) {
     setModalChart(isChart)
     setModalData(data)
   }
-
-  useEffect(() => {
-    if (mkrSupply) {
-      getPollsData(data.polls).then(result => {
-        const polls = result.filter(Boolean)
-        setPolls([...polls])
-        Promise.all(
-          polls.map(poll => {
-            return getPollData(poll, pollsBalances).then(data => {
-              return { ...poll, participation: getParticipation(data, mkrSupply) }
-            })
-          }),
-        ).then(pollsWithPluralityAndParticipation => {
-          setPolls(pollsWithPluralityAndParticipation)
-        })
-      })
-    }
-  }, [data.polls, mkrSupply, pollsBalances])
-
-  useEffect(() => {
-    lscache.set('mkr-supply', mkrSupply, DEFAULT_CACHE_TTL)
-    lscache.set('home-polls', polls, DEFAULT_CACHE_TTL)
-    lscache.set('home-topVoters', topVoters, DEFAULT_CACHE_TTL)
-    lscache.set('polls-responsiveness', pollsResponsiveness, DEFAULT_CACHE_TTL)
-  }, [mkrSupply, polls, topVoters, pollsResponsiveness])
 
   return (
     <>

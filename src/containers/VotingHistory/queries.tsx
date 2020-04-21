@@ -64,6 +64,7 @@ const pollsDetailFragment = gql`
       type: __typename
       ... on VotePollAction {
         sender
+        option
         timestamp
       }
       ... on CreatePollAction {
@@ -87,7 +88,7 @@ export const GOVERNANCE_INFO_QUERY = gql`
 
 export const ACTIONS_QUERY = gql`
   query getHistoryData($executives: Int!, $polls: Int!) {
-    polls(first: $polls) {
+    polls(first: $polls, orderBy: startDate, orderDirection: desc, where: { id_not_in: [0, 1, 2, 3, 6, 7, 8, 9, 11] }) {
       ...pollsDetailVoting
     }
     executives: spells(first: $executives) {

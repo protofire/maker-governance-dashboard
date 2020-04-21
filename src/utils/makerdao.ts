@@ -1,6 +1,10 @@
 import matter from 'gray-matter'
 import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
+import lscache from 'lscache'
+import { INFINITE_CACHE_TTL } from '../constants'
+import store from './cache'
+
 const Hash = require('ipfs-only-hash')
 
 const network = 'mainnet'
@@ -160,28 +164,25 @@ const formatYamlToJson = async data => {
     options: formatOptions(options),
     discussion_link,
     content,
-    rawData: data.about || data,
   }
 }
 
-export function getPollsData(polls) {
-  return Promise.all(
-    polls.map(async poll => {
-      try {
-        if (poll.fetched) {
-          return poll
-        }
-        // Poll black list
-        if (!['https://url.com'].includes(poll.url)) {
-          const pollDocument = await fetchPollFromUrl(poll.url)
-          if (pollDocument) {
-            const documentData = await formatYamlToJson(pollDocument)
-            const pollData = { ...poll, ...documentData, fetched: true }
-            pollData.active = isPollActive(pollData.startDate, pollData.endDate)
-            pollData.source = POLLING_EMITTER
+export async function getPollsMetaData(polls) {
+  const cached = (await store.getItem<Array<any>>('polls-metadata')) || []
+  const cachedIds = cached.map(poll => poll.id)
+  const nonCached = cachedIds ? polls.filter(poll => !cachedIds.includes(poll.id)) : []
 
-            return pollData
-          }
+  const pollsToAdd = await Promise.all(
+    nonCached.map(async poll => {
+      try {
+        const pollDocument = await fetchPollFromUrl(poll.url)
+        if (pollDocument) {
+          const documentData = await formatYamlToJson(pollDocument)
+          const pollData = { ...poll, ...documentData } // TODO: save only needed data
+          pollData.active = isPollActive(pollData.startDate, pollData.endDate)
+          pollData.source = POLLING_EMITTER
+
+          return pollData
         }
         return
       } catch (e) {
@@ -189,6 +190,20 @@ export function getPollsData(polls) {
       }
     }),
   )
+
+  const updatedCached = cached.map(cachedData => {
+    const newPollData = polls.find(p => p.id === cachedData.id)
+    return {
+      ...cachedData,
+      ...newPollData,
+    }
+  }) // need to update data comming from subgraph
+
+  const allPolls = [...updatedCached, ...pollsToAdd.filter(Boolean)]
+
+  await store.setItem('polls-metadata', allPolls)
+
+  return allPolls
 }
 
 export async function getMKRSupply() {
