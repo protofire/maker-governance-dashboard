@@ -83,22 +83,28 @@ function VoterHistory(props: Props) {
   }, [historyData, hasParticipations])
 
   useEffect(() => {
-    if (historyData.data && historyData.data.polls) {
-      getPollsData(historyData.data.polls).then(result => {
-        const polls = result.filter(Boolean)
-        setPolls([...polls])
-        Promise.all(
-          polls.map(poll => {
-            return getPollData(poll, pollsBalances).then(data => {
-              return { ...poll, plurality: setPlurality(data) }
-            })
-          }),
-        ).then(pollsWithPluralityAndParticipation => {
-          setPolls(pollsWithPluralityAndParticipation)
-        })
+    if (!historyData || !historyData.data) return
+    const votedPolls = historyData.data.polls
+      .map(poll => {
+        const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
+
+        return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
       })
-    }
-  }, [historyData.data, pollsBalances, hasParticipations])
+      .filter(Boolean)
+
+    getPollsData(votedPolls).then(result => {
+      const polls = result.filter(Boolean)
+      Promise.all(
+        polls.map(poll => {
+          return getPollData(poll, pollsBalances).then(data => {
+            return { ...poll, plurality: setPlurality(data) }
+          })
+        }),
+      ).then(pollsWithPluralityAndParticipation => {
+        setPolls(pollsWithPluralityAndParticipation)
+      })
+    })
+  }, [historyData.data, pollsBalances, voterId])
 
   useEffect(() => {
     const getData = () => {
@@ -112,18 +118,11 @@ function VoterHistory(props: Props) {
           return participation.length > 0 ? { ...vote, lastParticipation: participation[0] } : undefined
         })
         .filter(Boolean)
-      const polls = historyData.data.polls
-        .map(poll => {
-          const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
 
-          return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
-        })
-        .filter(Boolean)
       setExecutives(executives)
-      setPolls(polls)
     }
     getData()
-  }, [historyData, voterId, hasParticipations])
+  }, [historyData, voterId])
 
   useEffect(() => {
     if (historyData.data && historyData.data.executives) {

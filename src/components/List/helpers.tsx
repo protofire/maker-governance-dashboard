@@ -268,7 +268,12 @@ export const VoterHistoryColumns = () => {
       separator: true,
       disableFilters: true,
       sortType: 'datetime',
-      Cell: ({ row }) => format(fromUnixTime(row.original.lastParticipation.timestamp), 'dd MMM yy'),
+      Cell: ({ row }) => {
+        if (!row.original.lastParticipation) {
+          return <Loading />
+        }
+        return format(fromUnixTime(row.original.lastParticipation.timestamp), 'dd MMM yy')
+      },
       width: 100,
     },
   ]
