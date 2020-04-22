@@ -4,7 +4,6 @@ import { getUnixTime } from 'date-fns'
 const Hash = require('ipfs-only-hash')
 
 const prod = 'https://cms-gov.makerfoundation.com'
-const topicsPath = 'content/governance-dashboard'
 const spellsPath = 'content/all-spells'
 const rawUri = 'https://raw.githubusercontent.com/makerdao/community/master/governance/polls'
 
@@ -45,10 +44,6 @@ const fetchNetwork = async (url, resource, path, network = 'mainnet') => {
   return await res.json()
 }
 
-const fetchTopics = async network => {
-  return fetchNetwork(prod, 'topics', topicsPath, network)
-}
-
 const fetchSpells = async network => {
   return fetchNetwork(prod, 'spells', spellsPath, network)
 }
@@ -83,20 +78,12 @@ export const formatHistoricalPolls = topics => {
 }
 
 export async function getMakerDaoData() {
-  const topics = await promiseRetry({
-    fn: fetchTopics,
-    times: 4,
-    delay: 1,
-  })
-
   const allSpells = await promiseRetry({
     fn: fetchSpells,
     times: 4,
     delay: 1,
   })
 
-  //const executiveVotes = extractProposals(topics, network)
-  const historicalPolls = formatHistoricalPolls(topics)
   const spellsInfo = allSpells.map(({ source, title, proposal_blurb, about }) => ({
     source,
     title,
@@ -104,7 +91,7 @@ export async function getMakerDaoData() {
     about,
   }))
 
-  return { historicalPolls, spellsInfo }
+  return { spellsInfo }
 }
 
 // Polls data
