@@ -6,6 +6,7 @@ import { StrippedRowsContainer, CardTitle, ViewAll, Modal, InfoIcon, CloseIcon, 
 import { getIconContainer } from '../../../utils'
 import { IconContainer } from '../styled'
 import CopyLink from '../LinkableComponent/CopyLink'
+import { LinkableContext } from '../LinkableComponent'
 
 const TitleWrapper = styled.div`
   flex-shrink: 0;
@@ -58,6 +59,13 @@ type Props = {
 function StrippedTableWrapper(props: Props) {
   const { handleModal, children, content, isModalOpen, info, links, markdown } = props
   const [isInfoModalOpen, setInfoModalOpen] = useState(false)
+  const linkable = React.useContext(LinkableContext)
+
+  React.useEffect(() => {
+    if (linkable.active) {
+      linkable.onInitCallback(handleModal)
+    }
+  }, [linkable, handleModal])
 
   return (
     <>
