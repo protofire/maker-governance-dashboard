@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { StrippedRowsContainer, CardTitle, ViewAll, Modal, InfoIcon, CloseIcon, DescriptionBox } from '..'
 import { getIconContainer } from '../../../utils'
 import { IconContainer } from '../styled'
+import CopyLink from '../LinkableComponent/CopyLink'
 
 const TitleWrapper = styled.div`
   flex-shrink: 0;
@@ -63,6 +64,7 @@ function StrippedTableWrapper(props: Props) {
       <TitleWrapper>
         <CardTitle content={content}>
           <Right>
+            <CopyLink />
             <InfoIconContainer>{info && <InfoIcon onClick={() => setInfoModalOpen(true)} />}</InfoIconContainer>
             {handleModal ? getIconContainer(() => <ViewAll>View All</ViewAll>, handleModal, isModalOpen) : null}
           </Right>
