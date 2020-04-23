@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 export const LegendLi = styled.li`
   display: inline-block;
@@ -25,6 +25,19 @@ export const Card = styled.div`
   > div {
     width: 100%;
   }
+`
+
+const glow = color => keyframes`
+ 0%   { box-shadow: 0px 0px 33px -2px ${color}}
+ 100% { box-shadow: 0 }
+`
+
+export const GlowingWrapper = styled.div`
+  ${props =>
+    props.glow &&
+    css`
+      animation: ${glow(props.theme.colors.primary)} 10s linear;
+    `}
 `
 
 export const PageTitle = styled.h1`
@@ -194,6 +207,13 @@ export const CenteredRowGrid = styled.div`
     ${Card} {
       width: 401px;
       margin-right: ${props => props.theme.separation.gridSeparation};
+    }
+    ${GlowingWrapper} {
+      margin-right: ${props => props.theme.separation.gridSeparation};
+
+      ${Card} {
+        margin-right: 0;
+      }
     }
   }
 `

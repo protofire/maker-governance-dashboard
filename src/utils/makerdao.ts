@@ -7,9 +7,8 @@ import store from './cache'
 
 const Hash = require('ipfs-only-hash')
 
-const network = 'mainnet'
 const prod = 'https://cms-gov.makerfoundation.com'
-const path = 'content/governance-dashboard'
+const spellsPath = 'content/all-spells'
 const rawUri = 'https://raw.githubusercontent.com/makerdao/community/master/governance/polls'
 
 const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
@@ -17,9 +16,9 @@ const POLLING_EMITTER = '0xF9be8F0945acDdeeDaA64DFCA5Fe9629D0CF8E5D' // mainnet
 const MKR_SUPPLY_API = 'https://api.etherscan.io/api'
 const PRECISION = new BigNumber('10').exponentiatedBy(18)
 
-const check = async res => {
+const check = async (res, resource) => {
   if (!res.ok) {
-    throw new Error(`unable to fetch topics: ${res.status} - ${await res.text()}`)
+    throw new Error(`unable to fetch ${resource}: ${res.status} - ${await res.text()}`)
   }
 }
 
@@ -43,29 +42,14 @@ export const promiseRetry = ({ times = 3, fn, delay = 500, args = [] }) => {
   )
 }
 
-const fetchNetwork = async (url, network = 'mainnet') => {
+const fetchNetwork = async (url, resource, path, network = 'mainnet') => {
   const res = await fetch(`${url}/${path}?network=${network}`)
-  await check(res)
+  await check(res, resource)
   return await res.json()
 }
 
-const fetchTopics = async network => {
-  return fetchNetwork(prod, network)
-}
-
-function extractProposals(topics, network) {
-  const executiveTopics = topics.filter(t => t.govVote === false)
-  return executiveTopics.reduce((acc, topic) => {
-    const proposals = topic.proposals.map(({ source, ...otherProps }) => ({
-      ...otherProps,
-      source: source.startsWith('{') ? JSON.parse(source)[network] : source,
-      active: topic.active,
-      govVote: topic.govVote,
-      topicKey: topic.key,
-      topicTitle: topic.topic,
-    }))
-    return acc.concat(proposals)
-  }, [])
+const fetchSpells = async network => {
+  return fetchNetwork(prod, 'spells', spellsPath, network)
 }
 
 export const formatHistoricalPolls = topics => {
@@ -98,16 +82,20 @@ export const formatHistoricalPolls = topics => {
 }
 
 export async function getMakerDaoData() {
-  const topics = await promiseRetry({
-    fn: fetchTopics,
+  const allSpells = await promiseRetry({
+    fn: fetchSpells,
     times: 4,
     delay: 1,
   })
 
-  const executiveVotes = extractProposals(topics, network)
-  const historicalPolls = formatHistoricalPolls(topics)
+  const spellsInfo = allSpells.map(({ source, title, proposal_blurb, about }) => ({
+    source,
+    title,
+    proposal_blurb,
+    about,
+  }))
 
-  return { executiveVotes, historicalPolls }
+  return { spellsInfo }
 }
 
 // Polls data
@@ -115,7 +103,7 @@ const fetchPollFromUrl = async url => {
   let customUri = url
   if (url.includes('github.com')) customUri = `${rawUri}/${url.substring(url.lastIndexOf('/') + 1)}`
   const res = await fetch(customUri)
-  await check(res)
+  await check(res, 'topics')
   const contentType = res.headers.get('content-type')
   if (!contentType) return null
   if (contentType.indexOf('application/json') !== -1) {

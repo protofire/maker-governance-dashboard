@@ -18,7 +18,7 @@ export const Pollcolumns = () => {
       Filter: SelectColumnFilter,
       filter: 'includes',
       accessor: row => (timeLeft(row.endDate) === 'Ended' ? 'Ended' : 'Active'),
-      Cell: ({ row }) => timeLeft(row.original.endDate),
+      Cell: ({ row }) => (row.original.fetched ? timeLeft(row.original.endDate) : <Loading />),
       width: 100,
     },
     {
@@ -80,7 +80,8 @@ export const Pollcolumns = () => {
       disableFilters: true,
       id: 'date',
       sortType: 'datetime',
-      Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
+      Cell: ({ row }) =>
+        row.original.fetched ? format(fromUnixTime(row.original.startDate), 'dd MMM yy') : <Loading />,
       width: 100,
     },
     {
@@ -89,7 +90,7 @@ export const Pollcolumns = () => {
       disableFilters: true,
       separator: true,
       sortType: 'datetime',
-      Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
+      Cell: ({ row }) => (row.original.fetched ? format(fromUnixTime(row.original.endDate), 'dd MMM yy') : <Loading />),
       width: 100,
     },
   ]
@@ -261,6 +262,20 @@ export const VoterHistoryColumns = () => {
         ) : (
           <Loading />
         ),
+    },
+    {
+      Header: 'Date',
+      id: 'date',
+      separator: true,
+      disableFilters: true,
+      sortType: 'datetime',
+      Cell: ({ row }) => {
+        if (!row.original.lastParticipation) {
+          return <Loading />
+        }
+        return format(fromUnixTime(row.original.lastParticipation.timestamp), 'dd MMM yy')
+      },
+      width: 100,
     },
   ]
 }

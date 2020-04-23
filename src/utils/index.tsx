@@ -54,7 +54,7 @@ export const msToSeconds = time => {
 
 export const timeLeft = (end): string => {
   const today = new Date()
-  const end_date = fromUnixTime(end)
+  const end_date = fromUnixTime(msToSeconds(end))
   if (differenceInSeconds(end_date, today) <= 0) return 'Ended'
 
   const minsDiff = differenceInMinutes(end_date, today)

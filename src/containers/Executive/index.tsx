@@ -44,10 +44,10 @@ function ExecutiveInfo(props) {
   useEffect(() => {
     if (excutivesData.data && excutivesData.data.spells) {
       getMakerDaoData()
-        .then(({ executiveVotes }) => {
+        .then(({ spellsInfo }) => {
           setData(
             excutivesData.data.spells.map(spell => {
-              const proposal = executiveVotes.find(prop => {
+              const proposal = spellsInfo.find(prop => {
                 return prop.source.toLowerCase() === spell.id.toLowerCase()
               })
               return {
