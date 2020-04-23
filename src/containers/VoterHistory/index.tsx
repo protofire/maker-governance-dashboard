@@ -25,14 +25,16 @@ const getHomeVariables = data => {
   }
 }
 
+const descendantTimestampSort = (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
+
 function VoterHistory(props: Props) {
   const { match, history } = props
   const voterId = match.params.id
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [executives, setExecutives] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
-  const [pollsBalances, setBalances] = useState<any>({})
-  const [participations, setParticipations] = useState<any>(true)
+  const [executivesMetadataLoaded, setExecutiveMetadataLoaded] = useState(false)
+  const [pollsMetadataLoaded, setPollsMetadataLoaded] = useState(false)
 
   const historyColumns = React.useMemo(() => VoterHistoryColumns(), [])
 
@@ -42,23 +44,30 @@ function VoterHistory(props: Props) {
 
   useEffect(() => {
     if (!historyData || !historyData.data) return
-    const findParticipations = () => {
-      const executiveEvents = executives.flatMap(vote =>
-        vote.timeLine
-          .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
-          .map(v => ({
-            ...v,
-            voter: v.sender,
-          })),
-      )
-      const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
-      return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
-    }
-    const hasParticipations = findParticipations()
-    setParticipations(hasParticipations)
-  }, [executives, polls, voterId, historyData])
 
-  const hasParticipations = participations
+    const executives = historyData.data.executives
+      .map(vote => {
+        const participation = vote.timeLine
+          .filter(tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId)
+          .sort(descendantTimestampSort)
+
+        return participation.length > 0 ? { ...vote, lastParticipation: participation[0] } : undefined
+      })
+      .filter(Boolean)
+
+    const polls = historyData.data.polls
+      .map(poll => {
+        const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
+
+        return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
+      })
+      .filter(Boolean)
+
+    setExecutives(executives)
+    setPolls(polls)
+  }, [voterId, historyData])
+
+  const hasParticipations = historyData.loading || executives.length || polls.length
 
   const getItem = row => {
     if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
@@ -76,69 +85,49 @@ function VoterHistory(props: Props) {
   }
 
   useEffect(() => {
-    if (!historyData || !historyData.data || !hasParticipations) return
-    getPollsBalances(historyData.data.polls).then(balances => setBalances(balances))
-  }, [historyData, hasParticipations])
+    if (!polls.length || pollsMetadataLoaded) return
+
+    setPollsMetadataLoaded(true)
+
+    async function fetchPollsData() {
+      const pollsBalances = await getPollsBalances(polls)
+
+      const pollsData = await getPollsData(polls)
+      const filteredPolls = pollsData.filter(Boolean)
+      const pollsWithPlurality = await Promise.all(
+        filteredPolls.map(poll => {
+          return getPollData(poll, pollsBalances).then(data => {
+            return { ...poll, plurality: setPlurality(data) }
+          })
+        }),
+      )
+      setPolls(pollsWithPlurality)
+    }
+
+    fetchPollsData()
+  }, [polls, pollsMetadataLoaded])
 
   useEffect(() => {
-    if (historyData.data && historyData.data.polls) {
-      getPollsData(historyData.data.polls).then(result => {
-        const polls = result.filter(Boolean)
-        setPolls([...polls])
-        Promise.all(
-          polls.map(poll => {
-            return getPollData(poll, pollsBalances).then(data => {
-              return { ...poll, plurality: setPlurality(data) }
-            })
+    if (!executives.length || executivesMetadataLoaded) return
+
+    setExecutiveMetadataLoaded(true)
+
+    getMakerDaoData()
+      .then(({ spellsInfo }) => {
+        setExecutives(exs =>
+          exs.map(spell => {
+            const proposal = spellsInfo.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
+            return {
+              ...spell,
+              ...proposal,
+            }
           }),
-        ).then(pollsWithPluralityAndParticipation => {
-          setPolls(pollsWithPluralityAndParticipation)
-        })
-      })
-    }
-  }, [historyData.data, pollsBalances, hasParticipations])
-
-  useEffect(() => {
-    const getData = () => {
-      if (!historyData || !historyData.data) return
-      const executives = historyData.data.executives
-
-        .map(vote =>
-          vote.timeLine.filter(
-            tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId,
-          ).length > 0
-            ? { ...vote }
-            : undefined,
         )
-        .filter(Boolean)
-      const polls = historyData.data.polls
-        .map(poll => (poll.votes.filter(vote => vote.voter === voterId).length > 0 ? { ...poll } : undefined))
-        .filter(Boolean)
-      setExecutives(executives)
-      setPolls(polls)
-    }
-    getData()
-  }, [historyData, voterId, hasParticipations])
-
-  useEffect(() => {
-    if (historyData.data && historyData.data.executives) {
-      getMakerDaoData()
-        .then(({ spellsInfo }) => {
-          setExecutives(exs =>
-            exs.map(spell => {
-              const proposal = spellsInfo.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
-              return {
-                ...spell,
-                ...proposal,
-              }
-            }),
-          )
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    }
-  }, [historyData, hasParticipations])
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [executives, executivesMetadataLoaded])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
