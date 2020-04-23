@@ -56,6 +56,7 @@ function PollsInfo(props) {
     return totalMkr
       .times(100)
       .div(mkrSupply)
+      .dp(4)
       .toString()
   }
 
