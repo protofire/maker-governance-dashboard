@@ -4,6 +4,8 @@ import { CardTitle, ExpandIcon, ChartSelect, Modal, InfoIcon, CloseIcon, Descrip
 import { filters, getIconContainer } from '../../../utils'
 import { IconContainer } from '../../common/styled'
 import styled from 'styled-components'
+import { LinkableContext } from '../LinkableComponent'
+import CopyLink from '../LinkableComponent/CopyLink'
 
 const Right = styled.div`
   margin-left: auto;
@@ -45,6 +47,7 @@ type Props = {
   versus?: string
   info?: string
   links?: Array<any>
+  id?: string
 }
 
 function ChartWrapper(props: Props) {
@@ -63,12 +66,20 @@ function ChartWrapper(props: Props) {
     links,
   } = props
   const [isInfoModalOpen, setInfoModalOpen] = useState(false)
+  const linkable = React.useContext(LinkableContext)
+
+  React.useEffect(() => {
+    if (linkable.active) {
+      linkable.onInitCallback(handleModal)
+    }
+  }, [linkable, handleModal])
 
   return (
     <>
       <CardTitle content={content} versus={versus}>
         {!hideFilters && <ChartSelect value={value} values={filters} onChange={onChange} />}
         <Right>
+          <CopyLink />
           <InfoIconContainer>{info && <InfoIcon onClick={() => setInfoModalOpen(true)} />}</InfoIconContainer>
           {!hideIcon && getIconContainer(ExpandIcon, handleModal, isModalOpen)}
         </Right>

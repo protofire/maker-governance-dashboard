@@ -113,10 +113,10 @@ function VoterHistory(props: Props) {
     setExecutiveMetadataLoaded(true)
 
     getMakerDaoData()
-      .then(({ executiveVotes }) => {
+      .then(({ spellsInfo }) => {
         setExecutives(exs =>
           exs.map(spell => {
-            const proposal = executiveVotes.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
+            const proposal = spellsInfo.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
             return {
               ...spell,
               ...proposal,

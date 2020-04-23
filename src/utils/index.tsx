@@ -54,9 +54,13 @@ export const toNiceDate = timestamp => {
 
 export const getModalContainer = Content => <Content />
 
+function msToSeconds(time) {
+  return time >= 1e12 ? (time / 1e3).toFixed(0) : time
+}
+
 export const timeLeft = (end): string => {
   const today = new Date()
-  const end_date = fromUnixTime(end)
+  const end_date = fromUnixTime(msToSeconds(end))
   if (differenceInSeconds(end_date, today) <= 0) return 'Ended'
 
   const minsDiff = differenceInMinutes(end_date, today)
