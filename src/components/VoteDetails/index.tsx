@@ -24,6 +24,7 @@ import {
   getVotersVsMkrData,
   getExecutiveVsHat,
 } from './helpers'
+import LinkableComponent from '../common/LinkableComponent'
 
 const VoteDetailContainer = styled.div`
   display: flex;
@@ -204,42 +205,52 @@ function VoteDetails(props: Props) {
             <NoData>Cannot fetch executive description.</NoData>
           )}
         </CardStyled>
-        <CardStyled style={{ gridArea: 'col4' }}>
-          <VotersVsMkr content="MKR Staked" component="mkrStaked" />
-        </CardStyled>
-        <CardStyled style={{ gridArea: 'col5' }}>
-          <VotersVsMkr content="Number of Voters" voters component="numberOfVoters" />
-        </CardStyled>
-        <CardStyled style={{ gridArea: 'col6' }}>
-          <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
-        </CardStyled>
-        <CardStyled style={{ padding: 0 }}>
-          <StrippedTableWrapper
-            markdown
-            info={`This tile shows a leaderboard for the top MKR wallets that have voted for this executive. This is primarily a navigational aid, allowing access to each address’s voting history and etherscan page. <br><br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. This MKR value is then converted into a percentage of the total MKR locked in this executive proposal. This list is then sorted large to small and the addresses are displayed.`}
-            links={[
-              {
-                title: 'MakerDAO Governance Graph',
-                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
-              },
-            ]}
-            content="Top Supporters"
-          >
-            <StrippedRowsContainer>
-              {getTopSupportersTableData(topSupporters, vote)
-                .slice(0, 8)
-                .map(el => (
-                  <StrippedTableRow key={el.sender}>
-                    <StrippedTableCell>{el.supports}%</StrippedTableCell>
-                    <StrippedTableCell>{el.s}</StrippedTableCell>
-                  </StrippedTableRow>
-                ))}
-            </StrippedRowsContainer>
-          </StrippedTableWrapper>
-        </CardStyled>
-        <CardStyled>
-          <ExecutiveVsHat content="Vs Current Hat" component="executiveVsHat" />
-        </CardStyled>
+        <LinkableComponent id="MKR_STAKED">
+          <CardStyled style={{ gridArea: 'col4' }}>
+            <VotersVsMkr content="MKR Staked" component="mkrStaked" />
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="VOTERS_NUMBER">
+          <CardStyled style={{ gridArea: 'col5' }}>
+            <VotersVsMkr content="Number of Voters" voters component="numberOfVoters" />
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="APPROVALS_BY_ADDRESS_SIZE">
+          <CardStyled style={{ gridArea: 'col6' }}>
+            <ApprovalsByAddress content="Approvals by Address Size" component="approvalsByAddress" />
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="TOP_SUPPORTERS">
+          <CardStyled style={{ padding: 0 }}>
+            <StrippedTableWrapper
+              markdown
+              info={`This tile shows a leaderboard for the top MKR wallets that have voted for this executive. This is primarily a navigational aid, allowing access to each address’s voting history and etherscan page. <br><br> This metric is generated using the Lock and Free events emitted by the DSChief governance contract which relate to this executive proposal. This MKR value is then converted into a percentage of the total MKR locked in this executive proposal. This list is then sorted large to small and the addresses are displayed.`}
+              links={[
+                {
+                  title: 'MakerDAO Governance Graph',
+                  uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Executive%20vote',
+                },
+              ]}
+              content="Top Supporters"
+            >
+              <StrippedRowsContainer>
+                {getTopSupportersTableData(topSupporters, vote)
+                  .slice(0, 8)
+                  .map(el => (
+                    <StrippedTableRow key={el.sender}>
+                      <StrippedTableCell>{el.supports}%</StrippedTableCell>
+                      <StrippedTableCell>{el.s}</StrippedTableCell>
+                    </StrippedTableRow>
+                  ))}
+              </StrippedRowsContainer>
+            </StrippedTableWrapper>
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="VS_CURRENT_HAT">
+          <CardStyled>
+            <ExecutiveVsHat content="Vs Current Hat" component="executiveVsHat" />
+          </CardStyled>
+        </LinkableComponent>
       </VoteDetailContainer>
       {isModalOpen && (
         <Modal isOpen={isModalOpen} isChart={isModalChart} closeModal={() => setModalOpen(false)}>
