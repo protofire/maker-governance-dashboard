@@ -52,6 +52,7 @@ import {
   getRecentPolls,
 } from './helpers'
 import styled from 'styled-components'
+import LinkableComponent from '../common/LinkableComponent'
 
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
@@ -547,20 +548,28 @@ function HomeDetail(props: Props) {
     <>
       <PageTitle>System Statistics</PageTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          {stakedMkr.length === 0 ? <Loading /> : <StakedMkr content="Staked MKR" component="stakedMkr" />}
-        </CardStyled>
-        <CardStyled>
-          <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
-        </CardStyled>
+        <LinkableComponent id="STAKED_MKR">
+          <CardStyled>
+            {stakedMkr.length === 0 ? <Loading /> : <StakedMkr content="Staked MKR" component="stakedMkr" />}
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="NUMBER_OF_VOTERS">
+          <CardStyled>
+            <VotersVsMkr content="Number of Voters" versus="Total MKR Staked" component="votersVsMkr" />
+          </CardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
-        </CardStyled>
-        <CardStyled>
-          <Gini content="Voting MKR Gini Coefficient" component="gini" />
-        </CardStyled>
+        <LinkableComponent id="TOTAL_VOTES">
+          <CardStyled>
+            {polls.length === 0 ? <Loading /> : <VotesVsPolls content="Total Votes" component="votesVsPolls" />}
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="VOTING_MKR_GINI">
+          <CardStyled>
+            <Gini content="Voting MKR Gini Coefficient" component="gini" />
+          </CardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       <PageSubTitle>Voter Behaviour</PageSubTitle>
       {/*
@@ -582,94 +591,112 @@ function HomeDetail(props: Props) {
         </TableCardStyled>
       </TwoRowGrid>
           */}
-      <CardStyled style={{ marginBottom: '20px' }}>
-        {executivesResponsiveness.length === 0 ? (
-          <Loading />
-        ) : (
-          <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
-        )}
-      </CardStyled>
-      <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          {pollsResponsiveness.length === 0 ? (
+      <LinkableComponent id="VOTES_MKR_RESPONSIVENESS">
+        <CardStyled style={{ marginBottom: '20px' }}>
+          {executivesResponsiveness.length === 0 ? (
             <Loading />
           ) : (
-            <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
+            <ExecutivesResponsiveness content="Votes - MKR Responsiveness" component="executivesResponsiveness" />
           )}
         </CardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          {topVoters.length === 0 ? (
-            <Loading />
-          ) : (
-            <HomeTable
-              info={homeMap.table.topVoters.info}
-              links={homeMap.table.topVoters.links}
-              content="Top Voters"
-              component="topVoters"
-            />
-          )}
-        </TableCardStyled>
+      </LinkableComponent>
+      <TwoRowGrid style={{ marginBottom: '20px' }}>
+        <LinkableComponent id="POLLS_MKR_RESPONSIVENESS">
+          <CardStyled>
+            {pollsResponsiveness.length === 0 ? (
+              <Loading />
+            ) : (
+              <PollsResponsiveness content="Polls - MKR Responsiveness" component="pollsResponsiveness" />
+            )}
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="TOP_VOTERS">
+          <TableCardStyled style={{ padding: 0 }}>
+            {topVoters.length === 0 ? (
+              <Loading />
+            ) : (
+              <HomeTable
+                info={homeMap.table.topVoters.info}
+                links={homeMap.table.topVoters.links}
+                content="Top Voters"
+                component="topVoters"
+              />
+            )}
+          </TableCardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       <PageSubTitle>Executives</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable
-            info={homeMap.table.executives.info}
-            links={homeMap.table.executives.links}
-            handleRow={getVote}
-            content="Top Executives"
-            component="executives"
-          />
-        </TableCardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          <HomeTable
-            info={homeMap.table.uncastedExecutives.info}
-            links={homeMap.table.uncastedExecutives.links}
-            handleRow={getVote}
-            content="Uncast Executives"
-            component="uncastedExecutives"
-          />
-        </TableCardStyled>
+        <LinkableComponent id="TOP_EXECUTIVES">
+          <TableCardStyled style={{ padding: 0 }}>
+            <HomeTable
+              info={homeMap.table.executives.info}
+              links={homeMap.table.executives.links}
+              handleRow={getVote}
+              content="Top Executives"
+              component="executives"
+            />
+          </TableCardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="UNCAST_EXECUTIVES">
+          <TableCardStyled style={{ padding: 0 }}>
+            <HomeTable
+              info={homeMap.table.uncastedExecutives.info}
+              links={homeMap.table.uncastedExecutives.links}
+              handleRow={getVote}
+              content="Uncast Executives"
+              component="uncastedExecutives"
+            />
+          </TableCardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <CardStyled>
-          <TimeTakenForExecutives content="Executive Time to Pass" component="timeTakenForExecutives" />
-        </CardStyled>
-        <CardStyled>
-          <MkrDistributionPerExecutive
-            content="MKR Distribution By Executive"
-            component="mkrDistributionPerExecutive"
-          />
-        </CardStyled>
+        <LinkableComponent id="EXECUTIVE_TIME_TO_PASS">
+          <CardStyled>
+            <TimeTakenForExecutives content="Executive Time to Pass" component="timeTakenForExecutives" />
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="MKR_DISTRIBUTION_BY_EXECUTIVE">
+          <CardStyled>
+            <MkrDistributionPerExecutive
+              content="MKR Distribution By Executive"
+              component="mkrDistributionPerExecutive"
+            />
+          </CardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       <PageSubTitle>Polls</PageSubTitle>
       <TwoRowGrid style={{ marginBottom: '20px' }}>
-        <TableCardStyled style={{ padding: 0 }}>
-          {polls.length === 0 || !polls[0].participation ? (
-            <Loading />
-          ) : (
-            <HomeTable
-              info={homeMap.table.votedPolls.info}
-              links={homeMap.table.votedPolls.links}
-              handleRow={getPoll}
-              content="Most Voted Polls"
-              component="votedPolls"
-            />
-          )}
-        </TableCardStyled>
-        <TableCardStyled style={{ padding: 0 }}>
-          {polls.length === 0 ? (
-            <Loading />
-          ) : (
-            <HomeTable
-              info={homeMap.table.polls.info}
-              links={homeMap.table.polls.links}
-              handleRow={getPoll}
-              content="Recent Polls"
-              component="polls"
-            />
-          )}
-        </TableCardStyled>
+        <LinkableComponent id="MOST_VOTED_POLLS">
+          <TableCardStyled style={{ padding: 0 }}>
+            {polls.length === 0 || !polls[0].participation ? (
+              <Loading />
+            ) : (
+              <HomeTable
+                info={homeMap.table.votedPolls.info}
+                links={homeMap.table.votedPolls.links}
+                handleRow={getPoll}
+                content="Most Voted Polls"
+                component="votedPolls"
+              />
+            )}
+          </TableCardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="RECENT_POLLS">
+          <TableCardStyled style={{ padding: 0 }}>
+            {polls.length === 0 ? (
+              <Loading />
+            ) : (
+              <HomeTable
+                info={homeMap.table.polls.info}
+                links={homeMap.table.polls.links}
+                handleRow={getPoll}
+                content="Recent Polls"
+                component="polls"
+              />
+            )}
+          </TableCardStyled>
+        </LinkableComponent>
       </TwoRowGrid>
       {isModalOpen && (
         <Modal isChart={isModalChart} isOpen={isModalOpen} closeModal={() => setModalOpen(false)}>

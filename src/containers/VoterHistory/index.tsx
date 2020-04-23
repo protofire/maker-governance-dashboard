@@ -123,10 +123,10 @@ function VoterHistory(props: Props) {
   useEffect(() => {
     if (historyData.data && historyData.data.executives) {
       getMakerDaoData()
-        .then(({ executiveVotes }) => {
+        .then(({ spellsInfo }) => {
           setExecutives(exs =>
             exs.map(spell => {
-              const proposal = executiveVotes.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
+              const proposal = spellsInfo.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
               return {
                 ...spell,
                 ...proposal,
