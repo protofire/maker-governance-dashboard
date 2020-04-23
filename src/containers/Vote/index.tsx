@@ -34,8 +34,8 @@ function VoteInfo(props: Props) {
 
   useEffect(() => {
     getMakerDaoData()
-      .then(({ executiveVotes }) => {
-        const vote = executiveVotes.find(el => {
+      .then(({ spellsInfo }) => {
+        const vote = spellsInfo.find(el => {
           return el.source.toLowerCase() === voteId.toLowerCase()
         })
         setMakerData(vote)
