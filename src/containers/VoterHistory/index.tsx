@@ -33,8 +33,8 @@ function VoterHistory(props: Props) {
   const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [executives, setExecutives] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
-  const [pollsBalances, setBalances] = useState<any>({})
-  const [participations, setParticipations] = useState<any>(true)
+  const [executivesMetadataLoaded, setExecutiveMetadataLoaded] = useState(false)
+  const [pollsMetadataLoaded, setPollsMetadataLoaded] = useState(false)
 
   const historyColumns = React.useMemo(() => VoterHistoryColumns(), [])
 
@@ -44,23 +44,30 @@ function VoterHistory(props: Props) {
 
   useEffect(() => {
     if (!historyData || !historyData.data) return
-    const findParticipations = () => {
-      const executiveEvents = executives.flatMap(vote =>
-        vote.timeLine
-          .filter(tl => tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK)
-          .map(v => ({
-            ...v,
-            voter: v.sender,
-          })),
-      )
-      const pollVotes = polls.flatMap(poll => poll.votes.map(p => ({ ...p })))
-      return [...executiveEvents, ...pollVotes].some(e => e.voter === voterId)
-    }
-    const hasParticipations = findParticipations()
-    setParticipations(hasParticipations)
-  }, [executives, polls, voterId, historyData])
 
-  const hasParticipations = participations
+    const executives = historyData.data.executives
+      .map(vote => {
+        const participation = vote.timeLine
+          .filter(tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId)
+          .sort(descendantTimestampSort)
+
+        return participation.length > 0 ? { ...vote, lastParticipation: participation[0] } : undefined
+      })
+      .filter(Boolean)
+
+    const polls = historyData.data.polls
+      .map(poll => {
+        const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
+
+        return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
+      })
+      .filter(Boolean)
+
+    setExecutives(executives)
+    setPolls(polls)
+  }, [voterId, historyData])
+
+  const hasParticipations = historyData.loading || executives.length || polls.length
 
   const getItem = row => {
     if (row.__typename === 'Spell') history.push(`/executive/${row.id}`)
@@ -78,71 +85,49 @@ function VoterHistory(props: Props) {
   }
 
   useEffect(() => {
-    if (!historyData || !historyData.data || !hasParticipations) return
-    getPollsBalances(historyData.data.polls).then(balances => setBalances(balances))
-  }, [historyData, hasParticipations])
+    if (!polls.length || pollsMetadataLoaded) return
 
-  useEffect(() => {
-    if (!historyData || !historyData.data) return
-    const votedPolls = historyData.data.polls
-      .map(poll => {
-        const participation = poll.votes.filter(vote => vote.voter === voterId).sort(descendantTimestampSort)
+    setPollsMetadataLoaded(true)
 
-        return participation.length > 0 ? { ...poll, lastParticipation: participation[0] } : undefined
-      })
-      .filter(Boolean)
+    async function fetchPollsData() {
+      const pollsBalances = await getPollsBalances(polls)
 
-    getPollsData(votedPolls).then(result => {
-      const polls = result.filter(Boolean)
-      Promise.all(
-        polls.map(poll => {
+      const pollsData = await getPollsData(polls)
+      const filteredPolls = pollsData.filter(Boolean)
+      const pollsWithPlurality = await Promise.all(
+        filteredPolls.map(poll => {
           return getPollData(poll, pollsBalances).then(data => {
             return { ...poll, plurality: setPlurality(data) }
           })
         }),
-      ).then(pollsWithPluralityAndParticipation => {
-        setPolls(pollsWithPluralityAndParticipation)
+      )
+      setPolls(pollsWithPlurality)
+    }
+
+    fetchPollsData()
+  }, [polls, pollsMetadataLoaded])
+
+  useEffect(() => {
+    if (!executives.length || executivesMetadataLoaded) return
+
+    setExecutiveMetadataLoaded(true)
+
+    getMakerDaoData()
+      .then(({ executiveVotes }) => {
+        setExecutives(exs =>
+          exs.map(spell => {
+            const proposal = executiveVotes.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
+            return {
+              ...spell,
+              ...proposal,
+            }
+          }),
+        )
       })
-    })
-  }, [historyData.data, pollsBalances, voterId])
-
-  useEffect(() => {
-    const getData = () => {
-      if (!historyData || !historyData.data) return
-      const executives = historyData.data.executives
-        .map(vote => {
-          const participation = vote.timeLine
-            .filter(tl => (tl.type === VOTING_ACTION_ADD || tl.type === VOTING_ACTION_LOCK) && tl.sender === voterId)
-            .sort(descendantTimestampSort)
-
-          return participation.length > 0 ? { ...vote, lastParticipation: participation[0] } : undefined
-        })
-        .filter(Boolean)
-
-      setExecutives(executives)
-    }
-    getData()
-  }, [historyData, voterId])
-
-  useEffect(() => {
-    if (historyData.data && historyData.data.executives) {
-      getMakerDaoData()
-        .then(({ executiveVotes }) => {
-          setExecutives(exs =>
-            exs.map(spell => {
-              const proposal = executiveVotes.find(prop => prop.source.toLowerCase() === spell.id.toLowerCase())
-              return {
-                ...spell,
-                ...proposal,
-              }
-            }),
-          )
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    }
-  }, [historyData, hasParticipations])
+      .catch(error => {
+        console.log(error)
+      })
+  }, [executives, executivesMetadataLoaded])
 
   useEffect(() => {
     if (gData) setResultVariables(getHomeVariables(gData))
