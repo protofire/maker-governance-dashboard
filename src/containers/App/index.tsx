@@ -41,7 +41,6 @@ function App() {
   useEffect(() => {
     store.getItem<any>('last-update').then(value => {
       if (!value || isBefore(fromUnixTime(value), fromUnixTime(Number(LAST_CACHE_UPDATE)))) {
-        console.log('ENTRANDO')
         import(`../../data/maker-governance-${LAST_CACHE_UPDATE}.json`).then(data => {
           Promise.all(
             Object.keys(data.default).map(key => {
@@ -53,13 +52,10 @@ function App() {
           })
         })
       } else {
-        console.log('ELSE')
         setCacheInitialized(true)
       }
     })
   }, [])
-
-  console.log('cacheInitialized', cacheInitialized)
 
   return (
     <ThemeProvider theme={theme}>
