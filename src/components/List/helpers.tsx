@@ -18,7 +18,7 @@ export const Pollcolumns = () => {
       Filter: SelectColumnFilter,
       filter: 'includes',
       accessor: row => (timeLeft(row.endDate) === 'Ended' ? 'Ended' : 'Active'),
-      Cell: ({ row }) => (row.original.fetched ? timeLeft(row.original.endDate) : <Loading />),
+      Cell: ({ row }) => timeLeft(row.original.endDate),
       width: 100,
     },
     {
@@ -80,8 +80,7 @@ export const Pollcolumns = () => {
       disableFilters: true,
       id: 'date',
       sortType: 'datetime',
-      Cell: ({ row }) =>
-        row.original.fetched ? format(fromUnixTime(row.original.startDate), 'dd MMM yy') : <Loading />,
+      Cell: ({ row }) => format(fromUnixTime(row.original.startDate), 'dd MMM yy'),
       width: 100,
     },
     {
@@ -90,7 +89,7 @@ export const Pollcolumns = () => {
       disableFilters: true,
       separator: true,
       sortType: 'datetime',
-      Cell: ({ row }) => (row.original.fetched ? format(fromUnixTime(row.original.endDate), 'dd MMM yy') : <Loading />),
+      Cell: ({ row }) => format(fromUnixTime(row.original.endDate), 'dd MMM yy'),
       width: 100,
     },
   ]
