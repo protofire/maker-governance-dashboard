@@ -13,6 +13,7 @@
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
+  REACT_APP_HOME_DATA_TTL='5' # IN MINUTES
 
 [context.branch-deploy.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
@@ -20,6 +21,7 @@
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
+  REACT_APP_HOME_DATA_TTL='5' # IN MINUTES
 
 [context.deploy-preview.environment]
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
@@ -27,3 +29,4 @@
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
+  REACT_APP_HOME_DATA_TTL='5' # IN MINUTES

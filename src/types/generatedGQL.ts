@@ -226,39 +226,6 @@ export interface GetPolls {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: getHomeData2
-// ====================================================
-
-export interface getHomeData2_voters {
-  __typename: 'Action'
-  id: string
-  /**
-   *  Action timestamp as seconds (time)
-   */
-  timestamp: any
-  /**
-   *  Action value (arg)
-   */
-  wad: any | null
-  /**
-   *  Action name (act)
-   */
-  type: ActionType
-}
-
-export interface getHomeData2 {
-  voters: getHomeData2_voters[]
-}
-
-export interface getHomeData2Variables {
-  voters: number
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: getHomeData
 // ====================================================
 
@@ -1208,6 +1175,39 @@ export interface getHistoryData {
 export interface getHistoryDataVariables {
   executives: number
   polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getHomeData2
+// ====================================================
+
+export interface getHomeData2_voters {
+  __typename: 'Action'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
+}
+
+export interface getHomeData2 {
+  voters: getHomeData2_voters[]
+}
+
+export interface getHomeData2Variables {
+  voters: number
 }
 
 /* tslint:disable */

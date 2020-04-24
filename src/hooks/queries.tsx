@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { getAllEvents } from '../../utils'
+import { getAllEvents } from '../utils'
 
 const makerGovernanceDetailFragment = gql`
   fragment makerGovernanceDetail on GovernanceInfo {
@@ -142,6 +142,20 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
     }
   `
 }
+
+export const HOME_DATA_QUERY2 = gql`
+  query getHomeData2($voters: Int!) {
+    ${getAllEvents(getPollsData, 'startDate')}
+    ${getAllEvents(getExecutivesData)}
+    voters: actions(where: { type: VOTER }, first: $voters) {
+      ...actionsDetail
+    }
+    ${getAllEvents(getHomeData)}
+  }
+  ${pollsDetailFragment}
+  ${executivesDetailFragment}
+  ${actionsDetailFragment}
+`
 
 export const HOME_DATA_QUERY = ({ pollPages, executivesPages }) => gql`
   query getHomeData($voters: Int!) {

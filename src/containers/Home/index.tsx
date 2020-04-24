@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import lscache from 'lscache'
+import React, { useState, useEffect } from 'react'
 import HomeDetail from '../../components/Home/HomeDetail'
-import { getMKRResponsiveness } from '../../components/Home/helpers'
 
 import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
-import { HOME_DATA_QUERY, GOVERNANCE_INFO_QUERY } from './queries'
-import { DEFAULT_CACHE_TTL } from '../../constants'
-import { getMkrBurnEvents, getMkrMintEvents, mergeEventPages } from '../../utils'
+import { GOVERNANCE_INFO_QUERY } from './queries'
+import { getMkrBurnEvents, getMkrMintEvents } from '../../utils'
 import { getMKRSupply } from '../../utils/makerdao'
-import useAsyncMemo from '../../components/hooks/useAsyncMemo'
+import useAsyncMemo from '../../hooks/useAsyncMemo'
+import useHomeData from '../../hooks/useHomeData'
 import BigNumber from 'bignumber.js'
 
 const getHomeVariables = data => {
@@ -39,21 +37,11 @@ const Error = () => <div>ERROR: There was an error trying to fetch the data.</di
 
 function MakerGovernanceInfo() {
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
-
-  const { data: homeData, loading, error } = useQuery(HOME_DATA_QUERY(getPages(gData)), {
-    variables: gData && getHomeVariables(gData),
-    skip: !gData,
-  })
+  const { data, loading, error } = useHomeData(gData)
 
   const [mkrEvents, setMkrEvents] = useState({})
   const [mkrError, setMkrError] = useState(null)
   const [loadingMkrEvent, setLoadingMkrEvents] = useState(false)
-
-  const data = useMemo(() => {
-    if (homeData) {
-      return mergeEventPages(homeData)
-    }
-  }, [homeData])
 
   const mkrSupply = useAsyncMemo(async () => getMKRSupply(), new BigNumber(0), [])
 

@@ -83,16 +83,16 @@ function PollDetails(props: Props) {
   useEffect(() => {
     if (!pollPerOptionCached.length) {
       getPollPerOptionData(poll).then(data => {
-        lscache.set(`pollPerOption-${poll.id}`, pollPerOptionData, DEFAULT_CACHE_TTL)
+        lscache.set(`pollPerOption-${poll.id}`, data, DEFAULT_CACHE_TTL)
         setPollPerOptionData(data)
       })
     }
-  }, [poll])
+  }, [poll, pollPerOptionCached])
 
   useEffect(() => {
     if (!mkrDistributionCached.length) {
       getPollMakerHistogramData(poll).then(data => {
-        lscache.set(`mkrDistribution-${poll.id}`, mkrDistributionData, DEFAULT_CACHE_TTL)
+        lscache.set(`mkrDistribution-${poll.id}`, data, DEFAULT_CACHE_TTL)
         setMkrDistributionData(data)
       })
     }
