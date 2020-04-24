@@ -13,7 +13,10 @@ export default function LinkableComponent({ children, id }) {
     (fn: Function) => {
       if (initialized) return
 
-      fn()
+      if (fn) {
+        fn()
+      }
+
       setInitialized(true)
     },
     [initialized],

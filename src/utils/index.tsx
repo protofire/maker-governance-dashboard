@@ -2,17 +2,7 @@ import React from 'react'
 import { request } from 'graphql-request'
 import BigNumber from 'bignumber.js'
 import { IconContainer, CloseIcon } from '../components/common'
-import {
-  getVoterAddresses,
-  getVoterRegistries,
-  getVoteProxies,
-  stakedByAddress,
-  getStakedByAddress,
-  ZERO,
-  getLookup,
-  totalStaked,
-  getPollVotersPerOption,
-} from '../components/PollDetails/data'
+import { getVoteProxies, ZERO, getLookup, totalStaked, getPollVotersPerOption } from '../components/PollDetails/data'
 
 import {
   startOfMonth,
@@ -36,12 +26,16 @@ import {
   differenceInMonths,
   differenceInYears,
   addHours,
+  addMinutes,
+  isBefore,
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
+import store, { setCache, getCache } from './cache'
 
 export * from './mkr-registry'
 
 const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
+const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
 
 const fetchQuery = (url, query, variables) => request(url, query, variables)
 
@@ -54,7 +48,7 @@ export const toNiceDate = timestamp => {
 
 export const getModalContainer = Content => <Content />
 
-function msToSeconds(time) {
+export const msToSeconds = time => {
   return time >= 1e12 ? (time / 1e3).toFixed(0) : time
 }
 
@@ -184,15 +178,53 @@ export const getIconContainer = (Component, cb, isModalOpen = false) => (
   <IconContainer onClick={cb}>{isModalOpen ? <CloseIcon /> : <Component />}</IconContainer>
 )
 
-export const getVoterBalances = async (address, endDate) => {
+export const getVotersSnapshots = async (voters, endDate) => {
+  const snapshotsCache = (await getCache('accounts-snapshots-cache')) || {}
+
+  const requiredVoters = voters.reduce((acc, voter) => {
+    const { lastUpdate, data } = snapshotsCache[voter] || {}
+    // Do not update for 1/2 hour
+    if (!lastUpdate || getUnixTime(addMinutes(fromUnixTime(lastUpdate), 30)) < endDate) {
+      return [...acc, { voter, fromDate: lastUpdate, endDate }]
+    }
+
+    return acc
+  }, [])
+
+  const requiredBalances = await Promise.all<Array<Array<any>>>(
+    requiredVoters.map(required => Promise.all([required.voter, getVoterBalancesFrom(required)])),
+  )
+  const newData = requiredBalances.reduce((acc: any, [voter, snapshots]: Array<any>) => {
+    const { data } = snapshotsCache[voter] || {}
+    return {
+      ...acc,
+      [voter]: {
+        lastUpdate: endDate,
+        data: [...snapshots, ...(data ? data : [])], // this order matters since it's expected to ordered by timestamp desc
+      },
+    }
+  }, {})
+
+  const allSnapshots = { ...snapshotsCache, ...newData }
+
+  if (requiredVoters.length) {
+    await setCache('accounts-snapshots-cache', allSnapshots)
+  }
+
+  // return Object.keys(snapshotsCache).map(add => snapshotsCache[add].data)
+  return Object.keys(allSnapshots).map(add => allSnapshots[add].data)
+}
+
+export const getVoterBalancesFrom = async ({ voter, fromDate = 0, endDate }) => {
   // Query
   const query = `
-    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $skip: Int = 0 ) {
+    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $fromDate: BigInt!, $skip: Int = 0 ) {
       accountBalanceSnapshots(
         first: 1000,
         skip: $skip,
         where:{
           account: $voter,
+          timestamp_gt: $fromDate
           timestamp_lte: $endDate
         },
         orderBy: timestamp, orderDirection: desc
@@ -211,7 +243,8 @@ export const getVoterBalances = async (address, endDate) => {
   let result = []
   while (more) {
     const partial: any = await fetchQuery(MKR_API_URI, query, {
-      voter: address,
+      voter,
+      fromDate,
       endDate,
       skip,
     })
@@ -224,13 +257,172 @@ export const getVoterBalances = async (address, endDate) => {
   return result
 }
 
+export const getVoterAddresses = poll => {
+  const pollVoters = getPollVotersPerOption(poll)
+  return Object.keys(pollVoters).flatMap(option => pollVoters[option])
+}
+
+export const isPollExpired = poll => {
+  return isBefore(fromUnixTime(poll.endDate), Date.now())
+}
+
+export const getPollVotersRegistries = async poll => {
+  const cacheKey = `cache-poll-${poll.id}-registies`
+  const pollRegistries = (await getCache(cacheKey)) || {}
+  const endDate = msToSeconds(poll.endDate)
+
+  // Expired and updated after it expired
+  if (pollRegistries && isPollExpired(poll) && pollRegistries.lastUpdate >= endDate) {
+    return pollRegistries.data
+  }
+
+  // Do not update for 1/2 hour
+  if (pollRegistries && isBefore(Date.now(), addMinutes(fromUnixTime(pollRegistries.lastUpdate), 30))) {
+    return pollRegistries.data
+  }
+
+  const addresses = getVoterAddresses(poll)
+  // The query can't be called with empty array because it errors
+  if (!addresses.length) {
+    return []
+  }
+
+  const query = `
+    query getVoterRegistries($voters: [Bytes!]!, $endDate: BigInt!  ){
+      hot: voterRegistries(first: 1000, where: {hotAddress_in: $voters, timestamp_lte: $endDate}) {
+        id
+        coldAddress
+        hotAddress
+        voteProxies {
+          id
+        }
+      }
+      cold: voterRegistries(first: 100, where: {coldAddress_in: $voters, timestamp_lte: $endDate}) {
+        id
+        coldAddress
+        hotAddress
+        voteProxies {
+          id
+        }
+      }
+    }
+  `
+  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+    voters: addresses,
+    endDate: poll.endDate,
+  })
+
+  // When cold and hot are the same the registry cames twice, so we keep only one of them
+  const registriesById = new Map([...result.cold, ...result.hot].map(reg => [reg.id, reg]))
+
+  const newCacheData = {
+    lastUpdate: getUnixTime(Date.now()),
+    data: Array.from(registriesById.values()),
+  }
+
+  await setCache(cacheKey, newCacheData)
+
+  return Array.from(registriesById.values())
+}
+
+export const stakedByAddress = data => {
+  const result = data.flat().reduce((acc, el) => {
+    let current = acc[el.sender] || new BigNumber('0')
+    current = el.type === 'FREE' ? current.minus(new BigNumber(el.wad)) : current.plus(new BigNumber(el.wad))
+    return {
+      ...acc,
+      [el.sender]: current,
+    }
+  }, {})
+
+  return result
+}
+
+export const getStakedByPoll = async (proxies, voters, poll) => {
+  const pollEndDateSeconds = msToSeconds(poll.endDate)
+  const now = Date.now()
+  const endDate = isBefore(now, fromUnixTime(pollEndDateSeconds)) ? getUnixTime(now) : pollEndDateSeconds
+
+  const cacheKey = `lock-free-poll-${poll.id}`
+
+  const locksFrees = (await getCache(cacheKey)) || {}
+
+  // Expired and updated after it expired
+  if (locksFrees && isBefore(fromUnixTime(endDate), addMinutes(fromUnixTime(locksFrees.lastUpdate), 30))) {
+    return {
+      proxies: locksFrees.data.proxies.filter(free => free.timestamp <= endDate),
+      voters: locksFrees.data.voters.filter(free => free.timestamp <= endDate),
+    }
+  }
+
+  const query = `
+    query getStakedByPoll( $proxies: [Bytes!]!, $voters: [Bytes!]!, $fromDate: BigInt!, $endDate: BigInt! ) {
+      lock_proxies: actions(first: 1000, where: {type: LOCK, sender_in: $proxies, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+        sender
+        type
+        wad
+        timestamp
+      }
+      free_proxies: actions(first: 1000, where: {type: FREE, sender_in: $proxies, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+        sender
+        type
+        wad
+        timestamp
+      }
+      lock_voters: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+        sender
+        type
+        wad
+        timestamp
+      }
+      free_voters: actions(first: 1000, where: {type: FREE, sender_in: $voters, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+        sender
+        type
+        wad
+        timestamp
+      }
+    }
+  `
+  const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
+    proxies,
+    voters,
+    fromDate: locksFrees.lastUpdate || 0,
+    endDate,
+  })
+
+  const newProxies =
+    locksFrees && locksFrees.data && locksFrees.data.proxies
+      ? [...locksFrees.data.proxies, ...result.lock_proxies, ...result.free_proxies]
+      : [...result.lock_proxies, ...result.free_proxies]
+  const newVoters =
+    locksFrees && locksFrees.data && locksFrees.data.voters
+      ? [...locksFrees.data.voters, ...result.lock_voters, ...result.free_voters]
+      : [...result.lock_voters, ...result.free_voters]
+
+  const newCacheData = {
+    lastUpdate: endDate,
+    data: {
+      proxies: newProxies,
+      voters: newVoters,
+    },
+  }
+
+  await setCache(cacheKey, newCacheData)
+
+  return {
+    proxies: newProxies,
+    voters: newVoters,
+  }
+}
+
 export const getVotersBalance = async (poll, balancesLookup) => {
   const votersAddresses = getVoterAddresses(poll)
-  const voteRegistries = await getVoterRegistries(votersAddresses, poll.endDate)
+  const voteRegistries = await getPollVotersRegistries(poll)
   const voteProxies = getVoteProxies(voteRegistries)
 
-  const stakedProxies = stakedByAddress(await getStakedByAddress(voteProxies, poll.endDate))
-  const stakedVoters = stakedByAddress(await getStakedByAddress(votersAddresses, poll.endDate))
+  const stakeByPoll = await getStakedByPoll(voteProxies, votersAddresses, poll)
+  const stakedProxies = stakedByAddress(stakeByPoll.proxies)
+  const stakedVoters = stakedByAddress(stakeByPoll.voters)
 
   const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
   const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
@@ -238,7 +430,7 @@ export const getVotersBalance = async (poll, balancesLookup) => {
   const balances = votersHotCold.reduce((acc, addr) => {
     const snapshots = balancesLookup[addr]
     if (snapshots) {
-      const last = snapshots.find(snap => snap.timestamp <= poll.endDate)
+      const last = snapshots.find(snap => snap.timestamp <= msToSeconds(poll.endDate))
       if (last) {
         return {
           ...acc,
@@ -305,12 +497,14 @@ export const getPollData = async (poll, balancesLookup) => {
   return ret
 }
 
+// TODO - improve function naming (snapshots of acctual voting addresses)
 export const getPollsBalances = async polls => {
   const now = new Date()
   const allVoters = Array.from(
     new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
   )
-  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(now))))
+
+  const allBalances = await getVotersSnapshots(allVoters, getUnixTime(now))
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []

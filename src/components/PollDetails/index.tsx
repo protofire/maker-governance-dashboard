@@ -81,15 +81,22 @@ function PollDetails(props: Props) {
   }, [poll])
 
   useEffect(() => {
-    if (pollPerOptionCached.length === 0) getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
-
-    if (mkrDistributionCached.length === 0) getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
-  }, [poll, pollPerOptionCached.length, mkrDistributionCached.length])
+    if (!pollPerOptionCached.length) {
+      getPollPerOptionData(poll).then(data => {
+        lscache.set(`pollPerOption-${poll.id}`, data, DEFAULT_CACHE_TTL)
+        setPollPerOptionData(data)
+      })
+    }
+  }, [poll, pollPerOptionCached])
 
   useEffect(() => {
-    lscache.set(`mkrDistribution-${poll.id}`, mkrDistributionData, DEFAULT_CACHE_TTL)
-    lscache.set(`pollPerOption-${poll.id}`, pollPerOptionData, DEFAULT_CACHE_TTL)
-  }, [mkrDistributionData, pollPerOptionData, poll.id])
+    if (!mkrDistributionCached.length) {
+      getPollMakerHistogramData(poll).then(data => {
+        lscache.set(`mkrDistribution-${poll.id}`, data, DEFAULT_CACHE_TTL)
+        setMkrDistributionData(data)
+      })
+    }
+  }, [poll, mkrDistributionCached])
 
   const voteMap = {
     table: {

@@ -153,6 +153,10 @@ export interface GetPolls_polls_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface GetPolls_polls_timeLine_CreatePollAction {
@@ -198,7 +202,6 @@ export interface GetPolls_polls {
    *  Equals to: <Poll ID>
    */
   id: string
-  creator: any | null
   url: string | null
   pollId: any
   votes: GetPolls_polls_votes[] | null
@@ -689,6 +692,10 @@ export interface getVoterHistoryData_polls_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface getVoterHistoryData_polls_timeLine_CreatePollAction {
@@ -960,6 +967,10 @@ export interface getHistoryData_polls_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface getHistoryData_polls_timeLine_CreatePollAction {
@@ -1164,6 +1175,39 @@ export interface getHistoryData {
 export interface getHistoryDataVariables {
   executives: number
   polls: number
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getHomeData2
+// ====================================================
+
+export interface getHomeData2_voters {
+  __typename: 'Action'
+  id: string
+  /**
+   *  Action timestamp as seconds (time)
+   */
+  timestamp: any
+  /**
+   *  Action value (arg)
+   */
+  wad: any | null
+  /**
+   *  Action name (act)
+   */
+  type: ActionType
+}
+
+export interface getHomeData2 {
+  voters: getHomeData2_voters[]
+}
+
+export interface getHomeData2Variables {
+  voters: number
 }
 
 /* tslint:disable */
@@ -1440,6 +1484,10 @@ export interface pollsDetail_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface pollsDetail_timeLine_CreatePollAction {
@@ -1485,7 +1533,6 @@ export interface pollsDetail {
    *  Equals to: <Poll ID>
    */
   id: string
-  creator: any | null
   url: string | null
   pollId: any
   votes: pollsDetail_votes[] | null
@@ -1850,6 +1897,10 @@ export interface pollsDetailVoter_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface pollsDetailVoter_timeLine_CreatePollAction {
@@ -2096,6 +2147,10 @@ export interface pollsDetailVoting_timeLine_VotePollAction {
    *  Voter's Address
    */
   sender: any
+  /**
+   *  Selected option
+   */
+  option: any
 }
 
 export interface pollsDetailVoting_timeLine_CreatePollAction {

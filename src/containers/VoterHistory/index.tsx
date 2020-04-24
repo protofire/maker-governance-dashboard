@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import List from '../../components/List'
-import { getMakerDaoData, getPollsData } from '../../utils/makerdao'
+import { getMakerDaoData, getPollsMetaData } from '../../utils/makerdao'
 import { getPollData, getPollsBalances } from '../../utils'
 import { PageTitle, FullLoading } from '../../components/common'
 import { VoterHistoryColumns } from '../../components/List/helpers'
@@ -30,7 +30,6 @@ const descendantTimestampSort = (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
 function VoterHistory(props: Props) {
   const { match, history } = props
   const voterId = match.params.id
-  const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
   const [executives, setExecutives] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
   const [executivesMetadataLoaded, setExecutiveMetadataLoaded] = useState(false)
@@ -40,7 +39,7 @@ function VoterHistory(props: Props) {
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
-  const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
+  const historyData = useQuery(ACTIONS_QUERY, { variables: gData && getHomeVariables(gData), skip: !gData })
 
   useEffect(() => {
     if (!historyData || !historyData.data) return
@@ -92,7 +91,7 @@ function VoterHistory(props: Props) {
     async function fetchPollsData() {
       const pollsBalances = await getPollsBalances(polls)
 
-      const pollsData = await getPollsData(polls)
+      const pollsData = await getPollsMetaData(polls)
       const filteredPolls = pollsData.filter(Boolean)
       const pollsWithPlurality = await Promise.all(
         filteredPolls.map(poll => {
@@ -128,10 +127,6 @@ function VoterHistory(props: Props) {
         console.log(error)
       })
   }, [executives, executivesMetadataLoaded])
-
-  useEffect(() => {
-    if (gData) setResultVariables(getHomeVariables(gData))
-  }, [gData])
 
   if ((historyData.loading || gResult.loading) && hasParticipations) return <FullLoading />
   if (!hasParticipations) return <NoResult />

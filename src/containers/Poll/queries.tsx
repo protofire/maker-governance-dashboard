@@ -22,6 +22,7 @@ const pollsDetailFragmentPage = gql`
       ... on VotePollAction {
         sender
         option
+        timestamp
       }
       ... on CreatePollAction {
         block
