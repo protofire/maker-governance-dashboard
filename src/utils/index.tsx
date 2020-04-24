@@ -30,7 +30,7 @@ import {
   isBefore,
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
-import store from './cache'
+import store, { setCache, getCache } from './cache'
 
 export * from './mkr-registry'
 
@@ -179,7 +179,7 @@ export const getIconContainer = (Component, cb, isModalOpen = false) => (
 )
 
 export const getVotersSnapshots = async (voters, endDate) => {
-  const snapshotsCache = (await store.getItem<any>('accounts-snapshots-cache')) || {}
+  const snapshotsCache = (await getCache('accounts-snapshots-cache')) || {}
 
   const requiredVoters = voters.reduce((acc, voter) => {
     const { lastUpdate, data } = snapshotsCache[voter] || {}
@@ -208,7 +208,7 @@ export const getVotersSnapshots = async (voters, endDate) => {
   const allSnapshots = { ...snapshotsCache, ...newData }
 
   if (requiredVoters.length) {
-    await store.setItem('accounts-snapshots-cache', allSnapshots)
+    await setCache('accounts-snapshots-cache', allSnapshots)
   }
 
   // return Object.keys(snapshotsCache).map(add => snapshotsCache[add].data)
@@ -268,7 +268,7 @@ export const isPollExpired = poll => {
 
 export const getPollVotersRegistries = async poll => {
   const cacheKey = `cache-poll-${poll.id}-registies`
-  const pollRegistries = (await store.getItem<any>(cacheKey)) || {}
+  const pollRegistries = (await getCache(cacheKey)) || {}
   const endDate = msToSeconds(poll.endDate)
 
   // Expired and updated after it expired
@@ -320,7 +320,7 @@ export const getPollVotersRegistries = async poll => {
     data: Array.from(registriesById.values()),
   }
 
-  await store.setItem(cacheKey, newCacheData)
+  await setCache(cacheKey, newCacheData)
 
   return Array.from(registriesById.values())
 }
@@ -345,7 +345,7 @@ export const getStakedByPoll = async (proxies, voters, poll) => {
 
   const cacheKey = `lock-free-poll-${poll.id}`
 
-  const locksFrees = (await store.getItem<any>(cacheKey)) || {}
+  const locksFrees = (await getCache(cacheKey)) || {}
 
   // Expired and updated after it expired
   if (locksFrees && isBefore(fromUnixTime(endDate), addMinutes(fromUnixTime(locksFrees.lastUpdate), 30))) {
@@ -407,7 +407,7 @@ export const getStakedByPoll = async (proxies, voters, poll) => {
     },
   }
 
-  await store.setItem(cacheKey, newCacheData)
+  await setCache(cacheKey, newCacheData)
 
   return {
     proxies: newProxies,

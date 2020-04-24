@@ -47,6 +47,7 @@
     "react-tooltip": "^3.11.1",
     "recharts": "^1.7.1",
     "sanitize.css": "^11.0.0",
+    "save-as-file": "^0.2.0",
     "styled-components": "^4.3.2",
     "subscriptions-transport-ws": "^0.9.16",
     "typescript": "3.6.2"

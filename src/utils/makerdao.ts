@@ -1,9 +1,7 @@
 import matter from 'gray-matter'
 import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
-import lscache from 'lscache'
-import { INFINITE_CACHE_TTL } from '../constants'
-import store from './cache'
+import { setCache, getCache } from './cache'
 
 const Hash = require('ipfs-only-hash')
 
@@ -156,7 +154,7 @@ const formatYamlToJson = async data => {
 }
 
 export async function getPollsMetaData(polls) {
-  const cached = (await store.getItem<Array<any>>('polls-metadata')) || []
+  const cached = (await getCache('polls-metadata')) || []
   const cachedIds = cached.map(poll => poll.id)
   const nonCached = cachedIds ? polls.filter(poll => !cachedIds.includes(poll.id)) : []
 
@@ -189,7 +187,7 @@ export async function getPollsMetaData(polls) {
 
   const allPolls = [...updatedCached, ...pollsToAdd.filter(Boolean)]
 
-  await store.setItem('polls-metadata', allPolls)
+  await setCache('polls-metadata', allPolls)
 
   return allPolls
 }
