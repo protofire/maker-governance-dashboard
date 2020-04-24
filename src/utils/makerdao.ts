@@ -153,7 +153,7 @@ const formatYamlToJson = async data => {
   }
 }
 
-export async function getPollsMetaData(polls) {
+export async function getPollsMetaData(polls: Array<any>) {
   const cached = (await getCache('polls-metadata')) || []
   const cachedIds = cached.map(poll => poll.id)
   const nonCached = cachedIds ? polls.filter(poll => !cachedIds.includes(poll.id)) : []
@@ -183,13 +183,14 @@ export async function getPollsMetaData(polls) {
       ...cachedData,
       ...newPollData,
     }
-  }) // need to update data comming from subgraph
+  }) // need to update data coming from subgraph
 
   const allPolls = [...updatedCached, ...pollsToAdd.filter(Boolean)]
 
   await setCache('polls-metadata', allPolls)
 
-  return allPolls
+  const pollIds = polls.map(poll => poll.id)
+  return allPolls.filter(cachedPoll => pollIds.includes(cachedPoll.id))
 }
 
 export async function getMKRSupply() {
