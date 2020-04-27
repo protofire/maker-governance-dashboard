@@ -20,3 +20,4 @@ export const DEFAULT_FETCH_ROWS = 300
 //Polls list
 
 export const DEFAULT_CACHE_TTL = 30 // in minutes
+export const INFINITE_CACHE_TTL = 10 * 365 * 24 * 60 // 10 years in minutes

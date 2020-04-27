@@ -16,18 +16,13 @@ const getHomeVariables = data => {
 }
 
 function VotingHistory(props) {
-  const [resultVariables, setResultVariables] = useState(getHomeVariables({ governanceInfo: {} }))
-
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
 
-  const historyData = useQuery(ACTIONS_QUERY, { variables: resultVariables })
-
-  useEffect(() => {
-    if (gData) setResultVariables(getHomeVariables(gData))
-  }, [gData])
+  const historyData = useQuery(ACTIONS_QUERY, { variables: gData && getHomeVariables(gData), skip: !gData })
 
   if (historyData.loading || gResult.loading) return <FullLoading />
   if (historyData.error || gResult.error) return <Error />
+
   return (
     <>
       <PageTitle>Voting History</PageTitle>

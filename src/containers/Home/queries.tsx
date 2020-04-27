@@ -61,7 +61,6 @@ const executivesDetailFragment = gql`
 const pollsDetailFragment = gql`
   fragment pollsDetail on Poll {
     id
-    creator
     url
     pollId
     votes {
@@ -79,6 +78,7 @@ const pollsDetailFragment = gql`
       type: __typename
       ... on VotePollAction {
         sender
+        option
         timestamp
       }
       ... on CreatePollAction {
@@ -109,7 +109,7 @@ export const POLLS_FIRST_QUERY = gql`
 `
 const getPollsData = (pageIndex, pageSize, offset, ordering) => {
   return `
-  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}, where: { id_not_in: [0,1,2,3,6,7,8,9,11] }) {
     ...pollsDetail
   }
   `
@@ -143,10 +143,10 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
   `
 }
 
-export const HOME_DATA_QUERY = gql`
+export const HOME_DATA_QUERY = ({ pollPages, executivesPages }) => gql`
   query getHomeData($voters: Int!) {
-    ${getAllEvents(getPollsData, 'startDate')}
-    ${getAllEvents(getExecutivesData)}
+    ${getAllEvents(getExecutivesData, 'timestamp', executivesPages)}
+    ${getAllEvents(getPollsData, 'startDate', pollPages)}
     voters: actions(where: { type: VOTER }, first: $voters) {
       ...actionsDetail
     }

@@ -9,7 +9,15 @@ import {
   differenceInHours,
   isAfter,
 } from 'date-fns'
-import { shortenAccount, timeLeft, getVoterBalances, getVotersBalance, getPollData, getTimeOpened } from '../../utils'
+import {
+  shortenAccount,
+  timeLeft,
+  getVotersSnapshots,
+  getVotersBalance,
+  getPollData,
+  getTimeOpened,
+  msToSeconds,
+} from '../../utils'
 import { getVoterAddresses, getPollDataWithoutBalances } from './data'
 import { LAST_YEAR } from '../../constants'
 import { AddressNav } from '../common'
@@ -179,7 +187,7 @@ export const getPollVotersHistogramData = poll => {
 }
 
 const getAllBalances = async poll => {
-  const endPoll = fromUnixTime(poll.endDate)
+  const endPoll = fromUnixTime(msToSeconds(poll.endDate))
   const now = new Date()
   const end = isAfter(endPoll, now) ? now : endPoll
   const allVoters = Array.from(
@@ -194,7 +202,7 @@ const getAllBalances = async poll => {
     ),
   )
 
-  const allBalances = await Promise.all(allVoters.map(addr => getVoterBalances(addr, getUnixTime(end))))
+  const allBalances = await getVotersSnapshots(allVoters, getUnixTime(end))
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []

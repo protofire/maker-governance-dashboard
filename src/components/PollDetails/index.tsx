@@ -30,6 +30,7 @@ import {
   getTopVotersTableData,
 } from './helpers'
 import styled from 'styled-components'
+import LinkableComponent from '../common/LinkableComponent'
 
 const CardStyled = styled(Card)`
   height: ${props => props.theme.defaultCardHeight};
@@ -80,15 +81,22 @@ function PollDetails(props: Props) {
   }, [poll])
 
   useEffect(() => {
-    if (pollPerOptionCached.length === 0) getPollPerOptionData(poll).then(data => setPollPerOptionData(data))
-
-    if (mkrDistributionCached.length === 0) getPollMakerHistogramData(poll).then(data => setMkrDistributionData(data))
-  }, [poll, pollPerOptionCached.length, mkrDistributionCached.length])
+    if (!pollPerOptionCached.length) {
+      getPollPerOptionData(poll).then(data => {
+        lscache.set(`pollPerOption-${poll.id}`, data, DEFAULT_CACHE_TTL)
+        setPollPerOptionData(data)
+      })
+    }
+  }, [poll, pollPerOptionCached])
 
   useEffect(() => {
-    lscache.set(`mkrDistribution-${poll.id}`, mkrDistributionData, DEFAULT_CACHE_TTL)
-    lscache.set(`pollPerOption-${poll.id}`, pollPerOptionData, DEFAULT_CACHE_TTL)
-  }, [mkrDistributionData, pollPerOptionData, poll.id])
+    if (!mkrDistributionCached.length) {
+      getPollMakerHistogramData(poll).then(data => {
+        lscache.set(`mkrDistribution-${poll.id}`, data, DEFAULT_CACHE_TTL)
+        setMkrDistributionData(data)
+      })
+    }
+  }, [poll, mkrDistributionCached])
 
   const voteMap = {
     table: {
@@ -131,6 +139,8 @@ function PollDetails(props: Props) {
   }
 
   const setModal = (data: any, isChart: boolean = false): void => {
+    if (isModalOpen) return
+
     setModalOpen(true)
     setModalChart(isChart)
     setModalData(data)
@@ -250,64 +260,74 @@ function PollDetails(props: Props) {
             <NoData>Cannot fetch poll description.</NoData>
           )}
         </CardStyled>
-        <CardStyled style={{ gridArea: 'col4' }}>
-          <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
-        </CardStyled>
-        <CardStyled style={{ gridArea: 'col5' }}>
-          {pollPerOptionData.length === 0 ? (
-            <Loading />
-          ) : (
-            <PollPerOption content="Voters Per Option" isVoter component="pollPerOptionVoters" />
-          )}
-        </CardStyled>
-        <CardStyled style={{ gridArea: 'col6' }}>
-          {pollPerOptionData.length === 0 ? (
-            <Loading />
-          ) : (
-            <PollPerOption content="MKR Votes Per Option" component="pollPerOptionMkr" />
-          )}
-        </CardStyled>
+        <LinkableComponent id="VOTE_COUNT">
+          <CardStyled style={{ gridArea: 'col4' }}>
+            <VotersDistribution content="Vote Count By Option" component="votersDistribution" />
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="VOTERS_PER_OPTION">
+          <CardStyled style={{ gridArea: 'col5' }}>
+            {pollPerOptionData.length === 0 ? (
+              <Loading />
+            ) : (
+              <PollPerOption content="Voters Per Option" isVoter component="pollPerOptionVoters" />
+            )}
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="VOTES_PER_OPTION">
+          <CardStyled style={{ gridArea: 'col6' }}>
+            {pollPerOptionData.length === 0 ? (
+              <Loading />
+            ) : (
+              <PollPerOption content="MKR Votes Per Option" component="pollPerOptionMkr" />
+            )}
+          </CardStyled>
+        </LinkableComponent>
       </PollDetailContainer>
       <CenteredRowGrid>
-        <CardStyled>
-          {mkrDistributionData.length === 0 ? (
-            <Loading />
-          ) : (
-            <MakerDistribution content="MKR Count By Option" component="makerDistribution" />
-          )}
-        </CardStyled>
-        <CardStyled style={{ padding: 0 }}>
-          <StrippedTableWrapper
-            markdown
-            info={`This tile shows a leaderboard for the largest MKR holders that have voted in this poll. This is primarily a navigational tool that provides access to each address’s voting history and etherscan address. <br><br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. The total MKR held by each address voting in this poll is counted and added to this list. This MKR value is then converted into a percentage of the total MKR voting in this poll. This list is then sorted large to small and displayed.`}
-            links={[
-              {
-                title: 'MakerDAO Governance Graph',
-                uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
-              },
-              {
-                title: 'MKR Registry Graph',
-                uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
-              },
-            ]}
-            content="Top Voters"
-          >
-            <StrippedRowsContainer>
-              {Object.keys(topVoters).length === 0 ? (
-                <Loading />
-              ) : (
-                getTopVotersTableData(topVoters)
-                  .slice(0, 8)
-                  .map(el => (
-                    <StrippedTableRow key={el.key}>
-                      <StrippedTableCell>{el.supports}%</StrippedTableCell>
-                      <StrippedTableCell>{el.sender}</StrippedTableCell>
-                    </StrippedTableRow>
-                  ))
-              )}
-            </StrippedRowsContainer>
-          </StrippedTableWrapper>
-        </CardStyled>
+        <LinkableComponent id="MKR_COUNT">
+          <CardStyled>
+            {mkrDistributionData.length === 0 ? (
+              <Loading />
+            ) : (
+              <MakerDistribution content="MKR Count By Option" component="makerDistribution" />
+            )}
+          </CardStyled>
+        </LinkableComponent>
+        <LinkableComponent id="TOP_VOTERS">
+          <CardStyled style={{ padding: 0 }}>
+            <StrippedTableWrapper
+              markdown
+              info={`This tile shows a leaderboard for the largest MKR holders that have voted in this poll. This is primarily a navigational tool that provides access to each address’s voting history and etherscan address. <br><br> This metric is generated using the Voted event emitted by the PollingEmitter governance contract. The total MKR held by each address voting in this poll is counted and added to this list. This MKR value is then converted into a percentage of the total MKR voting in this poll. This list is then sorted large to small and displayed.`}
+              links={[
+                {
+                  title: 'MakerDAO Governance Graph',
+                  uri: 'https://thegraph.com/explorer/subgraph/protofire/makerdao-governance?query=Polls',
+                },
+                {
+                  title: 'MKR Registry Graph',
+                  uri: 'https://thegraph.com/explorer/subgraph/protofire/mkr-registry?query=Account%20balances',
+                },
+              ]}
+              content="Top Voters"
+            >
+              <StrippedRowsContainer>
+                {Object.keys(topVoters).length === 0 ? (
+                  <Loading />
+                ) : (
+                  getTopVotersTableData(topVoters)
+                    .slice(0, 8)
+                    .map(el => (
+                      <StrippedTableRow key={el.key}>
+                        <StrippedTableCell>{el.supports}%</StrippedTableCell>
+                        <StrippedTableCell>{el.sender}</StrippedTableCell>
+                      </StrippedTableRow>
+                    ))
+                )}
+              </StrippedRowsContainer>
+            </StrippedTableWrapper>
+          </CardStyled>
+        </LinkableComponent>
       </CenteredRowGrid>
 
       {isModalOpen && (
