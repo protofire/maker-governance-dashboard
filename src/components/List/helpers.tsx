@@ -267,7 +267,10 @@ export const VoterHistoryColumns = () => {
       id: 'date',
       separator: true,
       disableFilters: true,
-      sortType: 'datetime',
+      accessor: 'lastParticipation.timestamp',
+      sortType: (a, b) => {
+        return a.original.lastParticipation.timestamp - b.original.lastParticipation.timestamp
+      },
       Cell: ({ row }) => {
         if (!row.original.lastParticipation) {
           return <Loading />
