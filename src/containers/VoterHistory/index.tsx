@@ -26,6 +26,7 @@ const getHomeVariables = data => {
 }
 
 const descendantTimestampSort = (a, b) => (a.timestamp > b.timestamp ? 1 : -1)
+const defaultSort = [{ desc: true, id: 'date' }]
 
 function VoterHistory(props: Props) {
   const { match, history } = props
@@ -134,7 +135,7 @@ function VoterHistory(props: Props) {
   return (
     <>
       <PageTitle>{`Voter History - ${voterId}`}</PageTitle>
-      <List handleRow={getItem} data={[...executives, ...polls]} columns={historyColumns} />
+      <List handleRow={getItem} data={[...executives, ...polls]} columns={historyColumns} sortBy={defaultSort} />
     </>
   )
 }
