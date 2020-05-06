@@ -266,6 +266,7 @@ export const getPollMakerHistogramData = async poll => {
   return Promise.all(
     votersPerPeriod.map(async period => {
       const manualPoll = {
+        id: poll.id,
         endDate: period.endDate,
         votes: poll.options.flatMap(pop =>
           Array.from(period[pop]).map(voter => ({ option: poll.options.indexOf(pop) + 1, voter })),
