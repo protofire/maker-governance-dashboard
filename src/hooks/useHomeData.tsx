@@ -5,7 +5,7 @@ import store from '../utils/cache'
 import { addMinutes, isBefore } from 'date-fns'
 import { mergeEventPages } from '../utils'
 
-const REACT_APP_HOME_DATA_TTL = Number(process.env.REACT_APP_LAST_CACHE_UPDATE) || 5
+const REACT_APP_HOME_DATA_TTL = Number(process.env.REACT_APP_HOME_DATA_TTL) || 5
 
 const getHomeVariables = data => {
   const governance = data.governanceInfo
