@@ -225,6 +225,7 @@ export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
   const pollOptions = ['Abstein', ...poll.options]
+
   const options = pollOptions.reduce((acc, el) => {
     return {
       ...acc,
@@ -254,7 +255,9 @@ export const getPollMakerHistogramData = async poll => {
         options[option] = new Set([...Array.from(options[option])]).add(el.sender)
         voters[el.sender] = option
 
-        if (prevVote) options[prevVote] = options[prevVote].delete(el.sender)
+        if (prevVote) {
+          options[prevVote].delete(el.sender)
+        }
       }
     })
     return {
