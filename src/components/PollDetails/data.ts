@@ -37,7 +37,7 @@ export const getPollDataWithoutBalances = async poll => {
 
   const hotCold = Array.from(new Set(voteRegistries.flatMap((el: any) => [el.coldAddress, el.hotAddress])))
   const votersHotCold = Array.from(new Set([...votersAddresses, ...hotCold]))
-  const balances = getBalanceByAccount(await getVotersSnapshots(votersHotCold, msToSeconds(poll.endDate)))
+  const balances = getBalanceByAccount(await getVotersSnapshots(votersHotCold), msToSeconds(poll.endDate))
 
   const stakedVotersAndBalances = votersHotCold.reduce((acc, key) => {
     const staked = stakedVoters[key] || ZERO
@@ -90,9 +90,9 @@ export const getPollDataWithoutBalances = async poll => {
   return ret
 }
 
-const getBalanceByAccount = balances => {
+const getBalanceByAccount = (balances, endDate) => {
   return balances.reduce((acc, accountSnapshots) => {
-    const lastSnapshot = accountSnapshots[0]
+    const lastSnapshot = accountSnapshots.find(snapshot => snapshot.timestamp <= endDate)
 
     if (lastSnapshot) {
       return {

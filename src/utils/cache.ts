@@ -18,6 +18,25 @@ myWindow.exportCache = async () => {
   saveFile(file, fileName)
 }
 
+myWindow.exportCacheByKey = async key => {
+  let cache = await getCache(key)
+
+  const fileName = `maker-governace-${key}-${(Date.now() / 1000).toFixed(0)}.json`
+  const file = new File([JSON.stringify(cache)], fileName, { type: 'application/json' })
+  saveFile(file, fileName)
+}
+
+myWindow.exportCacheByMultipleKey = async (keys: Array<any>) => {
+  let cache = {}
+  await store.iterate(function(value, key) {
+    if (keys.includes(key)) cache[key] = value
+  })
+
+  const fileName = `maker-governace-multiple-${(Date.now() / 1000).toFixed(0)}.json`
+  const file = new File([JSON.stringify(cache)], fileName, { type: 'application/json' })
+  saveFile(file, fileName)
+}
+
 export const getCache = (key: string) => store.getItem<any>(key)
 
 export const setCache = async (key: string, data: any) => {

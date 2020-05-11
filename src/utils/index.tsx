@@ -178,14 +178,15 @@ export const getIconContainer = (Component, cb, isModalOpen = false) => (
   <IconContainer onClick={cb}>{isModalOpen ? <CloseIcon /> : <Component />}</IconContainer>
 )
 
-export const getVotersSnapshots = async (voters, endDate) => {
+export const getVotersSnapshots = async voters => {
+  const endDate = getUnixTime(new Date())
   const snapshotsCache = (await getCache('accounts-snapshots-cache')) || {}
 
   const requiredVoters = voters.reduce((acc, voter) => {
     const { lastUpdate, data } = snapshotsCache[voter] || {}
     // Do not update for 1/2 hour
     if (!lastUpdate || getUnixTime(addMinutes(fromUnixTime(lastUpdate), 30)) < endDate) {
-      return [...acc, { voter, fromDate: lastUpdate, endDate }]
+      return [...acc, { voter, endDate }]
     }
 
     return acc
@@ -195,12 +196,11 @@ export const getVotersSnapshots = async (voters, endDate) => {
     requiredVoters.map(required => Promise.all([required.voter, getVoterBalancesFrom(required)])),
   )
   const newData = requiredBalances.reduce((acc: any, [voter, snapshots]: Array<any>) => {
-    const { data } = snapshotsCache[voter] || {}
     return {
       ...acc,
       [voter]: {
         lastUpdate: endDate,
-        data: [...snapshots, ...(data ? data : [])], // this order matters since it's expected to ordered by timestamp desc
+        data: snapshots,
       },
     }
   }, {})
@@ -504,7 +504,7 @@ export const getPollsBalances = async polls => {
     new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
   )
 
-  const allBalances = await getVotersSnapshots(allVoters, getUnixTime(now))
+  const allBalances = await getVotersSnapshots(allVoters)
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []
