@@ -202,7 +202,7 @@ const getAllBalances = async poll => {
     ),
   )
 
-  const allBalances = await getVotersSnapshots(allVoters, getUnixTime(end))
+  const allBalances = await getVotersSnapshots(allVoters)
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []
