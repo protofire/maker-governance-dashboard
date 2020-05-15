@@ -202,7 +202,7 @@ const getAllBalances = async poll => {
     ),
   )
 
-  const allBalances = await getVotersSnapshots(allVoters, getUnixTime(end))
+  const allBalances = await getVotersSnapshots(allVoters)
   return allBalances.flat().reduce((lookup, snapshot: any) => {
     const account = snapshot.account.address
     const balances = lookup[account] || []
@@ -225,6 +225,7 @@ export const getPollMakerHistogramData = async poll => {
   const periods = getPollPeriods(poll)
 
   const pollOptions = ['Abstein', ...poll.options]
+
   const options = pollOptions.reduce((acc, el) => {
     return {
       ...acc,
@@ -254,7 +255,9 @@ export const getPollMakerHistogramData = async poll => {
         options[option] = new Set([...Array.from(options[option])]).add(el.sender)
         voters[el.sender] = option
 
-        if (prevVote) options[prevVote] = options[prevVote].delete(el.sender)
+        if (prevVote) {
+          options[prevVote].delete(el.sender)
+        }
       }
     })
     return {
@@ -266,6 +269,7 @@ export const getPollMakerHistogramData = async poll => {
   return Promise.all(
     votersPerPeriod.map(async period => {
       const manualPoll = {
+        id: poll.id,
         endDate: period.endDate,
         votes: poll.options.flatMap(pop =>
           Array.from(period[pop]).map(voter => ({ option: poll.options.indexOf(pop) + 1, voter })),
