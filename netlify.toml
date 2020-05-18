@@ -3,6 +3,11 @@
   command = "npm run build"
 
 [[redirects]]
+  from = "/api/v1"
+  to = "https://gov-db.makerfoundation.com/api/v1"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -11,6 +16,7 @@
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
   REACT_APP_HOME_DATA_TTL='5' # IN MINUTES
@@ -19,6 +25,7 @@
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
   REACT_APP_HOME_DATA_TTL='5' # IN MINUTES
@@ -27,6 +34,7 @@
   REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
   REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1587733935'
   REACT_APP_HOME_DATA_TTL='5' # IN MINUTES
