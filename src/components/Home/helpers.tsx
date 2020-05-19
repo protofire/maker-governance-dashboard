@@ -74,7 +74,23 @@ export const getRecentPolls = polls => polls.sort((a, b) => Number(b.startDate) 
 export const getStakedMkrData = (data: any, time: string) => {
   const periods = periodsMap[time]()
   const mkrEvents = [data.mint, data.burn]
-  const votingEvents = [data.lock, data.vote, data.free]
+
+  // Some LOCK/FREE events occurs in the same block/timestamp that VOTE, when need LOCK/FREE before VOTE
+  const votingEvents = [data.lock, data.free, data.vote].flat().sort((a, b) => {
+    if (a.timestamp > b.timestamp) {
+      return 1
+    }
+
+    if (a.timestamp < b.timestamp) {
+      return -1
+    }
+
+    if (a.type === 'LOCK' || (a.type === 'FREE' && b.type)) {
+      return -1
+    }
+
+    return 1
+  })
 
   // Calculate total MKR supply before first period
   let totalSupply = calculateMkrSupply(
@@ -83,7 +99,7 @@ export const getStakedMkrData = (data: any, time: string) => {
 
   // Calculate total MKR staked/voting before first period
   let { totalStaked, totalVoting, voters } = calculateVotingMkr(
-    votingEvents.map(events => events.filter(({ timestamp }) => timestamp < periods[0].from)),
+    votingEvents.filter(({ timestamp }) => timestamp < periods[0].from),
   )
 
   return periods.map(period => {
@@ -95,7 +111,7 @@ export const getStakedMkrData = (data: any, time: string) => {
 
     // Calculate total MKR staked/voting in the period
     ;({ totalStaked, totalVoting, voters } = calculateVotingMkr(
-      votingEvents.map(events => events.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to)),
+      votingEvents.filter(({ timestamp }) => timestamp > period.from && timestamp <= period.to),
       { totalStaked, totalVoting, voters },
     ))
 
@@ -124,41 +140,59 @@ function calculateVotingMkr(
   votingEvents: any[],
   previousValue = { totalStaked: new BigNumber(0), totalVoting: new BigNumber(0), voters: {} },
 ): { totalStaked: BigNumber; totalVoting: BigNumber; voters: { [addr: string]: BigNumber } } {
-  return votingEvents
-    .reduce((all, events) => [...all, ...events], [])
-    .sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
-    .reduce(({ totalStaked, totalVoting, voters }, { type, wad, sender, yays }) => {
-      const stake = voters[sender] || new BigNumber(0)
+  return votingEvents.reduce(({ totalStaked, totalVoting, voters }, { type, wad, sender, yays }) => {
+    const stake = voters[sender] || new BigNumber(0)
 
-      if (type === 'LOCK') {
-        return {
-          totalStaked: totalStaked.plus(wad),
-          totalVoting: stake.isZero() ? totalVoting : totalVoting.plus(wad),
-          voters: stake.isZero() ? voters : { ...voters, [sender]: stake.plus(wad) },
-        }
-      } else if (type === 'VOTE') {
-        return {
-          totalStaked,
-          totalVoting: stake.isZero()
-            ? yays.length === 0
-              ? totalVoting.minus(wad)
-              : totalVoting.plus(wad)
-            : totalVoting,
-          voters: { ...voters, [sender]: yays.length ? BigNumber.max(new BigNumber(0), stake, wad) : new BigNumber(0) },
-        }
-      } else if (type === 'FREE') {
-        return {
-          totalStaked: totalStaked.minus(wad),
-          totalVoting: stake.isZero() ? totalVoting : totalVoting.minus(wad),
-          voters: stake.isZero() ? voters : { ...voters, [sender]: stake.minus(wad) },
-        }
-      }
+    if (type === 'LOCK') {
+      const tS = totalStaked.plus(wad)
+      const tV = stake.isZero() ? totalVoting : totalVoting.plus(wad)
+      const vs = { ...voters, [sender]: !stake.isZero() ? stake.plus(wad) : new BigNumber(0) }
+
       return {
-        totalStaked: 0,
-        totalVoting: 0,
-        voters: 0,
+        totalStaked: totalStaked.plus(wad),
+        totalVoting: stake.isZero() ? totalVoting : totalVoting.plus(wad),
+        voters: stake.isZero() ? voters : { ...voters, [sender]: stake.plus(wad) },
       }
-    }, previousValue)
+    } else if (type === 'VOTE') {
+      let newTotalVoting = totalVoting
+
+      // first time voting or voting for something again after removing its vote
+      if (stake.isZero()) {
+        // but it does has to be voting something
+        if (yays.length !== 0) {
+          newTotalVoting = totalVoting.plus(wad)
+        }
+      }
+
+      // already voting
+      if (!stake.isZero()) {
+        // voting for somthing else
+        if (yays.length !== 0) {
+          newTotalVoting = totalVoting
+        } else {
+          // removing its vote
+          newTotalVoting = totalVoting.minus(stake)
+        }
+      }
+
+      return {
+        totalStaked: totalStaked,
+        totalVoting: newTotalVoting,
+        voters: { ...voters, [sender]: yays.length ? new BigNumber(wad) : new BigNumber(0) },
+      }
+    } else if (type === 'FREE') {
+      return {
+        totalStaked: totalStaked.minus(wad),
+        totalVoting: stake.isZero() ? totalVoting : totalVoting.minus(wad),
+        voters: stake.isZero() ? voters : { ...voters, [sender]: stake.minus(wad) },
+      }
+    }
+    return {
+      totalStaked,
+      totalVoting,
+      voters,
+    }
+  }, previousValue)
 }
 
 export const getVotersVsMkrData = (data: Array<any>, mkrLockFree: Array<any>, time: string): Array<any> => {
