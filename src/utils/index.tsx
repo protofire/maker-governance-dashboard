@@ -60,15 +60,13 @@ export const timeLeft = (end): string => {
   const minsDiff = differenceInMinutes(end_date, today)
   const hoursDiff = differenceInHours(end_date, today)
   const daysDiff = differenceInDays(end_date, today)
-  const weeksDiff = differenceInWeeks(end_date, today)
   const monthsDiff = differenceInMonths(end_date, today)
   const yearsDiff = differenceInYears(end_date, today)
 
-  if (yearsDiff > 0) return yearsDiff === 1 ? `${yearsDiff} year` : `${yearsDiff} year`
+  if (yearsDiff > 0) return yearsDiff === 1 ? `${yearsDiff} year` : `${yearsDiff} years`
   if (monthsDiff > 0) return monthsDiff === 1 ? `${monthsDiff} month` : `${monthsDiff} months`
-  if (weeksDiff > 0) return weeksDiff === 1 ? `${daysDiff} week` : `${daysDiff} week`
   if (daysDiff > 0) return daysDiff === 1 ? `${daysDiff} day` : `${daysDiff} days`
-  if (hoursDiff > 0) return hoursDiff === 1 ? `${daysDiff} hour` : `${hoursDiff} hours`
+  if (hoursDiff > 0) return hoursDiff === 1 ? `${hoursDiff} hour` : `${hoursDiff} hours`
   return minsDiff === 1 ? `${minsDiff} minute` : `${minsDiff} minutes`
 }
 
