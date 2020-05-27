@@ -85,7 +85,7 @@ export const getStakedMkrData = (data: any, time: string) => {
       return -1
     }
 
-    if (a.type === 'LOCK' || (a.type === 'FREE' && b.type)) {
+    if (a.type === 'LOCK' || a.type === 'FREE') {
       return -1
     }
 
@@ -144,10 +144,6 @@ function calculateVotingMkr(
     const stake = voters[sender] || new BigNumber(0)
 
     if (type === 'LOCK') {
-      const tS = totalStaked.plus(wad)
-      const tV = stake.isZero() ? totalVoting : totalVoting.plus(wad)
-      const vs = { ...voters, [sender]: !stake.isZero() ? stake.plus(wad) : new BigNumber(0) }
-
       return {
         totalStaked: totalStaked.plus(wad),
         totalVoting: stake.isZero() ? totalVoting : totalVoting.plus(wad),
@@ -176,7 +172,7 @@ function calculateVotingMkr(
       }
 
       return {
-        totalStaked: totalStaked,
+        totalStaked,
         totalVoting: newTotalVoting,
         voters: { ...voters, [sender]: yays.length ? new BigNumber(wad) : new BigNumber(0) },
       }
