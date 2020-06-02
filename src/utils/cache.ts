@@ -13,7 +13,7 @@ myWindow.exportCache = async () => {
     cache[key] = value
   })
 
-  const fileName = `maker-governace-${(Date.now() / 1000).toFixed(0)}.json`
+  const fileName = `maker-governance-${(Date.now() / 1000).toFixed(0)}.json`
   const file = new File([JSON.stringify(cache)], fileName, { type: 'application/json' })
   saveFile(file, fileName)
 }
@@ -21,7 +21,7 @@ myWindow.exportCache = async () => {
 myWindow.exportCacheByKey = async key => {
   let cache = await getCache(key)
 
-  const fileName = `maker-governace-${key}-${(Date.now() / 1000).toFixed(0)}.json`
+  const fileName = `maker-governance-${key}-${(Date.now() / 1000).toFixed(0)}.json`
   const file = new File([JSON.stringify(cache)], fileName, { type: 'application/json' })
   saveFile(file, fileName)
 }
@@ -32,7 +32,7 @@ myWindow.exportCacheByMultipleKey = async (keys: Array<any>) => {
     if (keys.includes(key)) cache[key] = value
   })
 
-  const fileName = `maker-governace-multiple-${(Date.now() / 1000).toFixed(0)}.json`
+  const fileName = `maker-governance-multiple-${(Date.now() / 1000).toFixed(0)}.json`
   const file = new File([JSON.stringify(cache)], fileName, { type: 'application/json' })
   saveFile(file, fileName)
 }

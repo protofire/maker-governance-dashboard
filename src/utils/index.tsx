@@ -213,16 +213,15 @@ export const getVotersSnapshots = async voters => {
   return Object.keys(allSnapshots).map(add => allSnapshots[add].data)
 }
 
-export const getVoterBalancesFrom = async ({ voter, fromDate = 0, endDate }) => {
+export const getVoterBalancesFrom = async ({ voter, endDate }) => {
   // Query
   const query = `
-    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $fromDate: BigInt!, $skip: Int = 0 ) {
+    query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $skip: Int = 0 ) {
       accountBalanceSnapshots(
         first: 1000,
         skip: $skip,
         where:{
           account: $voter,
-          timestamp_gt: $fromDate
           timestamp_lte: $endDate
         },
         orderBy: timestamp, orderDirection: desc
@@ -242,7 +241,6 @@ export const getVoterBalancesFrom = async ({ voter, fromDate = 0, endDate }) => 
   while (more) {
     const partial: any = await fetchQuery(MKR_API_URI, query, {
       voter,
-      fromDate,
       endDate,
       skip,
     })
@@ -354,26 +352,26 @@ export const getStakedByPoll = async (proxies, voters, poll) => {
   }
 
   const query = `
-    query getStakedByPoll( $proxies: [Bytes!]!, $voters: [Bytes!]!, $fromDate: BigInt!, $endDate: BigInt! ) {
-      lock_proxies: actions(first: 1000, where: {type: LOCK, sender_in: $proxies, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+    query getStakedByPoll( $proxies: [Bytes!]!, $voters: [Bytes!]!, $endDate: BigInt! ) {
+      lock_proxies: actions(first: 1000, where: {type: LOCK, sender_in: $proxies, timestamp_lte: $endDate}) {
         sender
         type
         wad
         timestamp
       }
-      free_proxies: actions(first: 1000, where: {type: FREE, sender_in: $proxies, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+      free_proxies: actions(first: 1000, where: {type: FREE, sender_in: $proxies, timestamp_lte: $endDate}) {
         sender
         type
         wad
         timestamp
       }
-      lock_voters: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+      lock_voters: actions(first: 1000, where: {type: LOCK, sender_in: $voters, timestamp_lte: $endDate}) {
         sender
         type
         wad
         timestamp
       }
-      free_voters: actions(first: 1000, where: {type: FREE, sender_in: $voters, timestamp_gt: $fromDate, timestamp_lte: $endDate}) {
+      free_voters: actions(first: 1000, where: {type: FREE, sender_in: $voters, timestamp_lte: $endDate}) {
         sender
         type
         wad
@@ -384,18 +382,11 @@ export const getStakedByPoll = async (proxies, voters, poll) => {
   const result: any = await fetchQuery(GOVERNANCE_API_URI, query, {
     proxies,
     voters,
-    fromDate: locksFrees.lastUpdate || 0,
     endDate,
   })
 
-  const newProxies =
-    locksFrees && locksFrees.data && locksFrees.data.proxies
-      ? [...locksFrees.data.proxies, ...result.lock_proxies, ...result.free_proxies]
-      : [...result.lock_proxies, ...result.free_proxies]
-  const newVoters =
-    locksFrees && locksFrees.data && locksFrees.data.voters
-      ? [...locksFrees.data.voters, ...result.lock_voters, ...result.free_voters]
-      : [...result.lock_voters, ...result.free_voters]
+  const newProxies = [...result.lock_proxies, ...result.free_proxies]
+  const newVoters = [...result.lock_voters, ...result.free_voters]
 
   const newCacheData = {
     lastUpdate: endDate,
