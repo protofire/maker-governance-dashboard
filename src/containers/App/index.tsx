@@ -33,14 +33,20 @@ const items = [
 ]
 
 const LAST_CACHE_UPDATE = process.env.REACT_APP_LAST_CACHE_UPDATE || 0
+const CACHE_FORCE_UPDATE = process.env.REACT_APP_CACHE_FORCE_UPDATE || 0
 
 function App() {
   const [cacheInitialized, setCacheInitialized] = useState(false)
   const { data, ...result } = useQuery(GOVERNANCE_INFO_QUERY)
 
   useEffect(() => {
-    store.getItem<any>('last-update').then(value => {
-      if (!value || isBefore(fromUnixTime(value), fromUnixTime(Number(LAST_CACHE_UPDATE)))) {
+    Promise.all([store.getItem<any>('last-update'), store.getItem<any>('forced-update')]).then(([last, forced]) => {
+      if (
+        !last ||
+        isBefore(fromUnixTime(last), fromUnixTime(Number(LAST_CACHE_UPDATE))) ||
+        !forced ||
+        isBefore(fromUnixTime(forced), fromUnixTime(Number(CACHE_FORCE_UPDATE)))
+      ) {
         import(`../../data/maker-governance-${LAST_CACHE_UPDATE}.json`).then(data => {
           Promise.all(
             Object.keys(data.default).map(key => {
@@ -48,6 +54,7 @@ function App() {
             }),
           ).then(() => {
             store.setItem('last-update', (Date.now() / 1000).toFixed(0))
+            store.setItem('forced-update', (Date.now() / 1000).toFixed(0))
             setCacheInitialized(true)
           })
         })
