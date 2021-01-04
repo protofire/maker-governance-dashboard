@@ -7,18 +7,12 @@ import { mergeEventPages } from '../utils'
 
 const REACT_APP_HOME_DATA_TTL = Number(process.env.REACT_APP_HOME_DATA_TTL) || 5
 
-const getHomeVariables = data => {
-  const governance = data.governanceInfo
-  return {
-    voters: Number(governance.countProxies) + Number(governance.countAddresses) || 1000,
-  }
-}
-
 const getPages = gData => {
   if (!gData) {
     return {
       pollPages: 2,
       executivesPages: 2,
+      votersPages: 1,
     }
   }
 
@@ -26,6 +20,7 @@ const getPages = gData => {
   return {
     pollPages: Math.ceil(Number(governanceInfo.countPolls) / 1000),
     executivesPages: Math.ceil(Number(governanceInfo.countSpells) / 1000),
+    votersPages: Math.ceil((Number(governanceInfo.countProxies) + Number(governanceInfo.countAddresses)) / 1000),
   }
 }
 
@@ -34,7 +29,6 @@ export function useHomeData(governanceInfo: Maybe<any>): any {
   const [results, setResults] = useState<Maybe<null>>(null)
   const [loading, setLoading] = useState(true)
   const { data, error } = useQuery(HOME_DATA_QUERY(getPages(governanceInfo)), {
-    variables: governanceInfo && getHomeVariables(governanceInfo),
     skip: skipQuery,
   })
 
