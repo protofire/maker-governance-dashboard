@@ -22,7 +22,6 @@ import {
   differenceInMinutes,
   differenceInHours,
   differenceInDays,
-  differenceInWeeks,
   differenceInMonths,
   differenceInYears,
   addHours,
@@ -30,7 +29,7 @@ import {
   isBefore,
 } from 'date-fns'
 import { LAST_YEAR, LAST_MONTH, LAST_WEEK, LAST_DAY } from '../constants'
-import store, { setCache, getCache } from './cache'
+import { setCache, getCache } from './cache'
 
 export * from './mkr-registry'
 
@@ -181,7 +180,7 @@ export const getVotersSnapshots = async voters => {
   const snapshotsCache = (await getCache('accounts-snapshots-cache')) || {}
 
   const requiredVoters = voters.reduce((acc, voter) => {
-    const { lastUpdate, data } = snapshotsCache[voter] || {}
+    const { lastUpdate } = snapshotsCache[voter] || {}
     // Do not update for 1/2 hour
     if (!lastUpdate || getUnixTime(addMinutes(fromUnixTime(lastUpdate), 30)) < endDate) {
       return [...acc, { voter, endDate }]
@@ -488,7 +487,6 @@ export const getPollData = async (poll, balancesLookup) => {
 
 // TODO - improve function naming (snapshots of acctual voting addresses)
 export const getPollsBalances = async polls => {
-  const now = new Date()
   const allVoters = Array.from(
     new Set(polls.flatMap(poll => poll.votes.reduce((voters, v) => [...voters, v.voter], []))),
   )

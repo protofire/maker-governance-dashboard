@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import HomeDetail from '../../components/Home/HomeDetail'
 
-import { DEFAULT_FETCH_ROWS } from '../../constants'
 import { FullLoading } from '../../components/common'
 import { useQuery } from '@apollo/react-hooks'
 import { GOVERNANCE_INFO_QUERY } from './queries'
@@ -10,28 +9,6 @@ import { getMKRSupply } from '../../utils/makerdao'
 import useAsyncMemo from '../../hooks/useAsyncMemo'
 import useHomeData from '../../hooks/useHomeData'
 import BigNumber from 'bignumber.js'
-
-const getHomeVariables = data => {
-  const governance = data.governanceInfo
-  return {
-    voters: Number(governance.countProxies) + Number(governance.countAddresses) || DEFAULT_FETCH_ROWS,
-  }
-}
-
-const getPages = gData => {
-  if (!gData) {
-    return {
-      pollPages: 2,
-      executivesPages: 2,
-    }
-  }
-
-  const { governanceInfo } = gData
-  return {
-    pollPages: Math.ceil(Number(governanceInfo.countPolls) / 1000),
-    executivesPages: Math.ceil(Number(governanceInfo.countSpells) / 1000),
-  }
-}
 
 const Error = () => <div>ERROR: There was an error trying to fetch the data.</div>
 
@@ -65,7 +42,7 @@ function MakerGovernanceInfo() {
     return <FullLoading />
   }
 
-  if (error || gResult.error) {
+  if (error || gResult.error || mkrError) {
     return <Error />
   }
 

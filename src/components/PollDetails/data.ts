@@ -1,11 +1,5 @@
-import { request } from 'graphql-request'
 import { BigNumber } from 'bignumber.js'
 import { getPollVotersRegistries, getStakedByPoll, stakedByAddress, msToSeconds, getVotersSnapshots } from '../../utils'
-
-const GOVERNANCE_API_URI = process.env.REACT_APP_GRAPH_HTTP
-const MKR_API_URI = process.env.REACT_APP_MKR_GRAPH_HTTP
-
-const fetchQuery = (url, query, variables) => request(url, query, variables)
 
 export const getPollVotersPerOption = poll => {
   return poll.votes.reduce((acum, el) => {
