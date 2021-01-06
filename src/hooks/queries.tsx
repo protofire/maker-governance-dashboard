@@ -109,17 +109,25 @@ export const POLLS_FIRST_QUERY = gql`
 `
 const getPollsData = (pageIndex, pageSize, offset, ordering) => {
   return `
-  polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}, where: { id_not_in: [0,1,2,3,6,7,8,9,11] }) {
-    ...pollsDetail
-  }
+    polls_${pageIndex}: polls(first: ${pageSize}, skip: ${offset}, ${ordering}, where: { id_not_in: [0,1,2,3,6,7,8,9,11] }) {
+      ...pollsDetail
+    }
   `
 }
 
 const getExecutivesData = (pageIndex, pageSize, offset, ordering) => {
   return `
-  executives_${pageIndex}: spells(first: ${pageSize}, skip: ${offset}, ${ordering}) {
-    ...executivesDetailHome
-  }
+    executives_${pageIndex}: spells(first: ${pageSize}, skip: ${offset}, ${ordering}) {
+      ...executivesDetailHome
+    }
+  `
+}
+
+const getVotersData = (pageIndex, pageSize, offset, ordering) => {
+  return `
+    voters_${pageIndex}: actions(where: { type: VOTER }, first: ${pageSize}, skip: ${offset}, ${ordering}) {
+      ...actionsDetail
+    }
   `
 }
 
@@ -143,27 +151,11 @@ const getHomeData = (pageIndex, pageSize, offset, ordering) => {
   `
 }
 
-export const HOME_DATA_QUERY2 = gql`
-  query getHomeData2($voters: Int!) {
-    ${getAllEvents(getPollsData, 'startDate')}
-    ${getAllEvents(getExecutivesData)}
-    voters: actions(where: { type: VOTER }, first: $voters) {
-      ...actionsDetail
-    }
-    ${getAllEvents(getHomeData)}
-  }
-  ${pollsDetailFragment}
-  ${executivesDetailFragment}
-  ${actionsDetailFragment}
-`
-
-export const HOME_DATA_QUERY = ({ pollPages, executivesPages }) => gql`
-  query getHomeData($voters: Int!) {
+export const HOME_DATA_QUERY = ({ pollPages, executivesPages, votersPages }) => gql`
+  query getHomeData {
     ${getAllEvents(getExecutivesData, 'timestamp', executivesPages)}
     ${getAllEvents(getPollsData, 'startDate', pollPages)}
-    voters: actions(where: { type: VOTER }, first: $voters) {
-      ...actionsDetail
-    }
+    ${getAllEvents(getVotersData, 'timestamp', votersPages)}
     ${getAllEvents(getHomeData)}
   }
   ${pollsDetailFragment}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PageTitle, FullLoading } from '../../components/common'
 import { DEFAULT_FETCH_ROWS } from '../../constants'
