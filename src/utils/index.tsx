@@ -217,7 +217,7 @@ export const getVoterBalancesFrom = async ({ voter, endDate }) => {
   const query = `
     query getAccountBalances($voter: Bytes!, $endDate: BigInt!, $skip: Int = 0 ) {
       accountBalanceSnapshots(
-        first: 1000,
+        first: 500,
         skip: $skip,
         where:{
           account: $voter,
@@ -243,10 +243,9 @@ export const getVoterBalancesFrom = async ({ voter, endDate }) => {
       endDate,
       skip,
     })
-
     result = result.concat(partial.accountBalanceSnapshots)
-    more = !(partial.accountBalanceSnapshots.length < 1000)
-    skip += 1000
+    more = !(partial.accountBalanceSnapshots.length < 500) && skip < 5000
+    skip += 500
   }
 
   return result
@@ -537,7 +536,7 @@ export const mergeEventPages = (data: object) => {
 // Since TG returns a maximum of 1000 results per collection then it's necessary to paginate to get all events
 // Note: the max number of events per type supported with this configuration is 10000. Increase pageCount parameter
 // if we need to support more that that value.
-export const getAllEvents = (getQuery, orderBy = 'timestamp', pageCount = 10, pageSize = 1000) => {
+export const getAllEvents = (getQuery, orderBy = 'timestamp', pageCount = 4, pageSize = 1000) => {
   const pages = Array.from(Array(pageCount).keys()).reverse()
 
   const ordering = `orderBy: ${orderBy}, orderDirection: desc`
