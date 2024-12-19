@@ -2,7 +2,6 @@ import matter from 'gray-matter'
 import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
 import { setCache, getCache } from './cache'
-import { getPollDates } from './mkr-gov-db'
 
 const Hash = require('ipfs-only-hash')
 
