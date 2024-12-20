@@ -13,9 +13,9 @@
   status = 200
 
 [context.production.environment]
-  REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GRAPH_HTTP = "https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_GRAPH_WS = "wss://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_MKR_GRAPH_HTTP='https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/7aLegv47P5Y1EGYduQwmqVznXMy7HchJPkRM1rrzPrKV'
   REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1591122639'
@@ -23,9 +23,9 @@
   REACT_APP_HOME_DATA_TTL='5'
 
 [context.branch-deploy.environment]
-  REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GRAPH_HTTP = "https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_GRAPH_WS = "wss://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_MKR_GRAPH_HTTP='https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/7aLegv47P5Y1EGYduQwmqVznXMy7HchJPkRM1rrzPrKV'
   REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1591122639'
@@ -33,9 +33,9 @@
   REACT_APP_HOME_DATA_TTL='5'
 
 [context.deploy-preview.environment]
-  REACT_APP_GRAPH_HTTP = "https://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_GRAPH_WS = "wss://api.thegraph.com/subgraphs/name/protofire/makerdao-governance"
-  REACT_APP_MKR_GRAPH_HTTP='https://api.thegraph.com/subgraphs/name/protofire/mkr-registry'
+  REACT_APP_GRAPH_HTTP = "https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_GRAPH_WS = "wss://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/CcR73ZB82xbUZwZg9hSD4XUNhWjRDYt375KawRQhd6h8"
+  REACT_APP_MKR_GRAPH_HTTP='https://gateway.thegraph.com/api/ad06bcb2eee99ff1598a4d8634e1adbe/subgraphs/id/7aLegv47P5Y1EGYduQwmqVznXMy7HchJPkRM1rrzPrKV'
   REACT_APP_GOV_DB_HTTP='/api/v1'
   REACT_APP_ETHERSCAN_API_KEY='XQ2QTEM7H4KX7AQTE9JWXD3HWTTZ46TTU9'
   REACT_APP_LAST_CACHE_UPDATE='1591122639'

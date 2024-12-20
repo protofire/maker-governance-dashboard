@@ -2,7 +2,6 @@ import matter from 'gray-matter'
 import BigNumber from 'bignumber.js'
 import { getUnixTime } from 'date-fns'
 import { setCache, getCache } from './cache'
-import { getPollDates } from './mkr-gov-db'
 
 const Hash = require('ipfs-only-hash')
 
@@ -178,22 +177,22 @@ export async function getPollsMetaData(polls: Array<any>) {
     }),
   )
 
-  const updatedCached = await Promise.all(
-    cached.map(async cachedData => {
-      const newPollData = polls.find(p => p.id === cachedData.id)
-      let pollDates
-      if (newPollData) {
-        pollDates = await getPollDates(newPollData.id)
-      }
-      return {
-        ...cachedData,
-        ...newPollData,
-        ...pollDates,
-      }
-    }),
-  ) // need to update data coming from subgraph
+  // const updatedCached = await Promise.all(
+  //   cached.map(async cachedData => {
+  //     const newPollData = polls.find(p => p.id === cachedData.id)
+  //     let pollDates
+  //     if (newPollData) {
+  //       pollDates = await getPollDates(newPollData.id)
+  //     }
+  //     return {
+  //       ...cachedData,
+  //       ...newPollData,
+  //       ...pollDates,
+  //     }
+  //   }),
+  // ) // need to update data coming from subgraph
 
-  const allPolls = [...updatedCached, ...pollsToAdd.filter(Boolean)]
+  const allPolls = [...pollsToAdd.filter(Boolean)]
 
   await setCache('polls-metadata', allPolls)
 

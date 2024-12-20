@@ -32,6 +32,7 @@ function ExecutiveInfo(props) {
 
   const { data: gData, ...gResult } = useQuery(GOVERNANCE_INFO_QUERY)
   const excutivesData = useQuery(VOTES_FIRST_QUERY, { variables: resultVariables })
+
   const executivecolumns = React.useMemo(() => Executivecolumns(), [])
   const getVote = row => {
     if (row.id) props.history.push(`/executive/${row.id}`)
@@ -62,7 +63,7 @@ function ExecutiveInfo(props) {
         })
     }
   }, [excutivesData.data])
-  if (excutivesData.loading || gResult.loading || data.length === 0) return <FullLoading />
+  if (excutivesData.loading || gResult.loading) return <FullLoading />
   if (excutivesData.error || gResult.error) return <Error />
 
   return (

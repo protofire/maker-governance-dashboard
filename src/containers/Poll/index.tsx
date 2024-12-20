@@ -21,13 +21,20 @@ function PollInfo(props: Props) {
   useEffect(() => {
     if (pollData && pollData.poll) {
       getPollsMetaData([pollData.poll]).then(allPolls => {
-        setData(allPolls.find(p => p.id === pollData.poll.id))
+        setData(allPolls.find(p => p.id === pollData.poll.id) || {})
       })
     }
   }, [pollData])
 
-  if (loading || Object.keys(data).length === 0) return <FullLoading />
+  if (loading) return <FullLoading />
   if (error) return <Error />
+  if (Object.keys(data).length === 0) {
+    return (
+      <div>
+        There was an error trying to fetch the data. <button onClick={() => window.location.reload()}>Try again</button>
+      </div>
+    )
+  }
 
   return (
     <>

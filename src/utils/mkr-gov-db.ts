@@ -16,7 +16,11 @@ const POLL_QUERY = /* GraphQL */ `
 `
 
 export async function getPollDates(pollId) {
-  const data = await client.request(POLL_QUERY, { pollId: Number(pollId) })
+  try {
+    const data = await client.request(POLL_QUERY, { pollId: Number(pollId) })
 
-  return data.activePolls.nodes[0]
+    return data.activePolls.nodes[0]
+  } catch (error) {
+    console.error('Error fetching poll dates', error)
+  }
 }
